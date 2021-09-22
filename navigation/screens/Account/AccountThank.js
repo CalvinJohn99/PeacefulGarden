@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,6 +7,12 @@ import {
 } from "react-native";
 
 function AccountThank({ navigation }) {
+
+  useEffect( () => {
+    setTimeout(() => {
+      navigation.navigate('SigninForm'); //this.props.navigation.navigate('Login')
+  }, 5000);
+  })
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textGroup}>

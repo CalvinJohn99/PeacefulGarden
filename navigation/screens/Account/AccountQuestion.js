@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,11 +9,26 @@ import {
   TextInput,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-function AccountQuestion({ navigation }) {
+
+function AccountQuestion({navigation , route}) {
+  const [answer1, setAnswer1] = useState(null)
+  const [answer2, setAnswer2] = useState(null)
+  const [newdata, setNewdata] = useState({username: "", password:"", email: "", answer1: "", answer2: ""})
+  const {data} = route.params;
+
+  const handleSignUp = () => {  
+    newdata.username = data.username;
+    newdata.password = data.password;
+    newdata.email = data.email;
+    newdata.answer1 = answer1;
+    newdata.answer2 = answer2;
+    setNewdata({ ...newdata });
+  }
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfo}>
-        <Text style={{ fontSize: 30, fontWeight: "bold" }}>John Henry</Text>
+        <Text style={{ fontSize: 30, fontWeight: "bold" }}>{data.username}</Text>
         <Image
           style={{ width: 80, height: 80, borderRadius: 50, borderWidth: 1 }}
           source={require("./../../../assets/opening1.jpg")}
@@ -28,6 +43,7 @@ function AccountQuestion({ navigation }) {
           placeholder="Your Answer"
           autoCapitalize="none"
           placeholderTextColor="white"
+          onChangeText={(text) => { setAnswer1(text) }} value={answer1}
         />
       </View>
       <View style={styles.questionForm}>
@@ -39,11 +55,15 @@ function AccountQuestion({ navigation }) {
           placeholder="Your Answer"
           autoCapitalize="none"
           placeholderTextColor="white"
+          onChangeText={(text) => { setAnswer2(text) }} value={answer2}
         />
       </View>
       <TouchableOpacity
         style={styles.button_submit}
-        onPress={() => navigation.navigate("AccountAge")}
+        onPress={() => {
+          handleSignUp()
+          navigation.navigate("AccountAge", {newdata: newdata})
+          }}
       >
         <Button title="Next" color="#fff" />
       </TouchableOpacity>

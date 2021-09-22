@@ -7,15 +7,73 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-
+import { TouchableOpacity } from "react-native-gesture-handler";
+import fbdata from "../../../firebase";
 export default function SigninForm({ navigation }) {
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [data, setData] = useState({password:"", email: ""})
+  const [info, setInfo] = useState()
+  const handleSignIn = () => {  
+    data.password = password;
+    data.email = email;
+    setData({ ...data });
+}
+const get_DATA = (userId) => {
+  fbdata.database().ref('users/').on('value', function (snapshot) {
+    let array = [];
+    snapshot.forEach(function (childSnapshot) {
+      if(userId === childSnapshot.key){
+        var childData = childSnapshot.val();
+        console.log(childData)
+      }
+      // array.push({
+      //   uid: childSnapshot.key,
+      //   username: childData.username,
+      //   password: childData.password,
+      //   email: childData.email,
+      //   answer1: childData.answer1,
+      //   answer2: childData.answer2,
+      //   age: childData.age,
+      //   interest: childData.interest,
+      // });
+    });
+    // console.log(array[0])
+    // setInfo(array)
+  });
+}
+
+  function signIn(email, password) {
+    fbdata.auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(function (user) {
+      alert('Login Successful!' + "\n" +
+            "Your email: " + user["user"]["email"] + "\n"
+            + "Your uid: " + user["user"]["uid"] + "\n"
+      )
+      get_DATA(user["user"]["uid"]);
+    })
+    .catch(error => {
+      if (error.code === 'auth/auth/wrong-password') {
+        console.log('Wrong password');
+      }
+  
+      if (error.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
+  
+      console.error(error);
+    }); 
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Email"
         autoCapitalize="none"
         placeholderTextColor="white"
+        onChangeText={(value) => setEmail(value)} value={email}
       />
       <TextInput
         style={styles.input}
@@ -23,10 +81,14 @@ export default function SigninForm({ navigation }) {
         secureTextEntry={true}
         autoCapitalize="none"
         placeholderTextColor="white"
+        onChangeText={(value) => setPassword(value)} value={password}
       />
-      <View style={styles.button_submit}>
+      <TouchableOpacity style={styles.button_submit} onPress={() => {
+         handleSignIn()
+        signIn(data.email,data.password)
+        }}>
         <Button title="Login" color="#fff" />
-      </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

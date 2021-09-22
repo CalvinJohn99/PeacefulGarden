@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextInput,
@@ -10,6 +10,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function SignupForm({ navigation }) {
+  const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [data, setData] = useState({username: "", password:"", email: ""})
+  const handleSignUp = () => {  
+        data.username = username;
+        data.password = password;
+        data.email = email;
+        setData({ ...data });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <TextInput
@@ -17,6 +28,7 @@ export default function SignupForm({ navigation }) {
         placeholder="Email"
         autoCapitalize="none"
         placeholderTextColor="white"
+        onChangeText={(text) => { setEmail(text) }} value={email}
       />
       <TextInput
         style={styles.input}
@@ -24,6 +36,7 @@ export default function SignupForm({ navigation }) {
         secureTextEntry={true}
         autoCapitalize="none"
         placeholderTextColor="white"
+        onChangeText={(text) => { setPassword(text) }} value={password}
       />
       <TextInput
         style={styles.input}
@@ -34,9 +47,10 @@ export default function SignupForm({ navigation }) {
       />
       <TextInput
         style={styles.input}
-        placeholder="Username / Nickname"
+        placeholder="Username"
         autoCapitalize="none"
         placeholderTextColor="white"
+        onChangeText={(text) => { setUsername(text) }} value={username}
       />
       <TouchableOpacity>
         <AntDesign name="plussquare" size={55} color="black" />
@@ -45,7 +59,10 @@ export default function SignupForm({ navigation }) {
         Choose your profile picture
       </Text>
 
-      <TouchableOpacity style={styles.button_submit} onPress={() => navigation.navigate('AccountQuestion')}>
+      <TouchableOpacity style={styles.button_submit} onPress={() => {
+         handleSignUp()
+        navigation.navigate("AccountQuestion", {data: data})
+      }}>
         <Button title="Next" color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
