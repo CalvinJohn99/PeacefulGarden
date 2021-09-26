@@ -13,6 +13,7 @@ import {
 import fbdata from "../../firebase.js";
 
 import useCurrentDate from "../components/CommonFunctions.js";
+import LikeButton from "../components/LikeButton";
 
 const getBackgroundColor = (id) => {
   if (id % 3 === 1) {
@@ -34,7 +35,7 @@ export default function QuestionViewAnswer({ navigation, route }) {
   React.useEffect(() => {
     const questionAnswerRef = fbdata
       .ref("/qanswer/" + questiontext)
-      .orderByChild("timestamp");
+      .orderByChild("negTimestamp");
     const OnLoadingListener = questionAnswerRef.once("value", (snapshot) => {
       setQAList([]);
       snapshot.forEach((childSnapshot) => {
@@ -62,7 +63,7 @@ export default function QuestionViewAnswer({ navigation, route }) {
               screen: "QCreateAnswer",
               params: { currentQuestion },
             });
-            console.log(currentQuestion);
+            // console.log(currentQuestion);
           }}
         >
           <Text style={styles.newbuttontext}>New</Text>
@@ -86,6 +87,15 @@ export default function QuestionViewAnswer({ navigation, route }) {
         renderItem={({ item }) => (
           <View style={styles.answerCon}>
             <Text style={styles.answerText}> {item.answer} </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                marginTop: 4,
+              }}
+            >
+              <LikeButton />
+            </View>
           </View>
         )}
         keyExtractor={(item) => item.id}

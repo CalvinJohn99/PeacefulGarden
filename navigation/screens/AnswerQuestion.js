@@ -31,6 +31,7 @@ function storeQAnswer(question, answer) {
     timestamp: {
       ".sv": "timestamp",
     },
+    negTimestamp: 0,
   };
   var updates = {};
   updates["/qanswer/" + question + "/" + newAnswerKey] = dataToSave;
@@ -41,7 +42,20 @@ function storeQAnswer(question, answer) {
       console.log(error);
     } else {
       console.log("update is sucessful");
+      updateNegTimestamp(question, newAnswerKey);
     }
+  });
+}
+
+function updateNegTimestamp(question, key) {
+  const timeRef = fbdata.ref(
+    "/qanswer/" + question + "/" + key + "/timestamp/"
+  );
+  const negTimeRef = fbdata.ref("/qanswer/" + question + "/" + key + "/");
+  timeRef.once("value", (snapshot) => {
+    var negTimestampValue = snapshot.val() * -1;
+    console.log(negTimestampValue);
+    negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
 

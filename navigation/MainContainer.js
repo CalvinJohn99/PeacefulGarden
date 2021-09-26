@@ -1,9 +1,13 @@
 import * as React from "react";
 
 // import navigation
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  StackActions,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 // import screens
@@ -13,14 +17,16 @@ import QuestionScreen from "./screens/QuestionScreen";
 import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
+import CreateMood from "./screens/CreateMood";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
 // Create Self-awareness Question stack
-const QuesStack = createStackNavigator();
+const QuesStack = createNativeStackNavigator();
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
+      initialRouteName="QList"
       screenOptions={{
         headerStyle: { backgroundColor: "#1067CC" },
         headerTintColor: "white",
@@ -45,6 +51,34 @@ const QuesStackScreen = () => {
         options={{ headerTitle: "Post Answer" }}
       />
     </QuesStack.Navigator>
+  );
+};
+
+const JMStack = createNativeStackNavigator();
+const JMStackScreen = () => {
+  return (
+    <JMStack.Navigator
+      initialRouteName="JMNav"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <JMStack.Screen
+        name="JMNav"
+        component={JournalMoodScreen}
+        options={{ headerTitle: "Journal and Mood" }}
+      />
+
+      <JMStack.Screen
+        name="CreateMood"
+        component={CreateMood}
+        options={{ headerTitle: "Create Mood" }}
+      />
+    </JMStack.Navigator>
   );
 };
 
@@ -97,11 +131,46 @@ function MyTabs() {
         name="Question"
         component={QuesStackScreen}
         options={{ headerShown: false }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            // work with transition delay
+            // navigation.dispatch(
+            //   CommonActions.reset({
+            //     index: 0,
+            //     routes: [{ name: "QList" }],
+            //   })
+            // );
+
+            // work with transition delay
+            // navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: "QList" }],
+            // });
+
+            // work with development-only error -- action pop_to_top was not handled by any navigator
+            // navigation.dispatch(StackActions.popToTop());
+
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
+            if (routeName !== "QList") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Journal"
-        component={JournalMoodScreen}
-        options={{ headerTitle: "Journal and Mood" }}
+        component={JMStackScreen}
+        options={{ headerShown: false }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            // navigation.dispatch(StackActions.popToTop());
+
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
+            if (routeName !== "JMNav") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Music"
