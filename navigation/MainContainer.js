@@ -161,7 +161,7 @@ function MyTabs() {
         name="Journal"
         component={JMStackScreen}
         options={{ headerShown: false }}
-        listeners={({ navigation }) => ({
+        listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             // navigation.dispatch(StackActions.popToTop());
 
