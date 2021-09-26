@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
+import RandomImage from "./../../components/RandomImage"
 
 export default function SignupForm({ navigation }) {
   const [username, setUsername] = useState(null)
@@ -20,6 +21,8 @@ export default function SignupForm({ navigation }) {
         data.email = email;
         setData({ ...data });
   }
+
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,12 +55,11 @@ export default function SignupForm({ navigation }) {
         placeholderTextColor="white"
         onChangeText={(text) => { setUsername(text) }} value={username}
       />
-      <TouchableOpacity>
-        <AntDesign name="plussquare" size={55} color="black" />
-      </TouchableOpacity>
+      
       <Text style={{ color: "#000000", marginVertical: 10 }}>
         Choose your profile picture
       </Text>
+      <RandomImage></RandomImage>
 
       <TouchableOpacity style={styles.button_submit} onPress={() => {
          handleSignUp()
