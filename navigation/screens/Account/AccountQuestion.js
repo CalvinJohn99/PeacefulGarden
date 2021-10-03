@@ -9,17 +9,19 @@ import {
   TextInput,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Avatar } from 'react-native-elements';
 
 function AccountQuestion({navigation , route}) {
   const [answer1, setAnswer1] = useState(null)
   const [answer2, setAnswer2] = useState(null)
-  const [newdata, setNewdata] = useState({username: "", password:"", email: "", answer1: "", answer2: ""})
+  const [newdata, setNewdata] = useState({username: "", password:"", email: "",img:"", answer1: "", answer2: ""})
   const {data} = route.params;
 
   const handleSignUp = () => {  
     newdata.username = data.username;
     newdata.password = data.password;
     newdata.email = data.email;
+    newdata.img = data.img;
     newdata.answer1 = answer1;
     newdata.answer2 = answer2;
     setNewdata({ ...newdata });
@@ -28,11 +30,14 @@ function AccountQuestion({navigation , route}) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfo}>
-        <Text style={{ fontSize: 30, fontWeight: "bold" }}>{data.username}</Text>
-        <Image
-          style={{ width: 80, height: 80, borderRadius: 50, borderWidth: 1 }}
-          source={require("./../../../assets/opening1.jpg")}
-        />
+      <Avatar
+            size="large"
+            rounded
+            source={{
+              uri: `${data.img}`,
+            }}
+          />
+        <Text style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10, }}>{data.username}</Text>
       </View>
       <View style={styles.questionForm}>
         <Text style={{ fontSize: 16, fontWeight: "normal" }}>
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   questionForm: {
@@ -98,12 +103,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     width: "100%",
-    marginVertical: 30,
+    marginVertical: 20,
   },
   input: {
-    height: 36,
+    height: 50,
     width: "100%",
-    fontSize: 16,
+    fontSize: 18,
     paddingVertical: 0,
     paddingHorizontal: 10,
     borderWidth: 1,
@@ -115,8 +120,8 @@ const styles = StyleSheet.create({
   },
 
   button_submit: {
-    height: 40,
-    width: 120,
+    height: 50,
+    width: 130,
     borderRadius: 14,
     backgroundColor: "#17CAF1",
     display: "flex",

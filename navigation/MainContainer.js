@@ -4,7 +4,6 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // import screens
 import HomeScreen from './screens/HomeScreen';
@@ -14,12 +13,6 @@ import JournalMoodScreen from './screens/JournalMoodScreen';
 import MusicScreen from './screens/MusicScreen';
 import AccountScreen from './screens/AccountScreen';
 
-import SignupForm from './screens/Account/SignupForm';
-import SigninForm from './screens/Account/SigninForm';
-import MainAccountScreen from "./screens/Account/MainAccountScreen";
-import AccountQuestion from './screens/Account/AccountQuestion'
-import AccountAge from './screens/Account/AccountAge'
-import AccountThank from './screens/Account/AccountThank';
 
 // Create screen names
 //const homeName = 'Home';
@@ -28,20 +21,6 @@ import AccountThank from './screens/Account/AccountThank';
 
 // Create tab
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-function AccountStack({navigation}) {
-    return (
-    <Stack.Navigator>
-        <Stack.Screen name="MainAccountScreen" component={MainAccountScreen} />
-        <Stack.Screen name="SigninForm" component={SigninForm} />
-        <Stack.Screen name="SignupForm" component={SignupForm} />
-        <Stack.Screen name="AccountQuestion" component={AccountQuestion} />
-        <Stack.Screen name="AccountAge" component={AccountAge} />
-        <Stack.Screen name="AccountThank" component={AccountThank} />
-    </Stack.Navigator>
-    );
-}
-
 function MyTabs() {
     return (
         <Tab.Navigator screenOptions={ ({route}) => ({
@@ -51,7 +30,8 @@ function MyTabs() {
             headerTintColor: 'white',
             headerTitleStyle: {
                 fontWeight: 'bold'
-            }, 
+            },
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => {
                 let iconName;
 
@@ -81,7 +61,7 @@ function MyTabs() {
             <Tab.Screen name="Question" component={QuestionScreen} />
             <Tab.Screen name="Journal" component={JournalMoodScreen} />
             <Tab.Screen name="Music" component={MusicScreen} />
-            <Tab.Screen name="Account" component={AccountStack} />
+            <Tab.Screen name="Account" component={AccountScreen} />
 
         </Tab.Navigator>
     );

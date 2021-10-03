@@ -1,6 +1,4 @@
 import firebase from "firebase/app";
-import "firebase/database";
-
 import "firebase/auth";
 import "firebase/database";
 import "firebase/firestore";
@@ -9,14 +7,14 @@ import "firebase/storage";
 
 // web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAUXNmwHZfHMK4EL_pKJ4-XmnI40h4GLZ4",
-  authDomain: "evanspg-d62d6.firebaseapp.com",
-  databaseURL: "https://evanspg-d62d6-default-rtdb.firebaseio.com",
-  projectId: "evanspg-d62d6",
-  storageBucket: "evanspg-d62d6.appspot.com",
-  messagingSenderId: "642272696498",
-  appId: "1:642272696498:web:690396c1e632abe8fc91ab",
-  measurementId: "G-NC0JZZQD0S"
+  apiKey: "AIzaSyAfvkrBJ52KyBurDg8nNeb8KQ3MvDbaUII",
+  authDomain: "greatful-2ffc2.firebaseapp.com",
+  databaseURL: "https://greatful-2ffc2-default-rtdb.firebaseio.com",
+  projectId: "greatful-2ffc2",
+  storageBucket: "greatful-2ffc2.appspot.com",
+  messagingSenderId: "884190027685",
+  appId: "1:884190027685:web:f8f58d582a4967838e524c",
+  measurementId: "G-JXG6XC1GND"
 };
 
 // initialize firebase

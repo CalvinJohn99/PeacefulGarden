@@ -5,66 +5,189 @@ import {
   StyleSheet,
   SafeAreaView,
   Text,
+  Image,
+  View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { AntDesign } from "@expo/vector-icons";
-import RandomImage from "./../../components/RandomImage"
+import * as Animatable from "react-native-animatable";
+import Feather from "react-native-vector-icons/Feather";
+import RandomImage from "./../../components/RandomImage";
+import { Avatar } from "react-native-elements";
 
 export default function SignupForm({ navigation }) {
-  const [username, setUsername] = useState(null)
-  const [password, setPassword] = useState(null)
-  const [email, setEmail] = useState(null)
-  const [data, setData] = useState({username: "", password:"", email: ""})
-  const handleSignUp = () => {  
-        data.username = username;
-        data.password = password;
-        data.email = email;
-        setData({ ...data });
-  }
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [check_textInputChange, setCheck_textInputChange] = useState(false);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [isValidUser, setIsValidUser] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
+  const [img, setImg] = useState(null);
+  const [data, setData] = useState({
+    username: "",
+    password: "",
+    email: "",
+    img: "",
+  });
+  const handleSignUp = () => {
+    if(username === null || 
+      password === null || 
+      email === null || 
+      isValidConfirmPassword === false) {
+      alert("Please fill your information.")
+    } else {
+    data.username = username;
+    data.password = password;
+    data.email = email;
+    data.img = img;
+    setData({ ...data });
+    console.log(data);
+    navigation.navigate("AccountQuestion", { data: data });
+    }
+    
+  };
+  const textInputChange = (val) => {
+    if (val.trim().length >= 4) {
+      setUsername(val);
+      setCheck_textInputChange(true);
+      setIsValidUser(true);
+    } else {
+      setUsername(val);
+      setCheck_textInputChange(false);
+      setIsValidUser(false);
+    }
+  };
+  const handlePasswordChange = (val) => {
+    if (val.trim().length >= 8) {
+      setPassword(val);
+      setIsValidPassword(true);
+    } else {
+      setPassword(val);
+      setIsValidPassword(false);
+    }
+  };
 
-  
+  const handleConfirmPassword = (val) => {
+    if (val === password) {
+      setIsValidConfirmPassword(true);
+    } else {
+      setIsValidConfirmPassword(false);
+    }
+  };
+  const updateSecureTextEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+  const handleValidUser = (val) => {
+    if (val.trim().length >= 4) {
+      setIsValidUser(true);
+    } else {
+      setIsValidUser(false);
+    }
+  };
+
+  const handleImg = (imgValue) => {
+    setImg("https://unsplash.it/150/200?image=" + imgValue);
+    console.log(img);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        placeholderTextColor="white"
-        onChangeText={(text) => { setEmail(text) }} value={email}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-        autoCapitalize="none"
-        placeholderTextColor="white"
-        onChangeText={(text) => { setPassword(text) }} value={password}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        secureTextEntry={true}
-        autoCapitalize="none"
-        placeholderTextColor="white"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        autoCapitalize="none"
-        placeholderTextColor="white"
-        onChangeText={(text) => { setUsername(text) }} value={username}
-      />
-      
-      <Text style={{ color: "#000000", marginVertical: 10 }}>
+    <Text style={styles.title}>Register</Text>
+    <Text style={styles.text}>Please fill in a few details below</Text>
+      <View style={styles.action}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          autoCapitalize="none"
+          onChangeText={(text) => {
+            setEmail(text);
+          }}
+          value={email}
+        />
+      </View>
+
+      <View style={styles.action}>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={secureTextEntry ? true : false}
+          autoCapitalize="none"
+          onChangeText={(val) => handlePasswordChange(val)}
+        />
+        <TouchableOpacity onPress={updateSecureTextEntry}>
+          {secureTextEntry ? (
+            <Feather name="eye-off" color="grey" size={20} />
+          ) : (
+            <Feather name="eye" color="grey" size={20} />
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {isValidPassword ? null : (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>
+            Password must be 8 characters long.
+          </Text>
+        </Animatable.View>
+      )}
+      <View style={styles.action}>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          secureTextEntry={secureTextEntry ? true : false}
+          autoCapitalize="none"
+          onChangeText={(val) => handleConfirmPassword(val)}
+        />
+      </View>
+      {isValidConfirmPassword ? null : (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>
+            Password does not match.
+          </Text>
+        </Animatable.View>
+      )}
+
+      <View style={styles.action}>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          autoCapitalize="none"
+          onChangeText={(val) => textInputChange(val)}
+          onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+        />
+        {check_textInputChange ? (
+          <Animatable.View animation="bounceIn">
+            <Feather name="check-circle" color="green" size={20} />
+          </Animatable.View>
+        ) : null}
+      </View>
+      {isValidUser ? null : (
+        <Animatable.View animation="fadeInLeft" duration={500}>
+          <Text style={styles.errorMsg}>
+            Username must be 4 characters long.
+          </Text>
+        </Animatable.View>
+      )}
+
+      <Text style={styles.text}>
         Choose your profile picture
       </Text>
-      <RandomImage></RandomImage>
+      <RandomImage onSelectImg={handleImg}></RandomImage>
+      {img ? (
+        <Avatar
+            size="large"
+            rounded
+            source={{
+              uri: `${img}`,
+            }}
+          />
+      ) : null}
 
-      <TouchableOpacity style={styles.button_submit} onPress={() => {
-         handleSignUp()
-        navigation.navigate("AccountQuestion", {data: data})
-      }}>
+      <TouchableOpacity
+        style={styles.button_submit}
+        onPress={() => { handleSignUp();}}
+      >
         <Button title="Next" color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
@@ -72,17 +195,6 @@ export default function SignupForm({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  input: {
-    width: 350,
-    height: 50,
-    backgroundColor: "#C4C4C6",
-    margin: 10,
-    padding: 8,
-    color: "white",
-    fontSize: 18,
-    fontWeight: "300",
-    marginBottom: 10,
-  },
   container: {
     display: "flex",
     flexDirection: "column",
@@ -94,23 +206,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#fff",
   },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000000",
+    alignSelf: "flex-start"
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: "normal",
+    color: "#000000",
+    alignSelf: "flex-start",
+    marginVertical: 10,
+  },
+  action: {
+    flexDirection: "row",
+    marginTop: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f2f2f2",
+    paddingBottom: 5,
+  },
+  input: {
+    flex: 1,
+    marginTop: Platform.OS === "ios" ? 0 : -12,
+    paddingLeft: 10,
+    color: "#05375a",
+    fontSize: 18,
+  },
   button_submit: {
-    height: 40,
-    width: 120,
+    height: 50,
+    width: 130,
     borderRadius: 14,
     backgroundColor: "#17CAF1",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: "white",
+    marginVertical: 20,
   },
-  profileimage: {
-    width: "100%",
-    height: 30,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#60C8ED",
+  errorMsg: {
+    color: "#FF0000",
+    fontSize: 12,
   },
 });
