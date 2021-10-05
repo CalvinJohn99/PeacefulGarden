@@ -27,4 +27,3 @@ const fbdata = firebase.database();
 export const fbstorage = firebase.storage();
 
 export default fbdata;
-
