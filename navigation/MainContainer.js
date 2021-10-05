@@ -14,10 +14,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "./screens/HomeScreen";
 import GPostScreen from "./screens/GPostScreen";
 import QuestionScreen from "./screens/QuestionScreen";
-import QuestionViewAnswer from "./screens/QuestionViewAnswer";
-import AnswerQuestion from "./screens/AnswerQuestion";
+// import QuestionViewAnswer from "./screens/QuestionViewAnswer";
+// import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
-import CreateMood from "./screens/CreateMood";
+// import CreateMood from "./screens/CreateMood";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
