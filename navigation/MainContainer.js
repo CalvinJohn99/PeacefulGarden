@@ -1,14 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 
 // import navigation
 import {
-    NavigationContainer,
-    StackActions,
-    getFocusedRouteNameFromRoute,
-  } from "@react-navigation/native";
-  import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-  import { createNativeStackNavigator } from "@react-navigation/native-stack";
-  import Ionicons from "react-native-vector-icons/Ionicons";
+  NavigationContainer,
+  StackActions,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 // import screens
 import HomeScreen from './screens/HomeScreen';
@@ -82,99 +82,102 @@ const JMStackScreen = () => {
 // Create tab
 const Tab = createBottomTabNavigator();
 function MyTabs() {
-    return (
-        <Tab.Navigator screenOptions={ ({route}) => ({
-            headerStyle: {
+    function MyTabs() {
+        return (
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              headerStyle: {
                 backgroundColor: "#1067CC",
-            },
-            headerTintColor: 'white',
-            headerTitleStyle: {
-                fontWeight: 'bold'
-            },
-            
-            tabBarIcon: ({focused, color, size}) => {
+              },
+              headerTintColor: "white",
+              headerTitleStyle: {
+                fontWeight: "bold",
+              },
+              tabBarIcon: ({ focused, color, size }) => {
                 let iconName;
-
+      
                 if (route.name === "Home") {
-                    iconName = focused? 'home' : 'home-outline';
+                  iconName = focused ? "home" : "home-outline";
                 } else if (route.name === "Post") {
-                    iconName = focused? 'earth' : 'earth-outline';
+                  iconName = focused ? "earth" : "earth-outline";
                 } else if (route.name === "Question") {
-                    iconName = focused? 'bulb' : 'bulb-outline';
+                  iconName = focused ? "bulb" : "bulb-outline";
                 } else if (route.name === "Journal") {
-                    iconName = focused? 'book' : 'book-outline';
+                  iconName = focused ? "book" : "book-outline";
                 } else if (route.name === "Music") {
-                    iconName = focused? 'musical-notes' : 'musical-notes-outline';
+                  iconName = focused ? "musical-notes" : "musical-notes-outline";
                 } else if (route.name === "Account") {
-                    iconName = focused? 'person' : 'person-outline';
+                  iconName = focused ? "person" : "person-outline";
                 }
                 return <Ionicons name={iconName} size={size} color={color} />;
-            },
-            tabBarActiveTintColor: 'white',
-            tabBarInactiveTintColor: 'white',
-            tabBarStyle: {
+              },
+              tabBarActiveTintColor: "white",
+              tabBarInactiveTintColor: "white",
+              tabBarStyle: {
                 backgroundColor: "#1067CC",
-            },
-        })}>
+              },
+            })}
+          >
             <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen
-        name="Post"
-        component={GPostScreen}
-        options={{ headerTitle: "Gratefulness Post" }}
-      />
             <Tab.Screen
-        name="Question"
-        component={QuesStackScreen}
-        options={{ headerShown: false }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // work with transition delay
-            // navigation.dispatch(
-            //   CommonActions.reset({
-            //     index: 0,
-            //     routes: [{ name: "QList" }],
-            //   })
-            // );
-
-            // work with transition delay
-            // navigation.reset({
-            //   index: 0,
-            //   routes: [{ name: "QList" }],
-            // });
-
-// work with development-only error -- action pop_to_top was not handled by any navigator
-            // navigation.dispatch(StackActions.popToTop());
-
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
-            if (routeName !== "QList") {
-              navigation.dispatch(StackActions.popToTop());
-            }
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Journal"
-        component={JMStackScreen}
-        options={{ headerShown: false }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // navigation.dispatch(StackActions.popToTop());
-
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
-            if (routeName !== "JMNav") {
-              navigation.dispatch(StackActions.popToTop());
-            }
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Music"
-        component={MusicScreen}
-        options={{ headerTitle: "Relaxing Music" }}
-      />
-      <Tab.Screen name="Account" component={AccountScreen} />
-    </Tab.Navigator>
-  );
+              name="Post"
+              component={GPostScreen}
+              options={{ headerTitle: "Gratefulness Post" }}
+            />
+            <Tab.Screen
+              name="Question"
+              component={QuesStackScreen}
+              options={{ headerShown: false }}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  // work with transition delay
+                  // navigation.dispatch(
+                  //   CommonActions.reset({
+                  //     index: 0,
+                  //     routes: [{ name: "QList" }],
+                  //   })
+                  // );
+      
+                  // work with transition delay
+                  // navigation.reset({
+                  //   index: 0,
+                  //   routes: [{ name: "QList" }],
+                  // });
+      
+                  // work with development-only error -- action pop_to_top was not handled by any navigator
+                  // navigation.dispatch(StackActions.popToTop());
+      
+                  const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
+                  if (routeName !== "QList") {
+                    navigation.dispatch(StackActions.popToTop());
+                  }
+                },
+              })}
+            />
+            <Tab.Screen
+              name="Journal"
+              component={JMStackScreen}
+              options={{ headerShown: false }}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  // navigation.dispatch(StackActions.popToTop());
+      
+                  const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
+                  if (routeName !== "JMNav") {
+                    navigation.dispatch(StackActions.popToTop());
+                  }
+                },
+              })}
+            />
+            <Tab.Screen
+              name="Music"
+              component={MusicScreen}
+              options={{ headerTitle: "Relaxing Music" }}
+            />
+            <Tab.Screen name="Account" component={AccountScreen} />
+          </Tab.Navigator>
+        );
+      }
 }
 
 export default function MainContainer() {
