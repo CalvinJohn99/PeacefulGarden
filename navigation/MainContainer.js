@@ -91,7 +91,7 @@ function MyTabs() {
             headerTitleStyle: {
                 fontWeight: 'bold'
             },
-            headerShown: false,
+            
             tabBarIcon: ({focused, color, size}) => {
                 let iconName;
 
@@ -116,8 +116,12 @@ function MyTabs() {
                 backgroundColor: "#1067CC",
             },
         })}>
-            <Tab.Screen name="Home" component={HomeScreen}/>
-            <Tab.Screen name="Post" component={GPostScreen} />
+            <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen
+        name="Post"
+        component={GPostScreen}
+        options={{ headerTitle: "Gratefulness Post" }}
+      />
             <Tab.Screen
         name="Question"
         component={QuesStackScreen}
