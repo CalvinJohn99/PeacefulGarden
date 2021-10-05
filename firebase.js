@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/storage";
+import "firebase/auth";
 
 // web app's Firebase configuration
 const firebaseConfig = {
@@ -23,6 +24,6 @@ if (firebase.apps.length === 0) {
 
 const fbdata = firebase.database();
 
-const fbstorage = firebase.storage();
+export const fbstorage = firebase.storage();
 
 export default fbdata;
