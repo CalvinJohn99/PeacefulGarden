@@ -6,9 +6,9 @@ import {
     StackActions,
     getFocusedRouteNameFromRoute,
   } from "@react-navigation/native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+  import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+  import { createNativeStackNavigator } from "@react-navigation/native-stack";
+  import Ionicons from "react-native-vector-icons/Ionicons";
 
 // import screens
 import HomeScreen from './screens/HomeScreen';
@@ -163,7 +163,11 @@ function MyTabs() {
           },
         })}
       />
-            <Tab.Screen name="Music" component={MusicScreen} />
+           <Tab.Screen
+        name="Music"
+        component={MusicScreen}
+        options={{ headerTitle: "Relaxing Music" }}
+      />
             <Tab.Screen name="Account" component={AccountScreen} />
 
         </Tab.Navigator>
