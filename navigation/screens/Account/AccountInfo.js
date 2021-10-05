@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Button } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import { Avatar, ListItem, Button } from "react-native-elements";
+import { Avatar, ListItem } from "react-native-elements";
 
 function AccountInfo() {
   const [user, setUser] = useState([]);
@@ -106,14 +106,15 @@ function AccountInfo() {
               uri: `${user["img"]}`,
             }}
           />
-          <ListItem.Title> {user["username"]}</ListItem.Title>
+           <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10, }}>{user["username"]}</Text>
         </View>
         <TouchableOpacity
+          style={stylesSheet.button_submit}
           onPress={() => {
             handleSignOut();
           }}
         >
-          <Button title="Logout" color="#fff" buttonStyle={styles.button}/>
+          <Button title="Logout" color="#fff" />
         </TouchableOpacity>
       </View>
       <View style={stylesSheet.MainContainer}>
@@ -177,11 +178,12 @@ function AccountInfo() {
                   {renderCheckBox}
                 </View>
                 <TouchableOpacity
+                  style={styles.button}
                   onPress={() => {
                     handleUpdate();
                   }}
                 >
-                  <Button title="Update" color="#fff" buttonStyle={styles.button}/>
+                  <Button title="Update" color="#fff" />
                 </TouchableOpacity>
               </View>
             )}
@@ -224,14 +226,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    height: 40,
-    width: 120,
-    borderRadius: 20,
+    height: 50,
+    width: 130,
+    borderRadius: 14,
     backgroundColor: "#1067CC",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "flex-end",
     color: "white",
+    marginHorizontal: 20
   },
   profileimage: {
     width: "100%",
@@ -296,13 +300,14 @@ const stylesSheet = StyleSheet.create({
   },
   button_submit: {
     height: 40,
-    width: 120,
+    width: 100,
+    borderRadius: 14,
+    backgroundColor: "#1067CC",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: "white",
     alignSelf: "center",
-    margin: 50,
   },
 
   divider: {
