@@ -3,6 +3,7 @@ import * as React from 'react';
 // import navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // import screens
@@ -18,6 +19,66 @@ import AccountScreen from './screens/AccountScreen';
 //const homeName = 'Home';
 //const DetailsName = 'Details';
 //const SettingsName = 'Settings';
+// Create Self-awareness Question stack
+const QuesStack = createNativeStackNavigator();
+const QuesStackScreen = () => {
+  return (
+    <QuesStack.Navigator
+      initialRouteName="QList"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <QuesStack.Screen
+        name="QList"
+        component={QuestionScreen}
+        options={{ headerTitle: "Question List" }}
+      />
+      <QuesStack.Screen
+        name="QViewAnswer"
+        component={QuestionViewAnswer}
+        options={{ headerTitle: "View Answer" }}
+      />
+      <QuesStack.Screen
+        name="QCreateAnswer"
+        component={AnswerQuestion}
+        options={{ headerTitle: "Post Answer" }}
+      />
+    </QuesStack.Navigator>
+  );
+};
+
+const JMStack = createNativeStackNavigator();
+const JMStackScreen = () => {
+  return (
+    <JMStack.Navigator
+      initialRouteName="JMNav"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <JMStack.Screen
+        name="JMNav"
+        component={JournalMoodScreen}
+        options={{ headerTitle: "Journal and Mood" }}
+      />
+
+      <JMStack.Screen
+        name="CreateMood"
+        component={CreateMood}
+        options={{ headerTitle: "Create Mood" }}
+      />
+    </JMStack.Navigator>
+  );
+};
 
 // Create tab
 const Tab = createBottomTabNavigator();
