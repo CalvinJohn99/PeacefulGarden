@@ -142,7 +142,7 @@ function MyTabs() {
             //   routes: [{ name: "QList" }],
             // });
 
-            // work with development-only error -- action pop_to_top was not handled by any navigator
+// work with development-only error -- action pop_to_top was not handled by any navigator
             // navigation.dispatch(StackActions.popToTop());
 
             const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
@@ -167,15 +167,14 @@ function MyTabs() {
           },
         })}
       />
-           <Tab.Screen
+      <Tab.Screen
         name="Music"
         component={MusicScreen}
         options={{ headerTitle: "Relaxing Music" }}
       />
-            <Tab.Screen name="Account" component={AccountScreen} />
-
-        </Tab.Navigator>
-    );
+      <Tab.Screen name="Account" component={AccountScreen} />
+    </Tab.Navigator>
+  );
 }
 
 export default function MainContainer() {
