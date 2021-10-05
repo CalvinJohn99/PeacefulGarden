@@ -96,6 +96,7 @@ function MyTabs() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
