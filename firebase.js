@@ -22,7 +22,9 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const fbdata = firebase.database();
+const fbdata = firebase;
+
+export const fbstorage = firebase.storage();
 
 export const fbstorage = firebase.storage();
 

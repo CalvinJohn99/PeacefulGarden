@@ -184,9 +184,7 @@ function MyTabs() {
 }
 
 export default function MainContainer() {
-  return (
-    <NavigationContainer>
+  return (  
       <MyTabs />
-    </NavigationContainer>
   );
 }
