@@ -81,6 +81,7 @@ const JMStackScreen = () => {
     </JMStack.Navigator>
   );
 };
+
 // Create tab
 const Tab = createBottomTabNavigator();
 
@@ -95,6 +96,7 @@ function MyTabs() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
