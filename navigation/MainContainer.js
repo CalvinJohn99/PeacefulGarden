@@ -18,6 +18,7 @@ import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
 import CreateMood from "./screens/CreateMood";
+import ViewMood from "./screens/ViewMood";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
@@ -78,6 +79,11 @@ const JMStackScreen = () => {
         component={CreateMood}
         options={{ headerTitle: "Create Mood" }}
       />
+      <JMStack.Screen
+        name="ViewMood"
+        component={ViewMood}
+        options={{ headerTitle: "View Mood" }}
+      />
     </JMStack.Navigator>
   );
 };
@@ -96,7 +102,7 @@ function MyTabs() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        headerShown: false,
+        // headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -122,7 +128,11 @@ function MyTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerTitle: "Home" }}
+      />
       <Tab.Screen
         name="Post"
         component={GPostScreen}
@@ -184,7 +194,5 @@ function MyTabs() {
 }
 
 export default function MainContainer() {
-  return (  
-      <MyTabs />
-  );
+  return <MyTabs />;
 }

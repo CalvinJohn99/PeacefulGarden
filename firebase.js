@@ -24,6 +24,4 @@ if (firebase.apps.length === 0) {
 
 const fbdata = firebase;
 
-export const fbstorage = firebase.storage();
-
 export default fbdata;
