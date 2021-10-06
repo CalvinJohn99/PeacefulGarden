@@ -93,6 +93,7 @@ export default function SignupForm({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
     <Text style={styles.title}>Register</Text>
     <Text style={styles.text}>Please fill in a few details below</Text>
       <View style={styles.action}>
@@ -190,6 +191,7 @@ export default function SignupForm({ navigation }) {
       >
         <Button title="Next" color="#fff" />
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

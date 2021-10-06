@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    paddingHorizontal: 0,
+    paddingHorizontal: 20,
     backgroundColor: "#fff",
   },
   form : {

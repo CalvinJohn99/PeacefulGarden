@@ -2,7 +2,6 @@ import * as React from "react";
 
 // import navigation
 import {
-  NavigationContainer,
   StackActions,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
@@ -14,73 +13,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "./screens/HomeScreen";
 import GPostScreen from "./screens/GPostScreen";
 import QuestionScreen from "./screens/QuestionScreen";
-// import QuestionViewAnswer from "./screens/QuestionViewAnswer";
-// import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
-// import CreateMood from "./screens/CreateMood";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
-
-// Create Self-awareness Question stack
-const QuesStack = createNativeStackNavigator();
-const QuesStackScreen = () => {
-  return (
-    <QuesStack.Navigator
-      initialRouteName="QList"
-      screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
-        headerTintColor: "white",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      }}
-    >
-      <QuesStack.Screen
-        name="QList"
-        component={QuestionScreen}
-        options={{ headerTitle: "Question List" }}
-      />
-      <QuesStack.Screen
-        name="QViewAnswer"
-        component={QuestionViewAnswer}
-        options={{ headerTitle: "View Answer" }}
-      />
-      <QuesStack.Screen
-        name="QCreateAnswer"
-        component={AnswerQuestion}
-        options={{ headerTitle: "Post Answer" }}
-      />
-    </QuesStack.Navigator>
-  );
-};
-
-const JMStack = createNativeStackNavigator();
-const JMStackScreen = () => {
-  return (
-    <JMStack.Navigator
-      initialRouteName="JMNav"
-      screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
-        headerTintColor: "white",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      }}
-    >
-      <JMStack.Screen
-        name="JMNav"
-        component={JournalMoodScreen}
-        options={{ headerTitle: "Journal and Mood" }}
-      />
-
-      <JMStack.Screen
-        name="CreateMood"
-        component={CreateMood}
-        options={{ headerTitle: "Create Mood" }}
-      />
-    </JMStack.Navigator>
-  );
-};
 
 // Create tab
 const Tab = createBottomTabNavigator();
@@ -123,70 +58,17 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen
-        name="Post"
-        component={GPostScreen}
-        options={{ headerTitle: "Gratefulness Post" }}
-      />
-      <Tab.Screen
-        name="Question"
-        component={QuesStackScreen}
-        options={{ headerShown: false }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // work with transition delay
-            // navigation.dispatch(
-            //   CommonActions.reset({
-            //     index: 0,
-            //     routes: [{ name: "QList" }],
-            //   })
-            // );
-
-            // work with transition delay
-            // navigation.reset({
-            //   index: 0,
-            //   routes: [{ name: "QList" }],
-            // });
-
-            // work with development-only error -- action pop_to_top was not handled by any navigator
-            // navigation.dispatch(StackActions.popToTop());
-
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
-            if (routeName !== "QList") {
-              navigation.dispatch(StackActions.popToTop());
-            }
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Journal"
-        component={JMStackScreen}
-        options={{ headerShown: false }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // navigation.dispatch(StackActions.popToTop());
-
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
-            if (routeName !== "JMNav") {
-              navigation.dispatch(StackActions.popToTop());
-            }
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Music"
-        component={MusicScreen}
-        options={{ headerTitle: "Relaxing Music" }}
-      />
+      <Tab.Screen name="Post" component={GPostScreen} />
+      <Tab.Screen name="Question" component={QuestionScreen} />
+      <Tab.Screen name="Journal" component={JournalMoodScreen} />
+      <Tab.Screen name="Music" component={MusicScreen} />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
   );
 }
 
 export default function MainContainer() {
-  return (
-    <NavigationContainer>
+  return (   
       <MyTabs />
-    </NavigationContainer>
   );
 }

@@ -5,7 +5,7 @@ import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import { Avatar, ListItem } from "react-native-elements";
+import { Avatar } from "react-native-elements";
 
 function AccountInfo() {
   const [user, setUser] = useState([]);
@@ -20,14 +20,12 @@ function AccountInfo() {
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
     setUid(userId);
-    console.log(userId);
     if (userId !== null) {
       fbdata
         .database()
         .ref("users/" + userId)
         .on("value", (querySnapShot) => {
           let userinfo = querySnapShot.val() ? querySnapShot.val() : {};
-          console.log(userinfo);
           setUser(userinfo);
           setInterest(userinfo["interest"]);
         });

@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   View,
-  Image,
   TextInput,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -29,6 +28,7 @@ function AccountQuestion({navigation , route}) {
   
   return (
     <SafeAreaView style={styles.container}>
+     <View style={styles.container}>
       <View style={styles.userInfo}>
       <Avatar
             size="large"
@@ -72,6 +72,7 @@ function AccountQuestion({navigation , route}) {
       >
         <Button title="Next" color="#fff" />
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

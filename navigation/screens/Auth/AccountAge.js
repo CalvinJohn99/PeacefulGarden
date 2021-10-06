@@ -10,8 +10,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import RNPickerSelect from "react-native-picker-select";
 import { CheckBox } from "react-native-elements";
 import { Avatar } from "react-native-elements";
-import { Root, Toast } from 'popup-ui';
-import Icon from "react-native-vector-icons/FontAwesome";
 import fbdata from "../../../firebase";
 import Interest from "./../../../assets/Interest";
 import AgeCategories from "./../../../assets/AgeCategories";
@@ -19,6 +17,7 @@ import AgeCategories from "./../../../assets/AgeCategories";
 const placeholder = {
   label: "Select your age...",
   value: null,
+  
   color: "#9EA0A4",
 };
 
@@ -92,13 +91,10 @@ function AccountAge({ navigation, route }) {
         function (error) {
           if (error) {
             alert("Error!!!");
-          } else {
-            alert("User account created successfully");
           }
         }
       );
   }
-
 
 
   function signUp() {
@@ -109,7 +105,6 @@ function AccountAge({ navigation, route }) {
         console.log("User account created & signed in!");
         handleSignUp(user["user"]["uid"]);
         addDataBase();
-        navigation.navigate("AccountThank");
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -124,6 +119,7 @@ function AccountAge({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+     <View style={styles.container}>
       <View style={styles.userInfo}>
         <Avatar
           size="large"
@@ -160,6 +156,7 @@ function AccountAge({ navigation, route }) {
       >
         <Button title="Next" color="#fff" />
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

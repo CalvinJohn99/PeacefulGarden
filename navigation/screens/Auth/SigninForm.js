@@ -9,6 +9,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import fbdata from "../../../firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
+import { View } from "react-native";
 
 export default function SigninForm({ navigation }) {
   const [email, setEmail] = useState(null);
@@ -24,7 +25,7 @@ export default function SigninForm({ navigation }) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(function () {
-        alert("Login Successful!");
+        console.log("Login Successful!");
       })
       .catch((error) => {
         if (error.code === "auth/auth/wrong-password") {
@@ -43,7 +44,8 @@ export default function SigninForm({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <View style={styles.container}>
+    <Text style={styles.title}>Login</Text>
       <Text style={styles.text}>Enter your registered email to log in</Text>
       <Input
         placeholder="Email@address.com"
@@ -70,6 +72,7 @@ export default function SigninForm({ navigation }) {
       >
         <Button title="Login" color="#fff" />
       </TouchableOpacity>
+    </View>
     </SafeAreaView>
   );
 }
@@ -82,9 +85,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    paddingVertical: 20,
-    paddingHorizontal: 20,
     backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   title: {
     fontSize: 24,
