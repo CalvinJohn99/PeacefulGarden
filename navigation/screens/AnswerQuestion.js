@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import fbdata from "../../firebase.js";
-import useCurrentDate from "../components/CommonFunctions.js";
+import useCurrentDate, {
+  useAccountUsername,
+} from "../components/CommonFunctions.js";
 
 const getBackgroundColor = (id) => {
   if (id % 3 === 1) {
@@ -24,9 +26,10 @@ const getBackgroundColor = (id) => {
 };
 
 function storeQAnswer(question, answer) {
-  var newAnswerKey = fbdata.ref().child(question).push().key;
+  var newAnswerKey = fbdata.database().ref().child(question).push().key;
   var dataToSave = {
     id: newAnswerKey,
+    username: username,
     answer: answer,
     timestamp: {
       ".sv": "timestamp",
@@ -37,21 +40,26 @@ function storeQAnswer(question, answer) {
   updates["/qanswer/" + question + "/" + newAnswerKey] = dataToSave;
   // fbdata.ref('qanswer/' + question + '/' + key).set(dataToSave);
 
-  return fbdata.ref().update(updates, (error) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("update is sucessful");
-      updateNegTimestamp(question, newAnswerKey);
-    }
-  });
+  return fbdata
+    .database()
+    .ref()
+    .update(updates, (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("update is sucessful");
+        updateNegTimestamp(question, newAnswerKey);
+      }
+    });
 }
 
 function updateNegTimestamp(question, key) {
-  const timeRef = fbdata.ref(
-    "/qanswer/" + question + "/" + key + "/timestamp/"
-  );
-  const negTimeRef = fbdata.ref("/qanswer/" + question + "/" + key + "/");
+  const timeRef = fbdata
+    .database()
+    .ref("/qanswer/" + question + "/" + key + "/timestamp/");
+  const negTimeRef = fbdata
+    .database()
+    .ref("/qanswer/" + question + "/" + key + "/");
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
     console.log(negTimestampValue);
@@ -61,6 +69,7 @@ function updateNegTimestamp(question, key) {
 
 export default function AnswerQuestion({ navigation, route }) {
   const currentDate = useCurrentDate();
+  const username = useAccountUsername();
   const [answer, setAnswer] = useState("");
   const [focused, setFocused] = useState(false);
   const [errorStatus, setErrorStatus] = useState(false);
@@ -77,7 +86,7 @@ export default function AnswerQuestion({ navigation, route }) {
     if (answer === "") {
       setErrorStatus(true);
     } else {
-      storeQAnswer(currentQuestion.question, answer);
+      storeQAnswer(currentQuestion.question, answer, username);
       alert("Successfully posted!");
       navigation.navigate("Question", { screen: "QList" });
     }

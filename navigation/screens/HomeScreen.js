@@ -10,29 +10,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import useCurrentDate from "../components/CommonFunctions";
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
-// // import screens
-// import GPostScreen from './GPostScreen';
-// import QuestionScreen from './QuestionScreen';
-// import JournalMoodScreen from './JournalMoodScreen';
-// import MusicScreen from './MusicScreen';
-
-/*
-const HomeStack = createNativeStackNavigator();
-
-function HomeStackScreen() {
-    return (
-        <HomeStack.Navigator>
-            <HomeStack.Screen name="Home" component={HomeScreen} />
-            <HomeStack.Screen name="GPost" component={GPostScreen} />
-        </HomeStack.Navigator>
-    )
-} */
+import useCurrentDate, { useOpeningImage } from "../components/CommonFunctions";
 
 export default function HomeScreen({ navigation }) {
   const currentDate = useCurrentDate();
+  const openingImageURL = useOpeningImage();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,7 +26,7 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <Image
-        source={require("../../assets/opening1.jpg")}
+        source={{ uri: openingImageURL }}
         style={styles.openingimage}
       ></Image>
 
