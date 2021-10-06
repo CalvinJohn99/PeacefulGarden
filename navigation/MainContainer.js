@@ -184,8 +184,7 @@ function MyTabs() {
 }
 
 export default function MainContainer() {
-  return (   
-    // Just move <NavigationContainer> to App.js in order to run Auth (login and register)
+  return (  
       <MyTabs />
   );
 }

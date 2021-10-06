@@ -1,4 +1,5 @@
 // @refresh state
+
 import React, { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -12,8 +13,10 @@ import MainAccountScreen from "./navigation/screens/Auth/MainAccountScreen";
 import AccountQuestion from "./navigation/screens/Auth/AccountQuestion";
 import AccountAge from "./navigation/screens/Auth/AccountAge";
 
+
 const Stack = createNativeStackNavigator();
 function App() {
+
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
