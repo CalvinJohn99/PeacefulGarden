@@ -218,7 +218,7 @@ export default function MusicScreen({navigation}) {
           </ImageBackground>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A2" })}  >
+        <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A3" })}  >
         
         <ImageBackground source={require('../../assets/2.jpg')} resizeMode="cover"     style={styles.image}>
           <Text style={styles.text}>Light Piano Music</Text>
@@ -226,7 +226,7 @@ export default function MusicScreen({navigation}) {
       </TouchableOpacity>
 
 
-      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A2" })}  >
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A4" })}  >
         
         <ImageBackground source={require('../../assets/3.jpg')} resizeMode="cover"     style={styles.image}>
           <Text style={styles.text}>Rain Drop Sound</Text>
@@ -234,14 +234,14 @@ export default function MusicScreen({navigation}) {
       </TouchableOpacity>
 
 
-      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A2" })}  >
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A5" })}  >
         
         <ImageBackground source={require('../../assets/4.jpg')} resizeMode="cover"     style={styles.image}>
           <Text style={styles.text}>Meditation Music</Text>
         </ImageBackground>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A2" })}  >
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Music', {screen: "A6" })}  >
         
         <ImageBackground source={require('../../assets/5.jpg')} resizeMode="cover"     style={styles.image}>
           <Text style={styles.text}>Sleeping Music</Text>
