@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 // import screens
@@ -21,6 +22,12 @@ import CreateMood from "./screens/CreateMood";
 import ViewMood from "./screens/ViewMood";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
+import { RelaxMusicScreen } from "./screens/MusicScreen";
+import { PianoMusicScreen } from "./screens/MusicScreen";
+import { RainDropMusicScreen } from "./screens/MusicScreen";
+import { MedMusicScreen } from "./screens/MusicScreen";
+import { SleepMusicScreen } from "./screens/MusicScreen";
+
 
 // Create Self-awareness Question stack
 const QuesStack = createNativeStackNavigator();
@@ -52,6 +59,51 @@ const QuesStackScreen = () => {
         options={{ headerTitle: "Post Answer" }}
       />
     </QuesStack.Navigator>
+  );
+};
+const MusicStack = createStackNavigator();
+const MusicStackScreen = () => {
+  return (
+    <MusicStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <MusicStack.Screen
+        name="A1"
+        component={MusicScreen}
+        options={{ headerTitle: "Music Screen" }}
+      />
+      <MusicStack.Screen
+        name="A2"
+        component={RelaxMusicScreen}
+        options={{ headerTitle: "Relax Music" }}
+      />
+      <MusicStack.Screen
+        name="A3"
+        component={PianoMusicScreen}
+        options={{ headerTitle: "Piano Music" }}
+      />
+      <MusicStack.Screen
+        name="A4"
+        component={RainDropMusicScreen}
+        options={{ headerTitle: "Rain Music" }}
+      />
+      <MusicStack.Screen
+        name="A5"
+        component={MedMusicScreen}
+        options={{ headerTitle: "Med Music" }}
+      />
+      <MusicStack.Screen
+        name="A6"
+        component={SleepMusicScreen}
+        options={{ headerTitle: "Sleep Music" }}
+      />      
+    </MusicStack.Navigator>
   );
 };
 
@@ -185,8 +237,8 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Music"
-        component={MusicScreen}
-        options={{ headerTitle: "Relaxing Music" }}
+        component={MusicStackScreen}
+        options={{ headerShown: false }}
       />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
