@@ -17,9 +17,7 @@ if(firebase.apps.length === 0) {
 
 function storePost(category, title, content, imageURL, 
     username, date) {
-    var newPostKey = firebase.database().ref().child(category).push().key;
-    console.log({category});
-    console.log({imageURL});
+    var newPostKey = firebase.database().ref("posts/").push().key;
     var dataToSave = {
       id: newPostKey,
       category: category,
@@ -31,7 +29,7 @@ function storePost(category, title, content, imageURL,
       },
     };
     var updates = {};
-    updates["/posts/" + category + "/" + newPostKey] = dataToSave;
+    updates["/posts/" + newPostKey] = dataToSave;
     // fbdata.ref('qanswer/' + question + '/' + key).set(dataToSave);
   
     return firebase.database().ref().update(updates, (error) => {
@@ -39,13 +37,26 @@ function storePost(category, title, content, imageURL,
         console.log(error);
       } else {
         console.log("Post data successfuly uploaded.");
+        updateNegTimestamp(newPostKey);
       }
     });
 }
 
+function updateNegTimestamp(key) {
+    const timeRef = firebase.database().ref(
+      "/posts/" + key + "/timestamp/"
+    );
+    const negTimeRef = firebase.database().ref("/posts/" + key + "/");
+    timeRef.once("value", (snapshot) => {
+      var negTimestampValue = snapshot.val() * -1;
+      console.log(negTimestampValue);
+      negTimeRef.update({ negTimestamp: negTimestampValue });
+    });
+}
+  
+
 export default function GPostScreen() {
         
-    const [imageURL, setImageURL] = useState("");
     const [image, setImage] = useState("");
     const [uploading, setUploading] = useState(false);  
     
@@ -112,10 +123,8 @@ export default function GPostScreen() {
         },
         () => {
             snapshot.snapshot.ref.getDownloadURL().then((url) => {
-                setImageURL(url.toString());
                 setUploading(false)                
                 console.log("download url", url)
-                console.log("image url", imageURL)
                 blob.close();
                 if (title === ""  || content === ""
                     || image === "" ) {
@@ -125,7 +134,6 @@ export default function GPostScreen() {
                         url, username, currentDate);
                         alert("Successfully posted!");
                 }
-
                 return url;
             });
         }
