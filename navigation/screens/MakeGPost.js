@@ -37,9 +37,22 @@ function storePost(category, title, content, imageURL,
         console.log(error);
       } else {
         console.log("Post data successfuly uploaded.");
+        updateNegTimestamp(newPostKey);
       }
     });
 }
+
+function updateNegTimestamp(key) {
+    const timeRef = firebase.database()
+      .ref("/posts/" + key + "/timestamp/");
+    const negTimeRef = firebase.database()
+      .ref("/posts/" + key + "/");
+    timeRef.once("value", (snapshot) => {
+      var negTimestampValue = snapshot.val() * -1;
+      console.log(negTimestampValue);
+      negTimeRef.update({ negTimestamp: negTimestampValue });
+    });
+}  
 
 export default function GPostScreen() {
         
