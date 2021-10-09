@@ -4,22 +4,27 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, FlatList,
     Button, TouchableNativeFeedback} from 'react-native';
 import fbdata from '../../firebase';
 
+import useCurrentDate, {
+    useAccountUsername,
+  } from "../components/CommonFunctions.js";
+  import LikeButton from "../components/LikeButton";  
 
 export default function GPostScreen({ navigation }) {   
-    const [post, setPost] = useState([]);
+    const [Post, setPost] = useState([]);
     React.useEffect(() => {
-        const postRef = fbdata.database().ref("/sa-question").orderByChild("id");
-        const OnLoadingListener = questionRef.once("value", (snapshot) => {
-          setQList([]);
-          snapshot.forEach((childSnapshot) => {
-            setQList((QList) => [...QList, childSnapshot.val()]);
-            console.log(childSnapshot.val());
-          });
+        const postRef = fbdata.database()
+            .ref("/posts/").orderByChild("negTimestamp");
+        const OnLoadingListener = postRef.on("value", (snapshot) => {
+            setPost([]);
+            snapshot.forEach((childSnapshot) => {
+                setPost((Post) => [...Post, childSnapshot.val()]);
+                console.log(childSnapshot.val());
+            });
         });
         return () => {
-          questionRef.off();
+          postRef.off();
         };
-      }, []);
+    }, []);
     
     
     return(        
@@ -45,17 +50,17 @@ export default function GPostScreen({ navigation }) {
             </View>
 
             <FlatList
-                data={post}
+                data={Post}
                 renderItem={({ item }) => (
                     <View>
                         <TouchableOpacity style = {styles.post}>
-                            <Image style={styles.postImage} source={item.imgLoc}/>
+                            <Image style={styles.postImage} source={{uri: item.imageURL}}/>
                             <Text style={styles.postText}>{item.title}</Text>
                         </TouchableOpacity>
                         <View style={{width: '80%', paddingBottom: 20, paddingTop: 10}}>
                             <Text style={{ alignItems: 'flex-start', paddingLeft: 20, 
                                 fontWeight: 'bold', fontSize: 18}}>
-                                {item.user}
+                                {item.username}
                             </Text>
                         </View>
                     </View>
@@ -76,9 +81,9 @@ const styles = StyleSheet.create({
         normal: {fontSize: 18, fontStyle:'normal'},
         bold: {fontWeight: 'bold', fontSize: 17},
         italic: {fontStyle: 'italic', fontSize: 17},
-        post: {width: 350, height: 250},
-        postImage: {width: 350, height: 250, 
-            borderColor:"#fff", borderRadius: 35, borderWidth: 4},
+        post: {width: 375, height: 250},
+        postImage: {width: 375, height: 250, 
+            borderColor:"#fff", borderRadius: 30, borderWidth: 4},
         postText: {color: '#fff', fontWeight: 'bold', 
             position:'absolute', padding: 20, fontSize: 18},            
     });

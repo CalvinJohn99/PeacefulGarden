@@ -2,7 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import {ScrollView, View, Text, TextInput, StyleSheet, Button, Alert, ActivityIndicator, Image, Platform, } from 'react-native';
 import { Picker } from '@react-native-community/picker';
-import useCurrentDate from "../components/CommonFunctions.js";
+import useCurrentDate, { useAccountUsername, }
+    from "../components/CommonFunctions.js";
 import * as ImagePicker from 'expo-image-picker';
 
 import firebase from 'firebase';
@@ -63,7 +64,7 @@ export default function GPostScreen() {
     const [content, setContent] = useState("");
     const [categoryValue, setCategoryValue] = useState("Others");
     const currentDate = useCurrentDate();
-    const username = "uqpf";
+    const username = useAccountUsername();
 
     const [errorStatus, setErrorStatus] = useState(false);
 
@@ -263,7 +264,7 @@ export default function GPostScreen() {
       color:'black',
       fontWeight: 'bold' 
     },
-    postImage: {width: 350, height: 250, 
+    postImage: {width: 375, height: 250, 
         marginBottom: 10,
         backgroundColor: '#fff',
         borderRadius: 35, 

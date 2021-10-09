@@ -12,7 +12,10 @@ import {
 
 import fbdata from "../../firebase.js";
 
-import useCurrentDate from "../components/CommonFunctions.js";
+import useCurrentDate, {
+  useAccountUsername,
+} from "../components/CommonFunctions.js";
+import LikeButton from "../components/LikeButton";
 
 const getBackgroundColor = (id) => {
   if (id % 3 === 1) {
@@ -28,13 +31,14 @@ export default function QuestionViewAnswer({ navigation, route }) {
   const questionid = route.params.item.id;
   const questiontext = route.params.item.question;
   const currentQuestion = { id: questionid, question: questiontext };
-  console.log(currentQuestion);
+  const username = useAccountUsername();
 
   const [QAList, setQAList] = useState([]);
   React.useEffect(() => {
     const questionAnswerRef = fbdata
+      .database()
       .ref("/qanswer/" + questiontext)
-      .orderByChild("timestamp");
+      .orderByChild("negTimestamp");
     const OnLoadingListener = questionAnswerRef.once("value", (snapshot) => {
       setQAList([]);
       snapshot.forEach((childSnapshot) => {
@@ -62,7 +66,7 @@ export default function QuestionViewAnswer({ navigation, route }) {
               screen: "QCreateAnswer",
               params: { currentQuestion },
             });
-            console.log(currentQuestion);
+            // console.log(currentQuestion);
           }}
         >
           <Text style={styles.newbuttontext}>New</Text>
@@ -86,6 +90,19 @@ export default function QuestionViewAnswer({ navigation, route }) {
         renderItem={({ item }) => (
           <View style={styles.answerCon}>
             <Text style={styles.answerText}> {item.answer} </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                marginTop: 4,
+              }}
+            >
+              <LikeButton
+                question={currentQuestion}
+                answer={item}
+                username={username}
+              />
+            </View>
           </View>
         )}
         keyExtractor={(item) => item.id}
