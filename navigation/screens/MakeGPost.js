@@ -169,10 +169,14 @@ export default function GPostScreen() {
                         selectedValue={categoryValue}
                         style={{ marginLeft: 10, height: 30, width: '100%'}}
                         onValueChange={(itemValue, itemIndex) => setCategoryValue(itemValue)}>
-                            <Picker.Item label="Others" value="Others" />
                             <Picker.Item label="Hiking" value="Hiking" />
-                            <Picker.Item label="Computer Game" value="Computer Game" />
-                            <Picker.Item label="Football" value="Football" />
+                            <Picker.Item label="Tech" value="Tech" />
+                            <Picker.Item label="Travel" value="Travel" />
+                            <Picker.Item label="Gardening" value="Gardening" />
+                            <Picker.Item label="Cook" value="Cook" />
+                            <Picker.Item label="Movie" value="Movie" />
+                            <Picker.Item label="Music" value="Music" />
+                            <Picker.Item label="Dog" value="Dog" />
                         </Picker>
                     </View>
                 </View>
