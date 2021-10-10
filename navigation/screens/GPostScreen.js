@@ -11,24 +11,14 @@ import useCurrentDate, {
   import LikeButton from "../components/LikeButton";  
 
 export default function GPostScreen({ navigation }) {
-    /*
-    const [uid, setUid] = useState("");
-    const [interest, setInterest] = useState(Interest);
-
+    
     const userId = fbdata.auth().currentUser.uid;
-    setUid(userId);
-    if (userId !== null) {
-    fbdata
-        .database()
-        .ref("users/" + userId)
-        .on("value", (querySnapShot) => {
-        let userinfo = querySnapShot.val() ? querySnapShot.val() : {};
-        setInterest(userinfo["interest"]);
-        });
-    }*/
-
+    const [interest, setInterest] = useState([]);
     const [Post, setPost] = useState([]);
+    const [InterestingPost, setInterestingPost] = useState([]);
+
     React.useEffect(() => {
+
         const postRef = fbdata.database()
             .ref("/posts/").orderByChild("negTimestamp");
         const OnLoadingListener = postRef.on("value", (snapshot) => {
@@ -38,11 +28,54 @@ export default function GPostScreen({ navigation }) {
                 console.log(childSnapshot.val());
             });
         });
+
+        console.log(userId);
+        const interestRef = fbdata.database()
+            .ref("/users/" + userId + "/" + "interest/");
+        const interestListener = interestRef.on("value", (snapshot) => {
+            setInterest([]);
+            snapshot.forEach((childSnapshot) => {
+                setInterest((interest) => [...interest, childSnapshot.val()]);
+            });
+        });  
+
+        console.log(interest);
+
+        setInterestingPost([]);
+        Post.forEach((post) => {
+            interest.forEach((userInterest) => {
+                if (post.category === userInterest.value) {
+                    if (userInterest.check === true) {
+                        setInterestingPost((InterestingPost) => 
+                            [...InterestingPost, post]);
+                        console.log(post);
+                        //break;
+                    }
+                    //break;
+                }
+            })
+        })
+/*
+        for (var aPost in Post) {
+            for (var anInterest in interest) {
+                if (aPost["category"] !== anInterest["value"]) {
+                    continue;
+                }
+                if (interest["check"] === true) {
+                    setInterestingPost((InterestingPost) => 
+                        [...InterestingPost, aPost]);
+                        console.log(aPost);
+                        break;
+                }
+                break;
+            }
+        }  */  
         return () => {
-          postRef.off();
+            interestRef.off();
+            postRef.off();
         };
     }, []);
-    
+
     
     return(        
         <View style={styles.container}>
@@ -67,7 +100,7 @@ export default function GPostScreen({ navigation }) {
             </View>
 
             <FlatList
-                data={Post}
+                data={InterestingPost}
                 renderItem={({ item }) => (
                     
                         <View>
