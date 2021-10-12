@@ -32,6 +32,25 @@ function deleteAnswer(question, answerID, username) {
   });
 }
 
+function updateAnswer(question, answerID, username, newAnswer) {
+  fbdata
+    .database()
+    .ref("/qanswer/" + question.question + "/" + answerID + "/")
+    .update({ answer: newAnswer });
+  fbdata
+    .database()
+    .ref(
+      "/qanswerbyuser/" +
+        username +
+        "/" +
+        question.question +
+        "/" +
+        answerID +
+        "/"
+    )
+    .update({ answer: newAnswer });
+}
+
 export default function EditAnswerInput(props) {
   console.log(props.item);
   const [editAnswer, setEditAnswer] = useState(props.item.answer);
@@ -169,11 +188,13 @@ export default function EditAnswerInput(props) {
                 <TouchableOpacity
                   style={{ margin: 10 }}
                   onPress={() => {
-                    deleteAnswer(
+                    updateAnswer(
                       props.item.question,
                       props.item.id,
-                      props.item.username
+                      props.item.username,
+                      editAnswer
                     );
+                    setModalVisible(!modalVisible);
                   }}
                 >
                   <Text>Save</Text>
