@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   View,
+  Platform
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
