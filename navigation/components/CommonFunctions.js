@@ -34,9 +34,8 @@ export function useDateString() {
     var TodayMonth = new Date().getMonth() + 1;
     var TodayYear = new Date().getFullYear();
     setDateString(TodayYear + "-" + TodayMonth + "-" + TodayDate);
-    setCurrentDate(TodayDate + " " + TodayMonthWord + " " + TodayYear);
   });
-  return currentDate;
+  return dateString;
 }
 
 export function useOpeningNum() {
@@ -93,4 +92,48 @@ export function useAccountUsername() {
     }
   }
   return username;
+}
+
+export function useQuestionList() {
+  const [QList, setQList] = useState([]);
+  React.useEffect(() => {
+    const questionRef = fbdata
+      .database()
+      .ref("/sa-question")
+      .orderByChild("id");
+    const OnLoadingListener = questionRef.once("value", (snapshot) => {
+      setQList([]);
+      snapshot.forEach((childSnapshot) => {
+        setQList((QList) => [...QList, childSnapshot.val()]);
+      });
+    });
+    return () => {
+      questionRef.off();
+    };
+  }, []);
+  return QList;
+}
+
+export function useUserAnswer(question, username) {
+  const [answerbyUserList, setAnswerbyUserList] = useState([]);
+  React.useEffect(() => {
+    const accQARef = fbdata
+      .database()
+      .ref("/qanswerbyuser/" + username + "/" + question);
+    const OnLoadingListener = accQARef.once("value", (snapshot) => {
+      setAnswerbyUserList([]);
+      if (snapshot.exists) {
+        snapshot.forEach((childSnapshot) => {
+          setAnswerbyUserList((answerbyUserList) => [
+            ...answerbyUserList,
+            childSnapshot.val(),
+          ]);
+        });
+      }
+    });
+    return () => {
+      accQARef.off();
+    };
+  }, []);
+  return answerbyUserList;
 }

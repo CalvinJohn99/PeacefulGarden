@@ -20,6 +20,7 @@ import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
 import CreateMood from "./screens/CreateMood";
 import ViewMood from "./screens/ViewMood";
+import History from "./screens/History";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 import { RelaxMusicScreen } from "./screens/MusicScreen";
@@ -135,6 +136,12 @@ const JMStackScreen = () => {
         name="ViewMood"
         component={ViewMood}
         options={{ headerTitle: "View Mood" }}
+      />
+
+      <JMStack.Screen
+        name="History"
+        component={History}
+        options={{ headerTitle: "History" }}
       />
     </JMStack.Navigator>
   );

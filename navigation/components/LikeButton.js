@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import fbdata from "../../firebase";
+import { useAccountUsername } from "./CommonFunctions";
 
 export default function LikeButton(props) {
   const [liked, setLiked] = useState(false);
+  const currentUser = useAccountUsername();
 
   const checkLikeAnswerRef = fbdata
     .database()
@@ -14,7 +16,7 @@ export default function LikeButton(props) {
         "/" +
         props.answer.id +
         "/likes/" +
-        props.username
+        currentUser
     );
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function LikeButton(props) {
       );
     checkLikeAnswerRef.get().then((snapshot) => {
       if (!snapshot.exists()) {
-        addLikeAnswerRef.update({ [props.username]: true });
+        addLikeAnswerRef.update({ [currentUser]: true });
       } else {
         checkLikeAnswerRef.remove();
       }

@@ -39,6 +39,7 @@ export default function ViewMood({ navigation }) {
           source={{ uri: imageURLLink }}
         ></Image>
         <Text> {commentWritten} </Text>
+        <Text>{item.negTimestamp}</Text>
       </View>
     );
   };
