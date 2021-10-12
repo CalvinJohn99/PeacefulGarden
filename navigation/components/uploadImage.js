@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
-import fbdata, { fbstorage } from "../../firebase.js";
+import fbdata from "../../firebase.js";
 //import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 
 export default function JournalMoodScreen({ navigation }) {
@@ -95,7 +95,7 @@ export default function JournalMoodScreen({ navigation }) {
           console.log("download url", url);
           console.log("imageDownloadURL: ", imageDownloadURL);
           blob.close();
-          fbdata.ref("/post/").push({
+          fbdata.database().ref("/post/").push({
             imageURL1: imageDownloadURL,
             imageURL2: url,
             test: 1,

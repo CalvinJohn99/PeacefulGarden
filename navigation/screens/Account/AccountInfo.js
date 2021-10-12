@@ -6,6 +6,7 @@ import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
 import { Avatar } from "react-native-elements";
+import QuestByAcc from "./QuestByAcc.js";
 
 function AccountInfo() {
   const [user, setUser] = useState([]);
@@ -104,7 +105,11 @@ function AccountInfo() {
               uri: `${user["img"]}`,
             }}
           />
-           <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10, }}>{user["username"]}</Text>
+          <Text
+            style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}
+          >
+            {user["username"]}
+          </Text>
         </View>
         <TouchableOpacity
           style={stylesSheet.button_submit}
@@ -149,16 +154,31 @@ function AccountInfo() {
               </Text>
             )}
             {customSelectedIndex === 1 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your questions here{" "}
-              </Text>
+              // <Text style={stylesSheet.tabTextStyle}>
+              //   {" "}
+              //   Selected Tab = Put your questions here{" "}
+              // </Text>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  top: 10,
+                  // justifyContent: "center",
+                }}
+              >
+                <QuestByAcc />
+              </View>
             )}
             {customSelectedIndex === 2 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your setting here{" "}
-              </Text>
+              <View>
+                <Text style={stylesSheet.tabTextStyle}>
+                  {" "}
+                  Selected Tab = Put your setting here{" "}
+                </Text>
+                <TouchableOpacity>
+                  <Text>change color to red</Text>
+                </TouchableOpacity>
+              </View>
             )}
             {customSelectedIndex === 3 && (
               <View>
@@ -233,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     color: "white",
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
   profileimage: {
     width: "100%",
