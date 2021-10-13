@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import fbdata from "../../firebase";
+import Interest from "../../assets/Interest";
 
 export default function useCurrentDate() {
   const [currentDate, setCurrentDate] = useState(null);
@@ -72,7 +73,7 @@ export function useOpeningImage() {
 }
 
 export function useAccountUsername() {
-  const [username, setUserName] = useState([]);
+  const [username, setUserName] = useState([Interest]);
   const [uid, setUid] = useState("");
 
   useEffect(() => {
@@ -93,4 +94,68 @@ export function useAccountUsername() {
     }
   }
   return username;
+
+
+
+}
+export function useAccountInterest() {
+  const userId = fbdata.auth().currentUser.uid;
+  const [interest, setInterest] = useState([]);
+  React.useEffect(() => {
+    console.log(userId);
+    const interestRef = fbdata.database()
+        .ref("/users/" + userId + "/" + "interest/");
+    const interestListener = interestRef.on("value", (snapshot) => {
+        setInterest([]);
+        snapshot.forEach((childSnapshot) => {
+            setInterest((interest) => [...interest, childSnapshot.val()]);
+        });
+    });  
+    return () => {
+      interestRef.off();
+    };
+  }, []);
+  return interest;
+}
+
+export function usePostData() {
+  const [Post, setPost] = useState([]);
+  React.useEffect(() => {
+    const postRef = fbdata.database()
+    .ref("/posts/").orderByChild("negTimestamp");
+    const OnLoadingListener = postRef.on("value", (snapshot) => {
+      setPost([]);
+      snapshot.forEach((childSnapshot) => {
+          setPost((Post) => [...Post, childSnapshot.val()]);
+          console.log(childSnapshot.val());
+      });
+    });
+    return () => {
+      postRef.off();
+    };
+  }, []);
+  return Post;
+}
+
+export function useInterestingPost() {
+  const Post = usePostData();
+  const interest = useAccountInterest();
+  const [InterestingPost, setInterestingPost] = useState([]);
+  React.useEffect(() => {
+    setInterestingPost([]);
+    Post.forEach((post) => {
+      interest.forEach((userInterest) => {
+        if (post.category === userInterest.value) {
+          if (userInterest.check === true) {
+              setInterestingPost((InterestingPost) => 
+                  [...InterestingPost, post]);
+              console.log(post);
+              //break;
+          }
+          //break;
+        }
+      })
+    })
+  }, []);
+  return InterestingPost;
 }

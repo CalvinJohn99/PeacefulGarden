@@ -4,21 +4,29 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, FlatList,
     Button, TouchableNativeFeedback} from 'react-native';
 import fbdata from '../../firebase';
 
+
 import Interest from "../../assets/Interest";
 import useCurrentDate, {
-    useAccountUsername,
+    useAccountUsername, useAccountInterest, usePostData, useInterestingPost
   } from "../components/CommonFunctions.js";
   import LikeButton from "../components/LikeButton";  
 
 export default function GPostScreen({ navigation }) {
     
+    const interest = useAccountInterest();
     const userId = fbdata.auth().currentUser.uid;
-    const [interest, setInterest] = useState([]);
-    const [Post, setPost] = useState([]);
-    const [InterestingPost, setInterestingPost] = useState([]);
-
+    //const [interest, setInterest] = useState([]);
+    //const [Post, setPost] = useState([]);
+    const Post = usePostData();
+    //const [InterestingPost, setInterestingPost] = useState([]);
+    const InterestingPost = useInterestingPost();
+    console.log(InterestingPost);
+/*
     React.useEffect(() => {
 
+        console.log(userId);
+
+        /*
         const postRef = fbdata.database()
             .ref("/posts/").orderByChild("negTimestamp");
         const OnLoadingListener = postRef.on("value", (snapshot) => {
@@ -27,20 +35,8 @@ export default function GPostScreen({ navigation }) {
                 setPost((Post) => [...Post, childSnapshot.val()]);
                 console.log(childSnapshot.val());
             });
-        });
-
-        console.log(userId);
-        const interestRef = fbdata.database()
-            .ref("/users/" + userId + "/" + "interest/");
-        const interestListener = interestRef.on("value", (snapshot) => {
-            setInterest([]);
-            snapshot.forEach((childSnapshot) => {
-                setInterest((interest) => [...interest, childSnapshot.val()]);
-            });
-        });  
-
-        console.log(interest);
-
+        });*/
+/*
         setInterestingPost([]);
         Post.forEach((post) => {
             interest.forEach((userInterest) => {
@@ -54,7 +50,7 @@ export default function GPostScreen({ navigation }) {
                     //break;
                 }
             })
-        })
+        })*/
 /*
         for (var aPost in Post) {
             for (var anInterest in interest) {
@@ -69,12 +65,12 @@ export default function GPostScreen({ navigation }) {
                 }
                 break;
             }
-        }  */  
+        }    
         return () => {
-            interestRef.off();
-            postRef.off();
+            //interestRef.off();
+            //postRef.off();
         };
-    }, []);
+    }, []);*/
 
     
     return(        
