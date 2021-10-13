@@ -127,7 +127,7 @@ export function usePostData() {
       setPost([]);
       snapshot.forEach((childSnapshot) => {
           setPost((Post) => [...Post, childSnapshot.val()]);
-          console.log(childSnapshot.val());
+          //console.log(childSnapshot.val());
       });
     });
     return () => {
@@ -140,6 +140,7 @@ export function usePostData() {
 export function useInterestingPost() {
   const Post = usePostData();
   const interest = useAccountInterest();
+  console.log(interest);
   const [InterestingPost, setInterestingPost] = useState([]);
   React.useEffect(() => {
     setInterestingPost([]);
@@ -149,7 +150,7 @@ export function useInterestingPost() {
           if (userInterest.check === true) {
               setInterestingPost((InterestingPost) => 
                   [...InterestingPost, post]);
-              console.log(post);
+              //console.log(post);
               //break;
           }
           //break;

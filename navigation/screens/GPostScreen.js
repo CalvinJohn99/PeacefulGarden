@@ -13,14 +13,14 @@ import useCurrentDate, {
 
 export default function GPostScreen({ navigation }) {
     
-    const interest = useAccountInterest();
+    //const interest = useAccountInterest();
     const userId = fbdata.auth().currentUser.uid;
     //const [interest, setInterest] = useState([]);
     //const [Post, setPost] = useState([]);
-    const Post = usePostData();
+    //const Post = usePostData();
     //const [InterestingPost, setInterestingPost] = useState([]);
     const InterestingPost = useInterestingPost();
-    console.log(InterestingPost);
+    //console.log(InterestingPost);
 /*
     React.useEffect(() => {
 
