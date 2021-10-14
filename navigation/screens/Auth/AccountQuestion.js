@@ -21,6 +21,7 @@ function AccountQuestion({navigation , route}) {
     newdata.password = data.password;
     newdata.email = data.email;
     newdata.img = data.img;
+    newdata.imgName = data.imgName;
     newdata.answer1 = answer1;
     newdata.answer2 = answer2;
     setNewdata({ ...newdata });

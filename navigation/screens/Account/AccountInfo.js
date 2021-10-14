@@ -1,24 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Button } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import { Avatar } from "react-native-elements";
+import { Avatar} from "react-native-elements";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 function AccountInfo() {
   const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
+  const [image, setImage] = useState("");
+  const [username, setUserName] = useState("");
   const [interest, setInterest] = useState(Interest);
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
+  const [verify, setVerify] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
+    setShowLoading(true);
     __isTheUserAuthenticated();
-  }, []);
+    // console.log(fbdata.auth().currentUser);
+    setVerify(fbdata.auth().currentUser.emailVerified);
+  }, []); 
 
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
+    setImage(fbdata.auth().currentUser.photoURL);
+    setUserName(fbdata.auth().currentUser.displayName);
     setUid(userId);
     if (userId !== null) {
       fbdata
@@ -30,6 +41,7 @@ function AccountInfo() {
           setInterest(userinfo["interest"]);
         });
     }
+    setShowLoading(false);
   }
   function handleSignOut() {
     fbdata
@@ -58,6 +70,10 @@ function AccountInfo() {
           }
         }
       );
+  }
+
+  function handleSendVerifyEmail() {
+    fbdata.auth().currentUser.sendEmailVerification();
   }
 
   const updateCustomSegment = (index) => {
@@ -93,18 +109,48 @@ function AccountInfo() {
     );
   });
 
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topInfo}>
+      {showLoading && (
+          <View style={styles.activity}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
         <View style={styles.userInfo}>
           <Avatar
+            containerStyle={{borderWidth: 3, borderColor:"white"}}
             size="large"
             rounded
             source={{
-              uri: `${user["img"]}`,
+              uri: `${image}`,
             }}
           />
-           <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10, }}>{user["username"]}</Text>
+          <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start", marginHorizontal: 10}}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", marginVertical: 5 }}
+            >
+              {username}
+            </Text>
+            {verify ? (
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+                <AntDesign name="checkcircle" color="green" size={12} />
+                <Text style={{color: "green", fontSize: 12}}> Verified Email</Text>
+              </View>
+            ) : (
+              <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start"}}>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+                <FontAwesome name="warning" color="red" size={12} />
+                <Text style={{color: "red", fontSize: 12}}> Please verify your email</Text>
+              </View>
+              <TouchableOpacity style={{marginVertical: 5}} onPress={() => handleSendVerifyEmail()}>
+                <Text>Send Again</Text>
+              </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
         <TouchableOpacity
           style={stylesSheet.button_submit}
@@ -233,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     color: "white",
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
   profileimage: {
     width: "100%",

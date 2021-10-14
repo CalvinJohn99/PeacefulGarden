@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  Button,
-  View,
-} from "react-native";
+import { SafeAreaView, StyleSheet, Text, Button, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import RNPickerSelect from "react-native-picker-select";
 import { CheckBox } from "react-native-elements";
@@ -17,14 +11,15 @@ import AgeCategories from "./../../../assets/AgeCategories";
 const placeholder = {
   label: "Select your age...",
   value: null,
-  
   color: "#9EA0A4",
 };
 
 function AccountAge({ navigation, route }) {
+  
   const { newdata } = route.params;
   const [checkboxes, setCheckboxes] = useState(Interest);
   const [age, setAge] = useState(null);
+  const [photo, setPhoto] = useState(null);
   const [data, setData] = useState({
     uid: "",
     username: "",
@@ -35,10 +30,8 @@ function AccountAge({ navigation, route }) {
     interest: {},
   });
 
-  // This function using for adding to database realtime
-  const handleSignUp = (uuid) => {
+  const handleData = (uuid) => {
     (data.uid = uuid), (data.username = newdata.username);
-    data.img = newdata.img;
     data.answer1 = newdata.answer1;
     data.answer2 = newdata.answer2;
     data.age = age;
@@ -75,14 +68,47 @@ function AccountAge({ navigation, route }) {
     );
   });
 
-  function addDataBase() {
+  async function addProfileAuth() {
+    return new Promise(async (res, rej) => {
+      const response = await fetch(newdata.img);
+      const file = await response.blob();
+      
+      let upload = fbdata
+        .storage()
+        .ref(data.uid + "/")
+        .child(data.uid)
+        .put(file);
+
+      upload.on(
+        "stated_changed",
+        snapshot => {},
+        err => {
+          rej(err)
+        },
+        async () => {
+          const url = await upload.snapshot.ref.getDownloadURL();
+          updateProfile(url)
+          res(url);
+        }
+      );
+    });
+  }
+
+  function updateProfile(url) {
+    const update  = {
+      displayName: data.username,
+      photoURL: url,
+    }
+    fbdata.auth().currentUser.updateProfile(update);
+    console.log("1. Add Auth Done!")
+  }
+
+  function addRealTimeDatabase() {
     fbdata
       .database()
       .ref("users/" + data.uid)
       .set(
         {
-          username: data.username,
-          img: data.img,
           answer1: data.answer1,
           answer2: data.answer2,
           age: data.age,
@@ -94,7 +120,11 @@ function AccountAge({ navigation, route }) {
           }
         }
       );
+      console.log("2. Add Realtime Done!")
   }
+
+ 
+
 
 
   function signUp() {
@@ -102,9 +132,11 @@ function AccountAge({ navigation, route }) {
       .auth()
       .createUserWithEmailAndPassword(newdata.email, newdata.password)
       .then(function (user) {
+        fbdata.auth().currentUser.sendEmailVerification();
         console.log("User account created & signed in!");
-        handleSignUp(user["user"]["uid"]);
-        addDataBase();
+        handleData(user["user"]["uid"]);
+        addProfileAuth();
+        addRealTimeDatabase();
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -119,43 +151,42 @@ function AccountAge({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-     <View style={styles.container}>
-      <View style={styles.userInfo}>
-        <Avatar
-          size="large"
-          rounded
-          source={{
-            uri: `${newdata.img}`,
+      <View style={styles.container}>
+        <View style={styles.userInfo}>
+          <Avatar
+            size="large"
+            rounded
+            source={{
+              uri: `${newdata.img}`,
+            }}
+          />
+          <Text
+            style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10 }}
+          >
+            {newdata.username}
+          </Text>
+        </View>
+        <View style={styles.questionForm}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Age</Text>
+          <RNPickerSelect
+            style={pickerSelectStyles}
+            onValueChange={(value) => setAge(value)}
+            placeholder={placeholder}
+            items={AgeCategories}
+          />
+        </View>
+        <View style={styles.questionForm}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Interest</Text>
+          <View style={styles.checkBoxGroup}>{renderCheckBox}</View>
+        </View>
+        <TouchableOpacity
+          style={styles.button_submit}
+          onPress={() => {
+            signUp();
           }}
-        />
-        <Text
-          style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10 }}
         >
-          {newdata.username}
-        </Text>
-      </View>
-      <View style={styles.questionForm}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Age</Text>
-        <RNPickerSelect
-          style={pickerSelectStyles}
-          onValueChange={(value) => setAge(value)}
-          placeholder={placeholder}
-          items={AgeCategories}
-        />
-      </View>
-      <View style={styles.questionForm}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Interest</Text>
-        <View style={styles.checkBoxGroup}>{renderCheckBox}</View>
-      </View>
-      <TouchableOpacity
-        style={styles.button_submit}
-        onPress={() => {
-          signUp();
-      
-        }}
-      >
-        <Button title="Next" color="#fff" />
-      </TouchableOpacity>
+          <Button title="Next" color="#fff" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

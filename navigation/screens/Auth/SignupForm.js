@@ -7,10 +7,12 @@ import {
   Text,
   Image,
   View,
+  Platform,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
 import Feather from "react-native-vector-icons/Feather";
+import * as ImagePicker from 'expo-image-picker';
 import RandomImage from "./../../components/RandomImage";
 import { Avatar } from "react-native-elements";
 
@@ -24,12 +26,42 @@ export default function SignupForm({ navigation }) {
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
   const [img, setImg] = useState(null);
+  const [imgName, setImgName] = useState(null);
   const [data, setData] = useState({
     username: "",
     password: "",
     email: "",
     img: "",
+    imgName: "",
   });
+  useEffect(() => {
+    (async () => {
+        if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        }
+    })();
+}, []);
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      const filename = result.uri.substring(result.uri.lastIndexOf('/') + 1);
+     
+      setImg(result.uri);
+      setImgName(filename);
+    }
+   
+};
   const handleSignUp = () => {
     if(username === null || 
       password === null || 
@@ -41,6 +73,7 @@ export default function SignupForm({ navigation }) {
     data.password = password;
     data.email = email;
     data.img = img;
+    data.imgName = imgName;
     setData({ ...data });
     console.log(data);
     navigation.navigate("AccountQuestion", { data: data });
@@ -86,10 +119,10 @@ export default function SignupForm({ navigation }) {
     }
   };
 
-  const handleImg = (imgValue) => {
-    setImg("https://unsplash.it/150/200?image=" + imgValue);
-    console.log(img);
-  };
+  // const handleImg = (imgValue) => {
+  //   setImg("https://unsplash.it/150/200?image=" + imgValue);
+  //   console.log(img);
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -170,11 +203,7 @@ export default function SignupForm({ navigation }) {
           </Text>
         </Animatable.View>
       )}
-
-      <Text style={styles.text}>
-        Choose your profile picture
-      </Text>
-      <RandomImage onSelectImg={handleImg}></RandomImage>
+      <Button title="Choose your profile picture" onPress={pickImage} />
       {img ? (
         <Avatar
             size="large"
@@ -184,13 +213,12 @@ export default function SignupForm({ navigation }) {
             }}
           />
       ) : null}
-
       <TouchableOpacity
         style={styles.button_submit}
         onPress={() => { handleSignUp();}}
       >
         <Button title="Next" color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity>      
       </View>
     </SafeAreaView>
   );
