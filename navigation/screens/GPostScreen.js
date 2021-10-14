@@ -17,7 +17,7 @@ export default function GPostScreen({ navigation }) {
     const userId = fbdata.auth().currentUser.uid;
     //const [interest, setInterest] = useState([]);
     //const [Post, setPost] = useState([]);
-    //const Post = usePostData();
+    const Post = usePostData();
     //const [InterestingPost, setInterestingPost] = useState([]);
     const InterestingPost = useInterestingPost();
     //console.log(InterestingPost);
@@ -85,7 +85,13 @@ export default function GPostScreen({ navigation }) {
                     <Text style={styles.bold}> look.</Text>
                 </Text> 
                 </View>
-                <TouchableNativeFeedback>
+                <TouchableNativeFeedback
+                    onPress={() => {
+                        navigation.navigate("MakeGPost", {
+                            screen: "MakeGPost",
+                        });
+                    }}                      
+                >
                     <View style={{width: '25%', padding: 15, 
                         backgroundColor: '#467fcf', borderRadius: 30, 
                         justifyContent: 'center', alignItems: 'center'}}>
@@ -96,7 +102,7 @@ export default function GPostScreen({ navigation }) {
             </View>
 
             <FlatList
-                data={InterestingPost}
+                data={Post}
                 renderItem={({ item }) => (
                     
                         <View>

@@ -25,10 +25,7 @@ export default function HomeScreen({ navigation }) {
         </Text>
       </View>
 
-      <Image
-        source={{ uri: openingImageURL }}
-        style={styles.openingimage}
-      ></Image>
+
 
       <View style={{ flexDirection: "row", top: 70, height: 300 }}>
         <View>

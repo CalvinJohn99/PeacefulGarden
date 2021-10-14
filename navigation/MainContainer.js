@@ -14,6 +14,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 // import screens
 import HomeScreen from "./screens/HomeScreen";
 import GPostScreen from "./screens/GPostScreen";
+import makeGPost from "./screens/MakeGPost";
+import GPostScreenDetail from "./screens/GPostScreenDetail";
 import QuestionScreen from "./screens/QuestionScreen";
 import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
@@ -27,6 +29,9 @@ import { PianoMusicScreen } from "./screens/MusicScreen";
 import { RainDropMusicScreen } from "./screens/MusicScreen";
 import { MedMusicScreen } from "./screens/MusicScreen";
 import { SleepMusicScreen } from "./screens/MusicScreen";
+
+
+
 
 
 // Create Self-awareness Question stack
@@ -61,6 +66,39 @@ const QuesStackScreen = () => {
     </QuesStack.Navigator>
   );
 };
+
+const GPostStack = createStackNavigator();
+const GPostStackScreen = () => {
+  return (
+    <GPostStack.Navigator
+      initialRouteName="GPostScreen"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <GPostStack.Screen
+        name="GPostScreen"
+        component={GPostScreen}
+        options={{ headerTitle: "Gratefulness Posts" }}
+      />
+      <GPostStack.Screen
+        name="MakeGPost"
+        component={makeGPost}
+        options={{ headerTitle: "Create New Post" }}
+      />
+      <GPostStack.Screen
+        name="GPostScreenDetail"
+        component={GPostScreenDetail}
+        options={{ headerTitle: "Post Detail" }}
+      />
+    </GPostStack.Navigator>
+  );
+};
+
 const MusicStack = createStackNavigator();
 const MusicStackScreen = () => {
   return (
@@ -187,8 +225,17 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Post"
-        component={GPostScreen}
-        options={{ headerTitle: "Gratefulness Post" }}
+        component={GPostStackScreen}
+        options={{ headerShown: false }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "GPostScreen";
+            if (routeName !== "GPostScreen") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Question"

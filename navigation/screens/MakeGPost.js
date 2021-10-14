@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import {ScrollView, View, Text, TextInput, StyleSheet, Button, Alert, ActivityIndicator, Image, Platform, } from 'react-native';
-import { Picker } from '@react-native-community/picker';
+import { Picker as SelectPicker } from 'react-native';
 import useCurrentDate, { useAccountUsername, }
     from "../components/CommonFunctions.js";
 import * as ImagePicker from 'expo-image-picker';
@@ -11,6 +11,7 @@ import 'firebase/database';
 import 'firebase/storage';
 import firebaseConfig from '../../firebase';
 import fbdata from "../../firebase.js";
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 if(firebase.apps.length === 0) {
     firebase.initializeApp(firebaseConfig);
@@ -55,7 +56,13 @@ function updateNegTimestamp(key) {
     });
 }  
 
-export default function GPostScreen() {
+function navigateAfterPosting() {
+    navigation.navigate("MakeGPost", {
+        screen: "MakeGPost",
+    });
+}
+
+export default function GPostScreen({ navigation }) {
         
     const [image, setImage] = useState("");
     const [uploading, setUploading] = useState(false);  
@@ -133,8 +140,8 @@ export default function GPostScreen() {
                     storePost(categoryValue, title, content, 
                         url, username, currentDate);
                         alert("Successfully posted!");
-                }
-
+                        navigation.navigate("GPostScreen", { screen: "GPostScreen" });
+                }           
                 return url;
             });
         }
@@ -165,19 +172,19 @@ export default function GPostScreen() {
                 <Text style={styles.header}>Category</Text>
                 <View style={{width: '100%', alignItems: 'center'}}>
                     <View style={styles.dropDown}>
-                        <Picker
+                        <SelectPicker
                         selectedValue={categoryValue}
                         style={{ marginLeft: 10, height: 30, width: '100%'}}
                         onValueChange={(itemValue, itemIndex) => setCategoryValue(itemValue)}>
-                            <Picker.Item label="Hiking" value="Hiking" />
-                            <Picker.Item label="Tech" value="Tech" />
-                            <Picker.Item label="Travel" value="Travel" />
-                            <Picker.Item label="Gardening" value="Gardening" />
-                            <Picker.Item label="Cook" value="Cook" />
-                            <Picker.Item label="Movie" value="Movie" />
-                            <Picker.Item label="Music" value="Music" />
-                            <Picker.Item label="Dog" value="Dog" />
-                        </Picker>
+                            <SelectPicker.Item label="Hiking" value="Hiking" />
+                            <SelectPicker.Item label="Tech" value="Tech" />
+                            <SelectPicker.Item label="Travel" value="Travel" />
+                            <SelectPicker.Item label="Gardening" value="Gardening" />
+                            <SelectPicker.Item label="Cook" value="Cook" />
+                            <SelectPicker.Item label="Movie" value="Movie" />
+                            <SelectPicker.Item label="Music" value="Music" />
+                            <SelectPicker.Item label="Dog" value="Dog" />
+                        </SelectPicker>
                     </View>
                 </View>
             </View>

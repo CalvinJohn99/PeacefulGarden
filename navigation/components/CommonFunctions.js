@@ -100,9 +100,9 @@ export function useAccountUsername() {
 }
 export function useAccountInterest() {
   const userId = fbdata.auth().currentUser.uid;
-  const [interest, setInterest] = useState([]);
+  const [interest, setInterest] = useState([Interest]);
   React.useEffect(() => {
-    console.log(userId);
+    //console.log(userId);
     const interestRef = fbdata.database()
         .ref("/users/" + userId + "/" + "interest/");
     const interestListener = interestRef.on("value", (snapshot) => {
@@ -112,35 +112,48 @@ export function useAccountInterest() {
         });
     });  
     return () => {
-      interestRef.off();
+      interestRef.off('value', interestListener);
     };
   }, []);
   return interest;
 }
 
 export function usePostData() {
+  const interest = useAccountInterest();
+  //console.log(interest);
   const [Post, setPost] = useState([]);
   React.useEffect(() => {
     const postRef = fbdata.database()
-    .ref("/posts/").orderByChild("negTimestamp");
+      .ref("/posts/").orderByChild("negTimestamp");
     const OnLoadingListener = postRef.on("value", (snapshot) => {
       setPost([]);
       snapshot.forEach((childSnapshot) => {
-          setPost((Post) => [...Post, childSnapshot.val()]);
+        interest.forEach((userInterest) => {
+          if (childSnapshot.val().category === userInterest.value) {
+            if (userInterest.check === true) {
+              console.log(childSnapshot.val().title);
+              setPost((Post) => [...Post, childSnapshot.val()]);
+              //break;
+            }
+            //break;
+          }
           //console.log(childSnapshot.val());
+        });
       });
     });
     return () => {
-      postRef.off();
+      postRef.off("value", OnLoadingListener);
     };
   }, []);
+  //window.location.reload(true);
+  // @refresh 
   return Post;
 }
 
 export function useInterestingPost() {
-  const Post = usePostData();
   const interest = useAccountInterest();
-  console.log(interest);
+  const Post = usePostData();
+  //console.log(Post);
   const [InterestingPost, setInterestingPost] = useState([]);
   React.useEffect(() => {
     setInterestingPost([]);
@@ -158,5 +171,7 @@ export function useInterestingPost() {
       })
     })
   }, []);
+  // @refresh state
+  //console.log(interest);
   return InterestingPost;
 }
