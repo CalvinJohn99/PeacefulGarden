@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import useCurrentDate, { useOpeningImage } from "../components/CommonFunctions";
+import styles from "../../styles.js";
 
 export default function HomeScreen({ navigation }) {
   const currentDate = useCurrentDate();
@@ -19,93 +20,95 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={{ top: 20, fontWeight: "bold", fontSize: 26 }}>
+        <Text style={{ marginTop: 50, fontWeight: "bold", fontSize: 26 }}>
           {" "}
           {currentDate}{" "}
         </Text>
       </View>
 
-      <Image
-        source={{ uri: openingImageURL }}
-        style={styles.openingimage}
-      ></Image>
+      <View style={styles.openingImageWrapper}>
+        <Image
+          source={{ uri: openingImageURL }}
+          style={styles.openingImage}
+        ></Image>
+      </View>
 
-      <View style={{ flexDirection: "row", top: 70, height: 300 }}>
-        <View>
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 70,
+          width: "85%",
+          height: "30%",
+          justifyContent: "center",
+          backgroundColor: "white",
+          borderRadius: 10,
+          shadowColor: "grey",
+          shadowOffset: {
+            width: 5,
+            height: 5,
+          },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          elevation: 9,
+        }}
+      >
+        <View style={{ marginVertical: 10 }}>
           <TouchableOpacity
-            style={{
-              backgroundColor: "#B6E4CB",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: 10,
-              padding: 10,
-              borderRadius: 20,
-              flex: 1,
-            }}
+            style={[
+              styles.openingButton,
+              {
+                flex: 1,
+                backgroundColor: "#B8F6F2",
+              },
+            ]}
             onPress={() => navigation.navigate("Post")}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-              Gratefulness
-            </Text>
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>Post</Text>
+            <Text style={styles.openingButtonText}>Gratefulness</Text>
+            <Text style={styles.openingButtonText}>Post</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{
-              backgroundColor: "#B5CBDF",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: 10,
-              padding: 10,
-              borderRadius: 20,
-              flex: 2,
-            }}
+            style={[
+              styles.openingButton,
+              {
+                flex: 2,
+                backgroundColor: "#D8DCF6",
+              },
+            ]}
             onPress={() => navigation.navigate("Journal")}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-              Personal Journal
-            </Text>
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>and</Text>
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-              Mood Tracker
-            </Text>
+            <Text style={styles.openingButtonText}>Personal Journal</Text>
+            <Text style={styles.openingButtonText}>and</Text>
+            <Text style={styles.openingButtonText}>Mood Tracker</Text>
           </TouchableOpacity>
         </View>
 
-        <View>
+        <View style={{ marginVertical: 10 }}>
           <TouchableOpacity
-            style={{
-              backgroundColor: "#B2E5DC",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: 10,
-              padding: 10,
-              borderRadius: 20,
-              flex: 2,
-            }}
+            style={[
+              styles.openingButton,
+              {
+                flex: 2,
+                backgroundColor: "#F6F2D8",
+              },
+            ]}
             onPress={() => navigation.navigate("Question")}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-              Self-awareness
-            </Text>
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>Question</Text>
+            <Text style={styles.openingButtonText}>Self-awareness</Text>
+            <Text style={styles.openingButtonText}>Question</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{
-              backgroundColor: "#E8D8D8",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: 10,
-              padding: 10,
-              borderRadius: 20,
-              flex: 1,
-            }}
+            style={[
+              styles.openingButton,
+              {
+                flex: 1,
+                backgroundColor: "#F6D8DC",
+              },
+            ]}
             onPress={() => navigation.navigate("Music")}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-              Relaxing Music{" "}
-            </Text>
+            <Text style={styles.openingButtonText}>Relaxing Music </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -113,16 +116,16 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    //justifyContent: 'center',
-  },
-  openingimage: {
-    width: "100%",
-    height: 300,
-    top: 50,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//     alignItems: "center",
+//     //justifyContent: 'center',
+//   },
+//   openingimage: {
+//     width: "100%",
+//     height: 300,
+//     top: 50,
+//   },
+// });

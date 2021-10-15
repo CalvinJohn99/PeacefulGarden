@@ -8,11 +8,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Touchable,
-  FlatList,
 } from "react-native";
 import { Audio } from "expo-av";
 import { FontAwesome5 } from "@expo/vector-icons";
-import fbdata from "../../firebase.js";
 
 export function RelaxMusicScreen({ navigation }) {
   const [isToggleOn, setIsToggleOn] = React.useState(false);
@@ -249,48 +247,72 @@ export function SleepMusicScreen({ navigation }) {
 }
 
 export default function MusicScreen({ navigation }) {
-  const [musicList, setMusicList] = React.useState();
-
-  React.useEffect(() => {
-    const musicRef = fbdata.database().ref("/relaxingMusic").orderByChild("id");
-    const OnLoadingListener = musicRef.once("value", (snapshot) => {
-      setMusicList([]);
-      snapshot.forEach((childSnapshot) => {
-        setMusicList((musicList) => [...musicList, childSnapshot.val()]);
-      });
-    });
-    return () => {
-      musicRef.off();
-    };
-  }, []);
-
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={musicList}
-        renderItem={({ item: music }) => (
-          <View>
-            <TouchableOpacity
-              style={styles.box}
-              onPress={() => {
-                navigation.navigate("Music", {
-                  screen: "PlayMusic",
-                  params: { music },
-                });
-              }}
-            >
-              <ImageBackground
-                source={{ uri: music.imageURL }}
-                resizeMode="cover"
-                style={styles.image}
-              >
-                <Text style={styles.text}>{music.name}</Text>
-              </ImageBackground>
-            </TouchableOpacity>
-          </View>
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      ></FlatList>
+      <TouchableOpacity
+        style={styles.box}
+        onPress={() => navigation.navigate("Music", { screen: "A2" })}
+      >
+        <ImageBackground
+          source={require("../../assets/1.jpg")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.text}>Stress Relax Music</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.box}
+        onPress={() => navigation.navigate("Music", { screen: "A3" })}
+      >
+        <ImageBackground
+          source={require("../../assets/2.jpg")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.text}>Light Piano Music</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.box}
+        onPress={() => navigation.navigate("Music", { screen: "A4" })}
+      >
+        <ImageBackground
+          source={require("../../assets/3.jpg")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.text}>Rain Drop Sound</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.box}
+        onPress={() => navigation.navigate("Music", { screen: "A5" })}
+      >
+        <ImageBackground
+          source={require("../../assets/4.jpg")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.text}>Meditation Music</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.box}
+        onPress={() => navigation.navigate("Music", { screen: "A6" })}
+      >
+        <ImageBackground
+          source={require("../../assets/5.jpg")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <Text style={styles.text}>Sleeping Music</Text>
+        </ImageBackground>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

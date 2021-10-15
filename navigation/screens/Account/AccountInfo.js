@@ -7,6 +7,7 @@ import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
 import { Avatar } from "react-native-elements";
 import QuestByAcc from "./QuestByAcc.js";
+import PostByAcc from "./PostByAcc.js";
 
 function AccountInfo() {
   const [user, setUser] = useState([]);
@@ -148,10 +149,20 @@ function AccountInfo() {
           />
           <View style={stylesSheet.contentStyle}>
             {customSelectedIndex === 0 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your posts here{" "}
-              </Text>
+              // <Text style={stylesSheet.tabTextStyle}>
+              //   {" "}
+              //   Selected Tab = Put your posts here{" "}
+              // </Text>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  top: 10,
+                  // justifyContent: "center",
+                }}
+              >
+                <PostByAcc />
+              </View>
             )}
             {customSelectedIndex === 1 && (
               // <Text style={stylesSheet.tabTextStyle}>

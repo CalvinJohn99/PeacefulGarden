@@ -9,7 +9,9 @@ import {
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import styles from "../styles.js";
 
 // import screens
 import HomeScreen from "./screens/HomeScreen";
@@ -28,16 +30,16 @@ import { PianoMusicScreen } from "./screens/MusicScreen";
 import { RainDropMusicScreen } from "./screens/MusicScreen";
 import { MedMusicScreen } from "./screens/MusicScreen";
 import { SleepMusicScreen } from "./screens/MusicScreen";
-
+import playMusicScreen from "./screens/PlayMusicScreen.js";
 
 // Create Self-awareness Question stack
-const QuesStack = createNativeStackNavigator();
+const QuesStack = createStackNavigator();
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
       initialRouteName="QList"
       screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
+        headerStyle: styles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -52,7 +54,21 @@ const QuesStackScreen = () => {
       <QuesStack.Screen
         name="QViewAnswer"
         component={QuestionViewAnswer}
-        options={{ headerTitle: "View Answer" }}
+        options={() => (
+          {
+            headerTitle: "View Answer",
+          },
+          {
+            gestureEnabled: false,
+            cardStyleInterpolator: ({ current: { progress } }) => {
+              return {
+                cardStyle: {
+                  opacity: progress,
+                },
+              };
+            },
+          }
+        )}
       />
       <QuesStack.Screen
         name="QCreateAnswer"
@@ -67,7 +83,7 @@ const MusicStackScreen = () => {
   return (
     <MusicStack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
+        headerStyle: styles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -75,9 +91,14 @@ const MusicStackScreen = () => {
       }}
     >
       <MusicStack.Screen
-        name="A1"
+        name="MusicList"
         component={MusicScreen}
         options={{ headerTitle: "Music Screen" }}
+      />
+      <MusicStack.Screen
+        name="PlayMusic"
+        component={playMusicScreen}
+        options={{ headerTitle: "Play Music" }}
       />
       <MusicStack.Screen
         name="A2"
@@ -103,7 +124,7 @@ const MusicStackScreen = () => {
         name="A6"
         component={SleepMusicScreen}
         options={{ headerTitle: "Sleep Music" }}
-      />      
+      />
     </MusicStack.Navigator>
   );
 };
@@ -114,7 +135,7 @@ const JMStackScreen = () => {
     <JMStack.Navigator
       initialRouteName="JMNav"
       screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
+        headerStyle: styles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -154,9 +175,10 @@ function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: {
-          backgroundColor: "#1067CC",
-        },
+        // headerStyle: {
+        //   backgroundColor: "#1067CC",
+        // },
+        headerStyle: styles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -182,9 +204,10 @@ function MyTabs() {
         },
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "white",
-        tabBarStyle: {
-          backgroundColor: "#1067CC",
-        },
+        // tabBarStyle: {
+        //   backgroundColor: "#1067CC",
+        // },
+        tabBarStyle: styles.bottomBGColor,
       })}
     >
       <Tab.Screen

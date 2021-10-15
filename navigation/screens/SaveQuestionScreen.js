@@ -13,8 +13,7 @@ import {
 import fbdata from "../../firebase.js";
 
 import useCurrentDate from "../components/CommonFunctions.js";
-import { SharedElement } from "react-navigation-shared-element";
-import QuestionViewAnswer from "./QuestionViewAnswer.js";
+import { SharedElement } from "react-native-shared-element";
 
 const getBackgroundColor = (id) => {
   if (id % 3 === 1) {
@@ -26,7 +25,7 @@ const getBackgroundColor = (id) => {
   }
 };
 
-function QuestionScreen({ navigation }) {
+export default function QuestionScreen({ navigation }) {
   const [QList, setQList] = useState([]);
   React.useEffect(() => {
     const questionRef = fbdata
@@ -67,14 +66,13 @@ function QuestionScreen({ navigation }) {
                 screen: "QViewAnswer",
                 params: { item },
               });
+              console.log({ item });
             }}
           >
-            <SharedElement id={`item.${item.id}.question`}>
-              <Text style={styles.question}>
-                {" "}
-                {item.id}. {item.question}{" "}
-              </Text>
-            </SharedElement>
+            <Text style={styles.question}>
+              {" "}
+              {item.id}. {item.question}{" "}
+            </Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -82,8 +80,6 @@ function QuestionScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-export default QuestionScreen;
 
 const styles = StyleSheet.create({
   container: {

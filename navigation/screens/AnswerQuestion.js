@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import fbdata from "../../firebase.js";
 import useCurrentDate, {
@@ -153,10 +154,7 @@ export default function AnswerQuestion({ navigation, route }) {
       <SafeAreaView style={styles.outerContainer}>
         <Text style={styles.todayDate}> {currentDate} </Text>
         <View
-          style={[
-            styles.question,
-            { backgroundColor: getBackgroundColor(currentQuestion.id) },
-          ]}
+          style={[styles.question, { backgroundColor: currentQuestion.color }]}
         >
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
             {" "}
@@ -236,8 +234,8 @@ const styles = StyleSheet.create({
     top: 20,
     padding: 8,
     margin: 10,
-    width: "90%",
-    height: "50%",
+    width: "85%",
+    height: "45%",
     borderColor: "black",
     shadowColor: "grey",
     shadowOffset: {
@@ -274,7 +272,7 @@ const styles = StyleSheet.create({
   },
 
   postbutton: {
-    backgroundColor: "#1067CC",
+    backgroundColor: "#f3b000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,

@@ -21,18 +21,18 @@ export default function JournalMoodScreen({ navigation }) {
       </View>
 
       <TouchableOpacity
-        style={[styles.jmNav, { backgroundColor: "#B6E4CB" }]}
+        style={[styles.jmNav, { backgroundColor: "#B8F6F2" }]}
         onPress={() => navigation.navigate("Journal", { screen: "CreateMood" })}
       >
         <Text style={styles.jmNavText}>Create Mood</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.jmNav, { backgroundColor: "#B5CBDF" }]}>
+      <TouchableOpacity style={[styles.jmNav, { backgroundColor: "#D8DCF6" }]}>
         <Text style={styles.jmNavText}>Journal</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.jmNav, { backgroundColor: "#E8D8D8" }]}
+        style={[styles.jmNav, { backgroundColor: "#F6D8DC" }]}
         onPress={() => navigation.navigate("Journal", { screen: "History" })}
       >
         <Text style={styles.jmNavText}>History</Text>
