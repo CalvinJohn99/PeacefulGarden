@@ -53,13 +53,14 @@ function updatePost(post, postID, username, newPost) {
 
 export default function EditPostInput(props) {
   console.log(props.item);
-  const [editPost, setEditPost] = useState(props.item.post);
+  const [editPostTitle, setEditPostTitle] = useState(props.item.title);
+  const [editPostContent, setEditPostContent] = useState(props.item.content);
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View>
       <Text>{props.item.creationDate}</Text>
-      <Text>{props.item.answer}</Text>
+      <Text>{props.item.title}</Text>
       <View
         style={{
           flexDirection: "row",
@@ -107,8 +108,8 @@ export default function EditPostInput(props) {
               backgroundColor: "green",
             }}
             onPress={() => {
-              deleteAnswer(
-                props.item.question,
+              deletePost(
+                props.item,
                 props.item.id,
                 props.item.username
               );
@@ -164,9 +165,24 @@ export default function EditPostInput(props) {
               autofocus={true}
               // placeholder={props.item.answer}
               onChangeText={(text) => {
-                setEditAnswer(text);
+                setEditTitle(text);
               }}
-              value={editAnswer}
+              value={editPostTitle}
+              clearTextOnFocus={true}
+              style={{ height: "30%", top: 20 }}
+              // onFocus={() => {
+              // setFocused(true);
+              // }}
+            />
+            <TextInput
+              multiline={true}
+              editable={true}
+              autofocus={true}
+              // placeholder={props.item.answer}
+              onChangeText={(text) => {
+                setEditontent(text);
+              }}
+              value={editPostContent}
               clearTextOnFocus={true}
               style={{ height: "30%", top: 20 }}
               // onFocus={() => {
@@ -188,11 +204,11 @@ export default function EditPostInput(props) {
                 <TouchableOpacity
                   style={{ margin: 10 }}
                   onPress={() => {
-                    updateAnswer(
-                      props.item.question,
+                    updatePost(
+                      props.item,
                       props.item.id,
                       props.item.username,
-                      editAnswer
+                      editPostTitle
                     );
                     setModalVisible(!modalVisible);
                   }}

@@ -22,13 +22,13 @@ function storePost(category, title, content, imageURL,
       category: category,
       title: title,
       content: content, imageURL: imageURL, 
-      username: username, date: date, 
+      username: username, creationDate: date, 
       timestamp: {
         ".sv": "timestamp",
       },
     };
     var updates = {};
-    updates["/posts/" + category + "/" + newPostKey] = dataToSave;
+    updates["/post/" + category + "/" + newPostKey] = dataToSave;
       
     return fbdata.database().ref().update(updates, (error) => {
       if (error) {
@@ -42,9 +42,9 @@ function storePost(category, title, content, imageURL,
 
 function updateNegTimestamp(key) {
     const timeRef = fbdata.database()
-      .ref("/posts/" + category + "/" + key + "/timestamp/");
+      .ref("/post/" + category + "/" + key + "/timestamp/");
     const negTimeRef = fbdata.database()
-      .ref("/posts/" + category + "/" + key + "/");
+      .ref("/post/" + category + "/" + key + "/");
     timeRef.once("value", (snapshot) => {
       var negTimestampValue = snapshot.val() * -1;
       console.log(negTimestampValue);
