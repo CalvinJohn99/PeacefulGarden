@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import {ScrollView, View, Text, TextInput, StyleSheet, Button, Alert, ActivityIndicator, Image, Platform, } from 'react-native';
-import { Picker as SelectPicker } from 'react-native';
+import { Picker as SelectPicker } from '@react-native-community/picker';
 import useCurrentDate, { useAccountUsername, }
     from "../components/CommonFunctions.js";
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -15,7 +15,7 @@ if(fbdata.apps.length === 0) {
 }
 
 function storePost(category, title, content, imageURL, 
-    username, date) {
+    username, date, ref) {
     var newPostKey = fbdata.database().ref().child(category).push().key;
     var dataToSave = {
       id: newPostKey,
@@ -23,6 +23,7 @@ function storePost(category, title, content, imageURL,
       title: title,
       content: content, imageURL: imageURL, 
       username: username, creationDate: date, 
+      storageRef: storageRef,
       timestamp: {
         ".sv": "timestamp",
       },
@@ -129,7 +130,7 @@ export default function GPostScreen({ navigation }) {
                     setErrorStatus(true);
                 } else {
                     storePost(categoryValue, title, content, 
-                        url, username, currentDate);
+                        url, username, currentDate, ref);
                         alert("Successfully posted!");
                         navigation.navigate("GPostScreen", { screen: "GPostScreen" });
                 }           
