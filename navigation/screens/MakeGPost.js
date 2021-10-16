@@ -4,22 +4,19 @@ import {ScrollView, View, Text, TextInput, StyleSheet, Button, Alert, ActivityIn
 import { Picker as SelectPicker } from 'react-native';
 import useCurrentDate, { useAccountUsername, }
     from "../components/CommonFunctions.js";
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 
-import firebase from 'firebase';
-import 'firebase/database';
-import 'firebase/storage';
-import firebaseConfig from '../../firebase';
-import fbdata from "../../firebase.js";
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import fbdata from '../../firebase';
 
-if(firebase.apps.length === 0) {
-    firebase.initializeApp(firebaseConfig);
+
+if(fbdata.apps.length === 0) {
+    fbdata.initializeApp(firebaseConfig);
 }
 
 function storePost(category, title, content, imageURL, 
     username, date) {
-    var newPostKey = firebase.database().ref("posts/").push().key;
+    var newPostKey = fbdata.database().ref().child(category).push().key;
     var dataToSave = {
       id: newPostKey,
       category: category,
@@ -31,10 +28,9 @@ function storePost(category, title, content, imageURL,
       },
     };
     var updates = {};
-    updates["/posts/" + newPostKey] = dataToSave;
-    // fbdata.ref('qanswer/' + question + '/' + key).set(dataToSave);
-  
-    return firebase.database().ref().update(updates, (error) => {
+    updates["/posts/" + category + "/" + newPostKey] = dataToSave;
+      
+    return fbdata.database().ref().update(updates, (error) => {
       if (error) {
         console.log(error);
       } else {
@@ -45,10 +41,10 @@ function storePost(category, title, content, imageURL,
 }
 
 function updateNegTimestamp(key) {
-    const timeRef = firebase.database()
-      .ref("/posts/" + key + "/timestamp/");
-    const negTimeRef = firebase.database()
-      .ref("/posts/" + key + "/");
+    const timeRef = fbdata.database()
+      .ref("/posts/" + category + "/" + key + "/timestamp/");
+    const negTimeRef = fbdata.database()
+      .ref("/posts/" + category + "/" + key + "/");
     timeRef.once("value", (snapshot) => {
       var negTimestampValue = snapshot.val() * -1;
       console.log(negTimestampValue);
@@ -56,11 +52,6 @@ function updateNegTimestamp(key) {
     });
 }  
 
-function navigateAfterPosting() {
-    navigation.navigate("MakeGPost", {
-        screen: "MakeGPost",
-    });
-}
 
 export default function GPostScreen({ navigation }) {
         
@@ -115,10 +106,10 @@ export default function GPostScreen({ navigation }) {
             xhr.send(null);
         });
     
-        const ref = firebase.storage().ref().child(new Date().toISOString())
+        const ref = fbdata.storage().ref().child(new Date().toISOString())
         const snapshot = ref.put(blob)
         
-        snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED, 
+        snapshot.on(fbdata.storage.TaskEvent.STATE_CHANGED, 
         () => {
             setUploading(true)
         },

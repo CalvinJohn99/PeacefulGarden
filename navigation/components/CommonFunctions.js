@@ -124,7 +124,7 @@ export function usePostData() {
   const [Post, setPost] = useState([]);
   React.useEffect(() => {
     const postRef = fbdata.database()
-      .ref("/posts/").orderByChild("negTimestamp");
+      .ref("/posts/"); //.orderByChild("negTimestamp");
     const OnLoadingListener = postRef.on("value", (snapshot) => {
       setPost([]);
       snapshot.forEach((childSnapshot) => {
