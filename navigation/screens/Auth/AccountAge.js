@@ -19,7 +19,6 @@ function AccountAge({ navigation, route }) {
   const { newdata } = route.params;
   const [checkboxes, setCheckboxes] = useState(Interest);
   const [age, setAge] = useState(null);
-  const [photo, setPhoto] = useState(null);
   const [data, setData] = useState({
     uid: "",
     username: "",
@@ -31,7 +30,8 @@ function AccountAge({ navigation, route }) {
   });
 
   const handleData = (uuid) => {
-    (data.uid = uuid), (data.username = newdata.username);
+    data.uid = uuid, 
+    data.username = newdata.username;
     data.answer1 = newdata.answer1;
     data.answer2 = newdata.answer2;
     data.age = age;
@@ -87,6 +87,7 @@ function AccountAge({ navigation, route }) {
         },
         async () => {
           const url = await upload.snapshot.ref.getDownloadURL();
+          console.log(url)
           updateProfile(url)
           res(url);
         }
@@ -104,6 +105,7 @@ function AccountAge({ navigation, route }) {
   }
 
   function addRealTimeDatabase() {
+   
     fbdata
       .database()
       .ref("users/" + data.uid)
@@ -123,9 +125,6 @@ function AccountAge({ navigation, route }) {
       console.log("2. Add Realtime Done!")
   }
 
- 
-
-
 
   function signUp() {
     fbdata
@@ -135,8 +134,15 @@ function AccountAge({ navigation, route }) {
         fbdata.auth().currentUser.sendEmailVerification();
         console.log("User account created & signed in!");
         handleData(user["user"]["uid"]);
-        addProfileAuth();
         addRealTimeDatabase();
+      })
+      .then(() => {
+        console.log(newdata.img)
+        if(newdata.img === null){
+          fbdata.auth().currentUser.updateProfile({displayName: data.username});
+        }else {
+          addProfileAuth();
+        }
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {

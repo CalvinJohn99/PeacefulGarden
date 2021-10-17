@@ -97,6 +97,7 @@ function App() {
             component={MainContainer}
             options={{ title: "MainContainer" }}
           />
+          
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -5,39 +5,38 @@ import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
+import Avatar_Default from '../../../assets/Avatar_Default.png'
 import { Avatar} from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 function AccountInfo() {
-  const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(Avatar_Default);
   const [username, setUserName] = useState("");
   const [interest, setInterest] = useState(Interest);
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
   const [verify, setVerify] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
+  const [isLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
     setShowLoading(true);
     __isTheUserAuthenticated();
-    // console.log(fbdata.auth().currentUser);
-    setVerify(fbdata.auth().currentUser.emailVerified);
   }, []); 
 
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
+    setUid(userId);
     setImage(fbdata.auth().currentUser.photoURL);
     setUserName(fbdata.auth().currentUser.displayName);
-    setUid(userId);
+    setVerify(fbdata.auth().currentUser.emailVerified);
+    
     if (userId !== null) {
       fbdata
         .database()
         .ref("users/" + userId)
         .on("value", (querySnapShot) => {
           let userinfo = querySnapShot.val() ? querySnapShot.val() : {};
-          setUser(userinfo);
           setInterest(userinfo["interest"]);
         });
     }
@@ -114,11 +113,6 @@ function AccountInfo() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topInfo}>
-      {showLoading && (
-          <View style={styles.activity}>
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        )}
         <View style={styles.userInfo}>
           <Avatar
             containerStyle={{borderWidth: 3, borderColor:"white"}}
