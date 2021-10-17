@@ -14,6 +14,8 @@ function AccountInfo() {
   const [uid, setUid] = useState("");
   const [interest, setInterest] = useState(Interest);
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
+  // const [postCount, setPostCount] = useState(0);
+  // console.log("111:", postCount);
 
   useEffect(() => {
     __isTheUserAuthenticated();
@@ -33,6 +35,22 @@ function AccountInfo() {
         });
     }
   }
+
+  // useEffect(() => {
+  //   const postCountRef = fbdata
+  //     .database()
+  //     .ref("/postsbyacc/" + user["username"]);
+  //   const OnLoadingListener = postCountRef.on("value", (snapshot) => {
+  //     setPostCount(0);
+  //     if (snapshot.exists) {
+  //       setPostCount(snapshot.numChildren());
+  //     }
+  //   });
+  //   return () => {
+  //     postCountRef.off("value", OnLoadingListener);
+  //   };
+  // }, []);
+
   function handleSignOut() {
     fbdata
       .auth()
@@ -125,7 +143,7 @@ function AccountInfo() {
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
-            badges={[40, 36]}
+            badges={[user["postCount"], user["answerCount"]]}
             values={["Post", "Quest", "Setting", "Interest"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
@@ -161,7 +179,7 @@ function AccountInfo() {
                   // justifyContent: "center",
                 }}
               >
-                <PostByAcc />
+                <PostByAcc username={user["username"]} userID={uid} />
               </View>
             )}
             {customSelectedIndex === 1 && (

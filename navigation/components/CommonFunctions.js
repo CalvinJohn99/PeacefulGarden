@@ -70,6 +70,20 @@ export function useOpeningImage() {
   return openingImageURL;
 }
 
+export function useAccountUserid() {
+  const [userid, setUserid] = useState([]);
+
+  useEffect(() => {
+    __isTheUserAuthenticated();
+  }, []);
+
+  function __isTheUserAuthenticated() {
+    const userId = fbdata.auth().currentUser.uid;
+    setUserid(userId);
+  }
+  return userid;
+}
+
 export function useAccountUsername() {
   const [username, setUserName] = useState([]);
   const [uid, setUid] = useState("");
@@ -136,4 +150,48 @@ export function useUserAnswer(question, username) {
     };
   }, []);
   return answerbyUserList;
+}
+
+export function increaseAnswerCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const answerCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/answerCount/");
+  answerCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() + 1;
+    userRef.update({ answerCount: newCount });
+  });
+}
+
+export function decreaseAnswerCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const answerCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/answerCount/");
+  answerCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() - 1;
+    userRef.update({ answerCount: newCount });
+  });
+}
+
+export function increasePostCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const postCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/postCount/");
+  postCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() + 1;
+    userRef.update({ postCount: newCount });
+  });
+}
+
+export function decreasePostCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const postCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/postCount/");
+  postCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() - 1;
+    userRef.update({ postCount: newCount });
+  });
 }

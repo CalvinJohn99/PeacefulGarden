@@ -21,7 +21,7 @@ export default function ListAnswerbyQuestion(props) {
       .orderByChild("negTimestamp");
     const OnLoadingListener = accQARef.on("value", (snapshot) => {
       setQabyacc([]);
-      if (snapshot.exists) {
+      if (snapshot.exists()) {
         snapshot.forEach((childSnapshot) => {
           setQabyacc((qabyacc) => [...qabyacc, childSnapshot.val()]);
         });
@@ -43,7 +43,13 @@ export default function ListAnswerbyQuestion(props) {
       <FlatList
         // style={{ top: 20 }}
         data={qabyacc}
-        renderItem={({ item }) => <EditAnswerInput item={item} />}
+        renderItem={({ item }) => (
+          <EditAnswerInput
+            item={item}
+            username={props.username}
+            userID={props.userID}
+          />
+        )}
       />
     </View>
   );

@@ -2,8 +2,9 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput } from "react-native";
 import fbdata from "../../firebase.js";
+import { decreaseAnswerCount } from "../components/CommonFunctions.js";
 
-function deleteAnswer(question, answerID, username) {
+function deleteAnswer(question, answerID, username, userID) {
   const answerRef = fbdata
     .database()
     .ref("/qanswer/" + question.question + "/" + answerID + "/");
@@ -30,6 +31,8 @@ function deleteAnswer(question, answerID, username) {
       answerbyUserRef.remove();
     }
   });
+
+  decreaseAnswerCount(userID);
 }
 
 function updateAnswer(question, answerID, username, newAnswer) {
@@ -52,7 +55,6 @@ function updateAnswer(question, answerID, username, newAnswer) {
 }
 
 export default function EditAnswerInput(props) {
-  console.log(props.item);
   const [editAnswer, setEditAnswer] = useState(props.item.answer);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -110,7 +112,8 @@ export default function EditAnswerInput(props) {
               deleteAnswer(
                 props.item.question,
                 props.item.id,
-                props.item.username
+                props.item.username,
+                props.userID
               );
             }}
           >

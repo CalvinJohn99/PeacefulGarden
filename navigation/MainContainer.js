@@ -34,10 +34,11 @@ import playMusicScreen from "./screens/PlayMusicScreen.js";
 
 // Create Self-awareness Question stack
 const QuesStack = createStackNavigator();
+// const QuesStack = createSharedElementStackNavigator();
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
-      initialRouteName="QList"
+      // initialRouteName="QList"
       screenOptions={{
         headerStyle: styles.headerBGColor,
         headerTintColor: "white",
@@ -54,21 +55,21 @@ const QuesStackScreen = () => {
       <QuesStack.Screen
         name="QViewAnswer"
         component={QuestionViewAnswer}
-        options={() => (
-          {
-            headerTitle: "View Answer",
-          },
-          {
-            gestureEnabled: false,
-            cardStyleInterpolator: ({ current: { progress } }) => {
-              return {
-                cardStyle: {
-                  opacity: progress,
-                },
-              };
-            },
-          }
-        )}
+        options={() => ({
+          headerTitle: "View Answer",
+          // gestureEnabled: false,
+          // transitionSpec: {
+          //   open: { animation: "timing", config: { duration: 5000 } },
+          //   close: { animation: "timing", config: { duration: 500 } },
+          // },
+          // cardStyleInterpolator: ({ current: { progress } }) => {
+          //   return {
+          //     cardStyle: {
+          //       opacity: progress,
+          //     },
+          //   };
+          // },
+        })}
       />
       <QuesStack.Screen
         name="QCreateAnswer"
@@ -213,7 +214,29 @@ function MyTabs() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerTitle: "Home" }}
+        options={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: "rgba(225, 0, 0, 0.9)",
+            position: "absolute",
+            bottom: 800,
+            marginHorizontal: 10,
+            paddingTop: 15,
+            height: 90,
+            borderRadius: 20,
+            shadowColor: "black",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0.8,
+            shadowRadius: 5,
+            elevation: 20,
+
+            // alignItems: "center",
+            // justifyContent: "center",
+          },
+        }}
       />
       <Tab.Screen
         name="Post"
@@ -224,31 +247,31 @@ function MyTabs() {
         name="Question"
         component={QuesStackScreen}
         options={{ headerShown: false }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // work with transition delay
-            // navigation.dispatch(
-            //   CommonActions.reset({
-            //     index: 0,
-            //     routes: [{ name: "QList" }],
-            //   })
-            // );
+        // listeners={({ navigation, route }) => ({
+        //   tabPress: (e) => {
+        //     // work with transition delay
+        //     // navigation.dispatch(
+        //     //   CommonActions.reset({
+        //     //     index: 0,
+        //     //     routes: [{ name: "QList" }],
+        //     //   })
+        //     // );
 
-            // work with transition delay
-            // navigation.reset({
-            //   index: 0,
-            //   routes: [{ name: "QList" }],
-            // });
+        //     // work with transition delay
+        //     // navigation.reset({
+        //     //   index: 0,
+        //     //   routes: [{ name: "QList" }],
+        //     // });
 
-            // work with development-only error -- action pop_to_top was not handled by any navigator
-            // navigation.dispatch(StackActions.popToTop());
+        //     // work with development-only error -- action pop_to_top was not handled by any navigator
+        //     // navigation.dispatch(StackActions.popToTop());
 
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
-            if (routeName !== "QList") {
-              navigation.dispatch(StackActions.popToTop());
-            }
-          },
-        })}
+        //     const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
+        //     if (routeName !== "QList") {
+        //       navigation.dispatch(StackActions.popToTop());
+        //     }
+        //   },
+        // })}
       />
       <Tab.Screen
         name="Journal"

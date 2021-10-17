@@ -1,28 +1,62 @@
+// @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, View, Text, FlatList } from "react-native";
 import {
-  useAccountUsername,
-  useQuestionList,
-  useUserAnswer,
-} from "../../components/CommonFunctions.js";
-import ListAnswerbyQuestion from "../../components/EditAnswer";
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  Modal,
+} from "react-native";
+import fbdata from "../../../firebase.js";
+import EditPost from "../../components/EditPost.js";
 
-export default function QuestByAcc({ navigation }) {
-  const username = useAccountUsername();
-  const Qlist = useQuestionList();
+export default function PostByAcc(props) {
+  const [userPosts, setUserPosts] = useState([]);
+
+  useEffect(() => {
+    const postbyAccRef = fbdata
+      .database()
+      .ref("/postsbyacc/" + props.username)
+      .orderByChild("negTimestamp");
+    const PostbyAccountListener = postbyAccRef.on("value", (snapshot) => {
+      setUserPosts([]);
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          setUserPosts((userPosts) => [...userPosts, childSnapshot.val()]);
+        });
+      }
+    });
+    return () => {
+      postbyAccRef.off("value", PostbyAccountListener);
+    };
+  }, []);
+
+  if (userPosts.length === 0) {
+    return null;
+  }
 
   return (
     <View>
       <FlatList
-        data={Qlist}
+        // horizontal
+        // pagingEnabled={true}
+        // showsHorizontalScrollIndicator={false}
+        // lagacyImplementation={false}
+        // style={{ width: "100%" }}
+        // showsVerticalScrollIndicator={false}
+        data={userPosts}
         renderItem={({ item }) => (
-          <View>
-            <ListAnswerbyQuestion question={item} username={username} />
-          </View>
+          <EditPost
+            item={item}
+            username={props.username}
+            userID={props.userID}
+          />
         )}
-        keyExtractor={(item) => item.id.toString()}
-      ></FlatList>
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }

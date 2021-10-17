@@ -19,16 +19,6 @@ import LikeButton from "../components/LikeButton";
 import { SharedElement } from "react-navigation-shared-element";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const getBackgroundColor = (id) => {
-  if (id % 3 === 1) {
-    return "#B6E4CB";
-  } else if (id % 3 === 2) {
-    return "#B5CBDF";
-  } else if (id % 3 === 0) {
-    return "#E8D8D8";
-  }
-};
-
 function QuestionViewAnswer({ navigation, route }) {
   const { item } = route.params;
   const questionid = route.params.item.id;
@@ -60,7 +50,10 @@ function QuestionViewAnswer({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.question, { backgroundColor: questioncolor }]}>
+      <Animatable.View
+        // animation="fadeInUp"
+        style={[styles.question, { backgroundColor: questioncolor }]}
+      >
         <View style={{ backgroundColor: "red" }} />
         <SharedElement id={`item.${item.id}.question`}>
           <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: -20 }}>
@@ -68,7 +61,7 @@ function QuestionViewAnswer({ navigation, route }) {
             {item.id}. {item.question}{" "}
           </Text>
         </SharedElement>
-      </View>
+      </Animatable.View>
       {/* <View style={styles.submitSection}>
         <View style={styles.dateCon}>
           <Text style={styles.todayDate}> {currentDate} </Text>
@@ -99,7 +92,7 @@ function QuestionViewAnswer({ navigation, route }) {
       >
         <Animatable.View animation="zoomIn">
           <TouchableOpacity
-            animation="fadeInUp"
+            // animation="fadeInUp"
             style={styles.newbutton}
             onPress={() => {
               navigation.navigate("Question", {
@@ -161,10 +154,11 @@ function QuestionViewAnswer({ navigation, route }) {
   );
 }
 
-QuestionViewAnswer.SharedElement = (route) => {
+QuestionViewAnswer.SharedElement = (route, otherRoute, showing) => {
   const { item } = route.params;
   return [
-    { id: `item.${item.id}.question`, animation: "fade-in", resize: "clip" },
+    // { id: `item.${item.id}.question` },
+    { id: `item.${item.id}.question`, animation: "fadeInUp" },
   ];
 };
 

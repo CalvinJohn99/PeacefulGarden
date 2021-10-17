@@ -14,7 +14,8 @@ import {
 import fbdata from "../../firebase.js";
 import useCurrentDate, {
   useAccountUsername,
-  useDateString,
+  useAccountUserid,
+  increaseAnswerCount,
 } from "../components/CommonFunctions.js";
 
 const getBackgroundColor = (id) => {
@@ -27,7 +28,13 @@ const getBackgroundColor = (id) => {
   }
 };
 
-function storeQAnswer(currentQuestion, answer, currentUser, currentDate) {
+function storeQAnswer(
+  currentQuestion,
+  answer,
+  currentUser,
+  currentUserID,
+  currentDate
+) {
   var newAnswerKey = fbdata
     .database()
     .ref()
@@ -70,6 +77,7 @@ function storeQAnswer(currentQuestion, answer, currentUser, currentDate) {
           currentUser,
           newAnswerKey
         );
+        increaseAnswerCount(currentUserID);
       }
     });
 }
@@ -111,7 +119,8 @@ function updateNegTimestampQAbyAcc(question, currentUser, key) {
 export default function AnswerQuestion({ navigation, route }) {
   const currentDate = useCurrentDate();
   const currentUser = useAccountUsername();
-  // const dateString = useDateString();
+  const currentUserID = useAccountUserid();
+
   const { currentQuestion } = route.params;
   const [answer, setAnswer] = useState("");
   const [focused, setFocused] = useState(false);
@@ -128,7 +137,13 @@ export default function AnswerQuestion({ navigation, route }) {
     if (answer === "") {
       setErrorStatus(true);
     } else {
-      storeQAnswer(currentQuestion, answer, currentUser, currentDate);
+      storeQAnswer(
+        currentQuestion,
+        answer,
+        currentUser,
+        currentUserID,
+        currentDate
+      );
       alert("Successfully posted!");
       navigation.navigate("Question", { screen: "QList" });
     }
