@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "../styles.js";
+import commonStyles, { SCREEN_WIDTH, SCREEN_HEIGHT } from "../commonStyles";
 
 // import screens
 import HomeScreen from "./screens/HomeScreen";
@@ -25,12 +25,6 @@ import ViewMood from "./screens/ViewMood";
 import History from "./screens/History";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
-import { RelaxMusicScreen } from "./screens/MusicScreen";
-import { PianoMusicScreen } from "./screens/MusicScreen";
-import { RainDropMusicScreen } from "./screens/MusicScreen";
-import { MedMusicScreen } from "./screens/MusicScreen";
-import { SleepMusicScreen } from "./screens/MusicScreen";
-import playMusicScreen from "./screens/PlayMusicScreen.js";
 
 // Create Self-awareness Question stack
 const QuesStack = createStackNavigator();
@@ -40,7 +34,7 @@ const QuesStackScreen = () => {
     <QuesStack.Navigator
       // initialRouteName="QList"
       screenOptions={{
-        headerStyle: styles.headerBGColor,
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -79,56 +73,6 @@ const QuesStackScreen = () => {
     </QuesStack.Navigator>
   );
 };
-const MusicStack = createStackNavigator();
-const MusicStackScreen = () => {
-  return (
-    <MusicStack.Navigator
-      screenOptions={{
-        headerStyle: styles.headerBGColor,
-        headerTintColor: "white",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      }}
-    >
-      <MusicStack.Screen
-        name="MusicList"
-        component={MusicScreen}
-        options={{ headerTitle: "Music Screen" }}
-      />
-      <MusicStack.Screen
-        name="PlayMusic"
-        component={playMusicScreen}
-        options={{ headerTitle: "Play Music" }}
-      />
-      <MusicStack.Screen
-        name="A2"
-        component={RelaxMusicScreen}
-        options={{ headerTitle: "Relax Music" }}
-      />
-      <MusicStack.Screen
-        name="A3"
-        component={PianoMusicScreen}
-        options={{ headerTitle: "Piano Music" }}
-      />
-      <MusicStack.Screen
-        name="A4"
-        component={RainDropMusicScreen}
-        options={{ headerTitle: "Rain Music" }}
-      />
-      <MusicStack.Screen
-        name="A5"
-        component={MedMusicScreen}
-        options={{ headerTitle: "Med Music" }}
-      />
-      <MusicStack.Screen
-        name="A6"
-        component={SleepMusicScreen}
-        options={{ headerTitle: "Sleep Music" }}
-      />
-    </MusicStack.Navigator>
-  );
-};
 
 const JMStack = createNativeStackNavigator();
 const JMStackScreen = () => {
@@ -136,7 +80,7 @@ const JMStackScreen = () => {
     <JMStack.Navigator
       initialRouteName="JMNav"
       screenOptions={{
-        headerStyle: styles.headerBGColor,
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -179,7 +123,7 @@ function MyTabs() {
         // headerStyle: {
         //   backgroundColor: "#1067CC",
         // },
-        headerStyle: styles.headerBGColor,
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -208,7 +152,7 @@ function MyTabs() {
         // tabBarStyle: {
         //   backgroundColor: "#1067CC",
         // },
-        tabBarStyle: styles.bottomBGColor,
+        tabBarStyle: commonStyles.bottomBGColor,
       })}
     >
       <Tab.Screen
@@ -217,10 +161,10 @@ function MyTabs() {
         options={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: "rgba(225, 0, 0, 0.9)",
+            backgroundColor: "rgba(0, 188, 212, 0.45)",
             position: "absolute",
-            bottom: 800,
-            marginHorizontal: 10,
+            bottom: 60,
+            marginHorizontal: 25,
             paddingTop: 15,
             height: 90,
             borderRadius: 20,
@@ -247,31 +191,31 @@ function MyTabs() {
         name="Question"
         component={QuesStackScreen}
         options={{ headerShown: false }}
-        // listeners={({ navigation, route }) => ({
-        //   tabPress: (e) => {
-        //     // work with transition delay
-        //     // navigation.dispatch(
-        //     //   CommonActions.reset({
-        //     //     index: 0,
-        //     //     routes: [{ name: "QList" }],
-        //     //   })
-        //     // );
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            // work with transition delay
+            // navigation.dispatch(
+            //   CommonActions.reset({
+            //     index: 0,
+            //     routes: [{ name: "QList" }],
+            //   })
+            // );
 
-        //     // work with transition delay
-        //     // navigation.reset({
-        //     //   index: 0,
-        //     //   routes: [{ name: "QList" }],
-        //     // });
+            // work with transition delay
+            // navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: "QList" }],
+            // });
 
-        //     // work with development-only error -- action pop_to_top was not handled by any navigator
-        //     // navigation.dispatch(StackActions.popToTop());
+            // work with development-only error -- action pop_to_top was not handled by any navigator
+            // navigation.dispatch(StackActions.popToTop());
 
-        //     const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
-        //     if (routeName !== "QList") {
-        //       navigation.dispatch(StackActions.popToTop());
-        //     }
-        //   },
-        // })}
+            const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
+            if (routeName !== "QList") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Journal"
@@ -290,8 +234,8 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Music"
-        component={MusicStackScreen}
-        options={{ headerShown: false }}
+        component={MusicScreen}
+        options={{ headerTitle: "Relaxing Music" }}
       />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>

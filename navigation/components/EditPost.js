@@ -7,10 +7,14 @@ import {
   Modal,
   TextInput,
   Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 import fbdata from "../../firebase.js";
 import { decreasePostCount } from "./CommonFunctions.js";
+import commonStyles from "../../commonStyles.js";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -53,6 +57,15 @@ export default function EditPost(props) {
   const userID = props.userID;
   const [editPostContent, setEditPostContent] = useState(item.content);
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  const getBorderColor = () => {
+    if (focused) {
+      return "#00BCD4";
+    }
+    return "white";
+  };
 
   return (
     <View>
@@ -113,7 +126,7 @@ export default function EditPost(props) {
               borderRadius: 20,
             }}
             onPress={() => {
-              deletePost(item.id, username, userID);
+              setDeleteModalVisible(true);
             }}
           >
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
@@ -124,83 +137,126 @@ export default function EditPost(props) {
       </Card>
       <Modal
         animationType="slide"
-        // transparent={true}
+        transparent={true}
+        visible={deleteModalVisible}
+        onRequestClose={() => {
+          setDeleteModalVisible(!deleteModalVisible);
+        }}
+      >
+        <View style={commonStyles.modalFirstView}>
+          <View style={commonStyles.modalSecondView}>
+            <Text style={commonStyles.deleteWarningTitle}>Confirm delete?</Text>
+            <Text style={commonStyles.deleteWarningText}>
+              * Once delete, it is unrecoverable!
+            </Text>
+            <View style={{ flexDirection: "row", marginVertical: 10 }}>
+              <TouchableOpacity
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#00BCD4" },
+                ]}
+                onPress={() => {
+                  setDeleteModalVisible(!deleteModalVisible);
+                }}
+              >
+                <Text style={commonStyles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[commonStyles.modalButton, { backgroundColor: "red" }]}
+                onPress={() => {
+                  deletePost(item.id, username, userID);
+                }}
+              >
+                <Text style={commonStyles.modalButtonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <View
-            style={{
-              width: "70%",
-              backgroundColor: "white",
-              borderRadius: 20,
-              padding: 35,
-              alignItem: "center",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacit: 0.25,
-              shadowRadius: 4,
-              elevation: 5,
+        <View style={commonStyles.modalFirstView}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Keyboard.dismiss();
+              setFocused(false);
             }}
           >
-            <Text>Edit Post</Text>
-            {/* <TouchableOpacity
-                style={{ margin: 10 }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text>Cancel</Text>
-              </TouchableOpacity> */}
+            <View style={commonStyles.modalSecondView}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Edit Post
+              </Text>
 
-            <TextInput
-              multiline={true}
-              editable={true}
-              autofocus={true}
-              onChangeText={(text) => {
-                setEditPostContent(text);
-              }}
-              value={editPostContent}
-              clearTextOnFocus={true}
-              style={{ height: "30%", top: 20 }}
-              // onFocus={() => {
-              // setFocused(true);
-              // }}
-            />
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
+              <View style={commonStyles.modalInputBoxWrapper}>
+                <TextInput
+                  multiline={true}
+                  editable={true}
+                  autofocus={true}
+                  onChangeText={(text) => {
+                    setEditPostContent(text);
+                  }}
+                  value={editPostContent}
+                  // clearTextOnFocus={true}
+                  style={[
+                    commonStyles.inputBox,
+                    { borderColor: getBorderColor() },
+                  ]}
+                  onFocus={() => {
+                    setFocused(true);
+                  }}
+                />
+              </View>
+
+              <View style={{ flexDirection: "row", marginTop: 40 }}>
                 <TouchableOpacity
-                  style={{ margin: 10 }}
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#00BCD4" },
+                  ]}
                   onPress={() => {
                     setModalVisible(!modalVisible);
                   }}
                 >
-                  <Text>Cancel</Text>
+                  <Text style={commonStyles.modalButtonText}>Cancel</Text>
                 </TouchableOpacity>
-              </View>
-              <View style={{ flex: 1 }}>
                 <TouchableOpacity
-                  style={{ margin: 10 }}
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#F3B000" },
+                  ]}
                   onPress={() => {
                     updatePost(item.id, item.username, editPostContent);
                     setModalVisible(!modalVisible);
                   }}
                 >
-                  <Text>Save</Text>
+                  <Text style={commonStyles.modalButtonText}>Save</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </TouchableWithoutFeedback>
         </View>
       </Modal>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  // deleteModal: {
+  //   width: "70%",
+  //   backgroundColor: "white",
+  //   borderRadius: 20,
+  //   padding: 35,
+  //   // alignItem: "center",
+  //   shadowColor: "#000",
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacit: 0.25,
+  //   shadowRadius: 4,
+  //   elevation: 5,
+  // },
+});

@@ -11,8 +11,8 @@ import {
   Animated,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-
 import fbdata from "../../firebase.js";
+import commonStyles from "../../commonStyles.js";
 
 import useCurrentDate from "../components/CommonFunctions.js";
 import LikeButton from "../components/LikeButton";
@@ -29,10 +29,9 @@ function QuestionViewAnswer({ navigation, route }) {
     question: questiontext,
     color: questioncolor,
   };
-  const currentDate = useCurrentDate();
 
   const [QAList, setQAList] = useState([]);
-  React.useEffect(() => {
+  useEffect(() => {
     const questionAnswerRef = fbdata
       .database()
       .ref("/qanswer/" + questiontext)
@@ -49,14 +48,17 @@ function QuestionViewAnswer({ navigation, route }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={commonStyles.pageContainer}>
       <Animatable.View
         // animation="fadeInUp"
-        style={[styles.question, { backgroundColor: questioncolor }]}
+        style={[
+          commonStyles.questionHeaderWrapper,
+          { backgroundColor: questioncolor },
+        ]}
       >
-        <View style={{ backgroundColor: "red" }} />
+        <View />
         <SharedElement id={`item.${item.id}.question`}>
-          <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: -20 }}>
+          <Text style={commonStyles.questionText}>
             {" "}
             {item.id}. {item.question}{" "}
           </Text>
@@ -79,17 +81,7 @@ function QuestionViewAnswer({ navigation, route }) {
         </TouchableOpacity>
       </View> */}
 
-      <Animatable.View
-        style={{
-          marginTop: -20,
-          width: "100%",
-          height: "78%",
-          backgroundColor: "white",
-          borderRadius: 20,
-          alignItems: "center",
-        }}
-        // animation="fadeInUp"
-      >
+      <Animatable.View style={commonStyles.answerContainer}>
         <Animatable.View animation="zoomIn">
           <TouchableOpacity
             // animation="fadeInUp"
@@ -106,11 +98,19 @@ function QuestionViewAnswer({ navigation, route }) {
         </Animatable.View>
 
         <FlatList
-          style={{ width: "90%", marginTop: 20 }}
+          style={{
+            width: "95%",
+            marginTop: 20,
+          }}
           data={QAList}
           renderItem={({ item }) => (
             <Animatable.View animation="fadeInUp" style={styles.answerCon}>
+              <Text style={{ marginTop: 10, right: "-47%" }}>
+                {" "}
+                Posted on {item.creationDate}{" "}
+              </Text>
               <Text style={styles.answerText}> {item.answer} </Text>
+
               <View
                 style={{
                   display: "flex",
@@ -139,6 +139,7 @@ function QuestionViewAnswer({ navigation, route }) {
                     display: "flex",
                     flexDirection: "row-reverse",
                     marginTop: 4,
+                    marginLeft: 10,
                     flexGrow: 1,
                   }}
                 >
@@ -154,28 +155,29 @@ function QuestionViewAnswer({ navigation, route }) {
   );
 }
 
-QuestionViewAnswer.SharedElement = (route, otherRoute, showing) => {
-  const { item } = route.params;
-  return [
-    // { id: `item.${item.id}.question` },
-    { id: `item.${item.id}.question`, animation: "fadeInUp" },
-  ];
-};
+// QuestionViewAnswer.SharedElement = (route, otherRoute, showing) => {
+//   const { item } = route.params;
+//   return [
+//     // { id: `item.${item.id}.question` },
+//     { id: `item.${item.id}.question`, animation: "fadeInUp" },
+//   ];
+// };
 
 export default QuestionViewAnswer;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // marginTop: StatusBar.currentHeight || 20,
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-  },
+  // container: {
+  //   flex: 1,
+  //   // marginTop: StatusBar.currentHeight || 20,
+  //   alignItems: "center",
+  //   backgroundColor: "#ffffff",
+  // },
 
   answerCon: {
     marginVertical: 20,
-    padding: 10,
-    width: "100%",
+    padding: 5,
+    width: "95%",
+    alignSelf: "center",
     backgroundColor: "white",
     borderRadius: 20,
     shadowColor: "grey",
@@ -189,42 +191,29 @@ const styles = StyleSheet.create({
   },
 
   answerText: {
-    padding: 20,
+    padding: 10,
     color: "black",
-    fontSize: 22,
+    fontSize: 18,
   },
 
-  question: {
-    // top: 20,
-    // margin: 20,
-    padding: 20,
-    // paddingVertical: 20,
-    // borderRadius: 20,
-    width: "100%",
-    height: "25%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // submitSection: {
+  //   flexDirection: "row",
+  //   height: 100,
+  // },
 
-  submitSection: {
-    flexDirection: "row",
-    height: 100,
-  },
+  // dateCon: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   flex: 3,
+  //   left: 5,
+  // },
 
-  dateCon: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 3,
-    left: 5,
-  },
-
-  todayDate: {
-    fontWeight: "bold",
-    fontSize: 26,
-  },
+  // todayDate: {
+  //   fontWeight: "bold",
+  //   fontSize: 26,
+  // },
 
   newbutton: {
-    // backgroundColor: "#1067CC",
     justifyContent: "center",
     alignItems: "center",
     marginTop: -30,
