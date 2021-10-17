@@ -8,6 +8,10 @@ import {
   useUserAnswer,
 } from "../../components/CommonFunctions.js";
 import ListAnswerbyQuestion from "../../components/EditAnswer";
+import commonStyles, {
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from "../../../commonStyles.js";
 
 export default function QuestByAcc({ navigation }) {
   const userID = useAccountUserid();
@@ -17,6 +21,12 @@ export default function QuestByAcc({ navigation }) {
   return (
     <View>
       <FlatList
+        style={{
+          width: SCREEN_WIDTH * 0.92,
+          borderRadius: 20,
+          // borderWidth: 2,
+          // borderColor: "red",
+        }}
         data={Qlist}
         renderItem={({ item }) => (
           <View>

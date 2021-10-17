@@ -1,3 +1,4 @@
+// @refresh state
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text, View, Button } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -136,7 +137,9 @@ function AccountInfo() {
             handleSignOut();
           }}
         >
-          <Button title="Logout" color="#fff" />
+          <Text style={{ fontSize: 20, fontWeight: "bold", color: "black" }}>
+            Logout
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={stylesSheet.MainContainer}>
@@ -157,7 +160,7 @@ function AccountInfo() {
               borderRadius: 10,
               marginHorizontal: 4,
             }}
-            activeTabStyle={{ backgroundColor: "#1067CC" }}
+            activeTabStyle={{ backgroundColor: "#00BCD4" }}
             tabTextStyle={{
               color: "#000000",
               fontWeight: "bold",
@@ -230,7 +233,11 @@ function AccountInfo() {
                     handleUpdate();
                   }}
                 >
-                  <Button title="Update" color="#fff" />
+                  <Text
+                    style={{ fontSize: 20, fontWeight: "bold", color: "white" }}
+                  >
+                    Update
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -273,10 +280,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
+    marginTop: 40,
     height: 50,
     width: 130,
     borderRadius: 14,
-    backgroundColor: "#1067CC",
+    backgroundColor: "#F3B000",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -346,14 +354,14 @@ const stylesSheet = StyleSheet.create({
     padding: 8,
   },
   button_submit: {
-    height: 40,
-    width: 100,
+    height: 45,
+    width: 105,
     borderRadius: 14,
-    backgroundColor: "#1067CC",
+    backgroundColor: "white",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    color: "white",
+    // color: "black",
     alignSelf: "center",
   },
 

@@ -119,7 +119,7 @@ export default function EditPost(props) {
           <TouchableOpacity
             style={{
               flex: 1,
-              backgroundColor: "red",
+              backgroundColor: "#F02A4B",
               padding: 10,
               margin: 20,
               alignItems: "center",
@@ -162,12 +162,15 @@ export default function EditPost(props) {
                 <Text style={commonStyles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[commonStyles.modalButton, { backgroundColor: "red" }]}
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#F02A4B" },
+                ]}
                 onPress={() => {
                   deletePost(item.id, username, userID);
                 }}
               >
-                <Text style={commonStyles.modalButtonText}>Confirm</Text>
+                <Text style={commonStyles.modalButtonText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>

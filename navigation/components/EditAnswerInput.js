@@ -69,62 +69,73 @@ export default function EditAnswerInput(props) {
   };
 
   return (
-    <View>
-      <Text>{props.item.creationDate}</Text>
-      <Text>{props.item.answer}</Text>
+    <View
+      style={{
+        width: "100%",
+        marginTop: 20,
+        padding: 5,
+        paddingLeft: 15,
+        alignItems: "left",
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        shadowColor: "grey",
+        shadowOffset: {
+          width: 2,
+          height: 2,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 5,
+        elevation: 11,
+      }}
+    >
+      <Text
+        style={{
+          marginTop: 10,
+          // fontSize: 16,
+        }}
+      >
+        Posted on: {props.item.creationDate}
+      </Text>
+      <Text style={{ marginTop: 10 }}>{props.item.answer}</Text>
       <View
         style={{
           flexDirection: "row",
           alignItem: "center",
           justifyContent: "center",
+          marginVertical: 20,
         }}
       >
-        <View
-          style={{
-            flexGrow: 1,
-            alignItem: "center",
-            justifyContent: "center",
-            marginHorizontal: "10%",
-            marginVertical: 10,
-            //   marginLeft: "10%",
-            //   marginRight: "10%",
-          }}
+        <TouchableOpacity
+          style={[
+            commonStyles.modalButton,
+            {
+              backgroundColor: "#F3B000",
+            },
+          ]}
         >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "blue",
-            }}
-          >
-            <Text
-              style={{ textAlign: "center", color: "white" }}
-              onPress={() => {
-                setModalVisible(true);
-              }}
-            >
-              Edit
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexGrow: 1,
-            alignItem: "center",
-            justifyContent: "center",
-            marginHorizontal: "10%",
-            marginVertical: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "green",
-            }}
+          <Text
+            style={commonStyles.modalButtonText}
             onPress={() => {
-              setDeleteModalVisible(true);
+              setModalVisible(true);
             }}
           >
-            <Text style={{ textAlign: "center", color: "white" }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+            Edit
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            commonStyles.modalButton,
+            {
+              backgroundColor: "#F02A4B",
+            },
+          ]}
+          onPress={() => {
+            setDeleteModalVisible(true);
+          }}
+        >
+          <Text style={commonStyles.modalButtonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
 
       <Modal
@@ -154,7 +165,10 @@ export default function EditAnswerInput(props) {
                 <Text style={commonStyles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[commonStyles.modalButton, { backgroundColor: "red" }]}
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#F02A4B" },
+                ]}
                 onPress={() => {
                   deleteAnswer(
                     props.item.question,
@@ -164,7 +178,7 @@ export default function EditAnswerInput(props) {
                   );
                 }}
               >
-                <Text style={commonStyles.modalButtonText}>Confirm</Text>
+                <Text style={commonStyles.modalButtonText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -180,8 +194,18 @@ export default function EditAnswerInput(props) {
         }}
       >
         <View style={commonStyles.modalFirstView}>
-          <View style={commonStyles.modalSecondView}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+          <View
+            style={[
+              commonStyles.modalSecondView,
+              { backgroundColor: "rgba(0,188,212,0.2)" },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+              }}
+            >
               Edit answer
             </Text>
 
@@ -218,7 +242,10 @@ export default function EditAnswerInput(props) {
                 <Text style={commonStyles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[commonStyles.modalButton, { backgroundColor: "red" }]}
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#F3B000" },
+                ]}
                 onPress={() => {
                   updateAnswer(
                     props.item.question,

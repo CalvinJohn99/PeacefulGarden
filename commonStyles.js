@@ -145,7 +145,7 @@ const commonStyles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
   },
 
   modalSecondView: {
@@ -191,7 +191,6 @@ const commonStyles = StyleSheet.create({
   modalInputBoxWrapper: {
     top: 40,
     padding: 8,
-    margin: 10,
     width: "100%",
     height: 300,
     shadowColor: "grey",
