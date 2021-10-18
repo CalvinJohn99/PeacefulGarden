@@ -60,7 +60,7 @@ export default function SigninForm({ navigation }) {
       onChangeText={(value) => setPassword(value)}
       value={password}
       />
-      <TouchableOpacity style={{alignSelf: "flex-end" }}>
+      <TouchableOpacity style={{alignSelf: "flex-end" }} onPress={() => {navigation.navigate("ResetPassword")} }>
           <Text style={{ fontSize: 16 }}>Forget password?</Text>
         </TouchableOpacity>
       <TouchableOpacity
