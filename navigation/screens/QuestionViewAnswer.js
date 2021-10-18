@@ -29,11 +29,12 @@ export default function QuestionViewAnswer({ navigation, route }) {
   const questionid = route.params.item.id;
   const questiontext = route.params.item.question;
   const currentQuestion = { id: questionid, question: questiontext };
-  console.log(currentQuestion);
+  const currentDate = useCurrentDate();
 
   const [QAList, setQAList] = useState([]);
   React.useEffect(() => {
     const questionAnswerRef = fbdata
+      .database()
       .ref("/qanswer/" + questiontext)
       .orderByChild("negTimestamp");
     const OnLoadingListener = questionAnswerRef.once("value", (snapshot) => {
@@ -48,8 +49,6 @@ export default function QuestionViewAnswer({ navigation, route }) {
     };
   }, []);
 
-  const currentDate = useCurrentDate();
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.submitSection}>
@@ -63,7 +62,6 @@ export default function QuestionViewAnswer({ navigation, route }) {
               screen: "QCreateAnswer",
               params: { currentQuestion },
             });
-            // console.log(currentQuestion);
           }}
         >
           <Text style={styles.newbuttontext}>New</Text>
@@ -90,11 +88,36 @@ export default function QuestionViewAnswer({ navigation, route }) {
             <View
               style={{
                 display: "flex",
-                flexDirection: "row-reverse",
-                marginTop: 4,
+                flexDirection: "row",
+                width: "100%",
               }}
             >
-              <LikeButton />
+              <View
+                style={{
+                  flexGrow: 1,
+                  marginTop: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    paddingTop: 6,
+                    paddingLeft: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  by {item.username}
+                </Text>
+              </View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                  marginTop: 4,
+                  flexGrow: 1,
+                }}
+              >
+                <LikeButton question={currentQuestion} answer={item} />
+              </View>
             </View>
           </View>
         )}

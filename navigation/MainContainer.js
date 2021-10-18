@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 // import screens
@@ -18,8 +19,16 @@ import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
 import CreateMood from "./screens/CreateMood";
+import ViewMood from "./screens/ViewMood";
+import History from "./screens/History";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
+import { RelaxMusicScreen } from "./screens/MusicScreen";
+import { PianoMusicScreen } from "./screens/MusicScreen";
+import { RainDropMusicScreen } from "./screens/MusicScreen";
+import { MedMusicScreen } from "./screens/MusicScreen";
+import { SleepMusicScreen } from "./screens/MusicScreen";
+
 
 // Create Self-awareness Question stack
 const QuesStack = createNativeStackNavigator();
@@ -53,6 +62,51 @@ const QuesStackScreen = () => {
     </QuesStack.Navigator>
   );
 };
+const MusicStack = createStackNavigator();
+const MusicStackScreen = () => {
+  return (
+    <MusicStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1067CC" },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <MusicStack.Screen
+        name="A1"
+        component={MusicScreen}
+        options={{ headerTitle: "Music Screen" }}
+      />
+      <MusicStack.Screen
+        name="A2"
+        component={RelaxMusicScreen}
+        options={{ headerTitle: "Relax Music" }}
+      />
+      <MusicStack.Screen
+        name="A3"
+        component={PianoMusicScreen}
+        options={{ headerTitle: "Piano Music" }}
+      />
+      <MusicStack.Screen
+        name="A4"
+        component={RainDropMusicScreen}
+        options={{ headerTitle: "Rain Music" }}
+      />
+      <MusicStack.Screen
+        name="A5"
+        component={MedMusicScreen}
+        options={{ headerTitle: "Med Music" }}
+      />
+      <MusicStack.Screen
+        name="A6"
+        component={SleepMusicScreen}
+        options={{ headerTitle: "Sleep Music" }}
+      />      
+    </MusicStack.Navigator>
+  );
+};
 
 const JMStack = createNativeStackNavigator();
 const JMStackScreen = () => {
@@ -78,6 +132,17 @@ const JMStackScreen = () => {
         component={CreateMood}
         options={{ headerTitle: "Create Mood" }}
       />
+      <JMStack.Screen
+        name="ViewMood"
+        component={ViewMood}
+        options={{ headerTitle: "View Mood" }}
+      />
+
+      <JMStack.Screen
+        name="History"
+        component={History}
+        options={{ headerTitle: "History" }}
+      />
     </JMStack.Navigator>
   );
 };
@@ -96,7 +161,7 @@ function MyTabs() {
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        headerShown: false,
+        // headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -122,7 +187,11 @@ function MyTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerTitle: "Home" }}
+      />
       <Tab.Screen
         name="Post"
         component={GPostScreen}
@@ -175,8 +244,8 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Music"
-        component={MusicScreen}
-        options={{ headerTitle: "Relaxing Music" }}
+        component={MusicStackScreen}
+        options={{ headerShown: false }}
       />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
@@ -184,7 +253,5 @@ function MyTabs() {
 }
 
 export default function MainContainer() {
-  return (  
-      <MyTabs />
-  );
+  return <MyTabs />;
 }

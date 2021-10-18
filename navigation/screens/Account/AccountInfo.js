@@ -9,6 +9,7 @@ import Avatar_Default from '../../../assets/Avatar_Default.png'
 import { Avatar} from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import QuestByAcc from "./QuestByAcc.js";
 
 function AccountInfo() {
   const [uid, setUid] = useState("");
@@ -122,6 +123,7 @@ function AccountInfo() {
               uri: `${image}`,
             }}
           />
+
           <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start", marginHorizontal: 10}}>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginVertical: 5 }}
@@ -189,16 +191,31 @@ function AccountInfo() {
               </Text>
             )}
             {customSelectedIndex === 1 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your questions here{" "}
-              </Text>
+              // <Text style={stylesSheet.tabTextStyle}>
+              //   {" "}
+              //   Selected Tab = Put your questions here{" "}
+              // </Text>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  top: 10,
+                  // justifyContent: "center",
+                }}
+              >
+                <QuestByAcc />
+              </View>
             )}
             {customSelectedIndex === 2 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your setting here{" "}
-              </Text>
+              <View>
+                <Text style={stylesSheet.tabTextStyle}>
+                  {" "}
+                  Selected Tab = Put your setting here{" "}
+                </Text>
+                <TouchableOpacity>
+                  <Text>change color to red</Text>
+                </TouchableOpacity>
+              </View>
             )}
             {customSelectedIndex === 3 && (
               <View>

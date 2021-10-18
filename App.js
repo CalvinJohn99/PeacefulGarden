@@ -15,10 +15,8 @@ import AccountAge from "./navigation/screens/Auth/AccountAge";
 import ResetPassword from './navigation/screens/Auth/ResetPassword'
 import Test from './navigation/screens/Auth/Test'
 
-
 const Stack = createNativeStackNavigator();
 function App() {
-
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -95,7 +93,7 @@ function App() {
           <Stack.Screen
             name="MainContainer"
             component={MainContainer}
-            options={{ title: "MainContainer" }}
+            options={{ headerShown: false }}
           />
           
         )}

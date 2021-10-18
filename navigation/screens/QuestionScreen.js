@@ -27,7 +27,10 @@ const getBackgroundColor = (id) => {
 export default function QuestionScreen({ navigation }) {
   const [QList, setQList] = useState([]);
   React.useEffect(() => {
-    const questionRef = fbdata.ref("/sa-question").orderByChild("id");
+    const questionRef = fbdata
+      .database()
+      .ref("/sa-question")
+      .orderByChild("id");
     const OnLoadingListener = questionRef.once("value", (snapshot) => {
       setQList([]);
       snapshot.forEach((childSnapshot) => {

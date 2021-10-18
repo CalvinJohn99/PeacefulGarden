@@ -11,7 +11,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import fbdata from "../../firebase.js";
-import useCurrentDate from "../components/CommonFunctions.js";
+import useCurrentDate, {
+  useAccountUsername,
+  useDateString,
+} from "../components/CommonFunctions.js";
 
 const getBackgroundColor = (id) => {
   if (id % 3 === 1) {
@@ -23,48 +26,95 @@ const getBackgroundColor = (id) => {
   }
 };
 
-function storeQAnswer(question, answer) {
-  var newAnswerKey = fbdata.ref().child(question).push().key;
+function storeQAnswer(currentQuestion, answer, currentUser, currentDate) {
+  var newAnswerKey = fbdata
+    .database()
+    .ref()
+    .child(currentQuestion.question)
+    .push().key;
   var dataToSave = {
     id: newAnswerKey,
+    username: currentUser,
     answer: answer,
+    creationDate: currentDate,
     timestamp: {
       ".sv": "timestamp",
     },
     negTimestamp: 0,
+    question: currentQuestion,
   };
   var updates = {};
-  updates["/qanswer/" + question + "/" + newAnswerKey] = dataToSave;
-  // fbdata.ref('qanswer/' + question + '/' + key).set(dataToSave);
+  updates["/qanswer/" + currentQuestion.question + "/" + newAnswerKey] =
+    dataToSave;
+  updates[
+    "/qanswerbyuser/" +
+      currentUser +
+      "/" +
+      currentQuestion.question +
+      "/" +
+      newAnswerKey
+  ] = dataToSave;
 
-  return fbdata.ref().update(updates, (error) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("update is sucessful");
-      updateNegTimestamp(question, newAnswerKey);
-    }
+  return fbdata
+    .database()
+    .ref()
+    .update(updates, (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("update is sucessful");
+        updateNegTimestampQA(currentQuestion.question, newAnswerKey);
+        updateNegTimestampQAbyAcc(
+          currentQuestion.question,
+          currentUser,
+          newAnswerKey
+        );
+      }
+    });
+}
+
+function updateNegTimestampQA(question, key) {
+  const timeRef = fbdata
+    .database()
+    .ref("/qanswer/" + question + "/" + key + "/timestamp/");
+  const negTimeRef = fbdata
+    .database()
+    .ref("/qanswer/" + question + "/" + key + "/");
+  timeRef.once("value", (snapshot) => {
+    var negTimestampValue = snapshot.val() * -1;
+    negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
 
-function updateNegTimestamp(question, key) {
-  const timeRef = fbdata.ref(
-    "/qanswer/" + question + "/" + key + "/timestamp/"
-  );
-  const negTimeRef = fbdata.ref("/qanswer/" + question + "/" + key + "/");
+function updateNegTimestampQAbyAcc(question, currentUser, key) {
+  const timeRef = fbdata
+    .database()
+    .ref(
+      "/qanswerbyuser/" +
+        currentUser +
+        "/" +
+        question +
+        "/" +
+        key +
+        "/timestamp/"
+    );
+  const negTimeRef = fbdata
+    .database()
+    .ref("/qanswerbyuser/" + currentUser + "/" + question + "/" + key + "/");
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
-    console.log(negTimestampValue);
     negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
 
 export default function AnswerQuestion({ navigation, route }) {
   const currentDate = useCurrentDate();
+  const currentUser = useAccountUsername();
+  // const dateString = useDateString();
+  const { currentQuestion } = route.params;
   const [answer, setAnswer] = useState("");
   const [focused, setFocused] = useState(false);
   const [errorStatus, setErrorStatus] = useState(false);
-  const { currentQuestion } = route.params;
 
   const getBorderColor = () => {
     if (focused) {
@@ -77,7 +127,7 @@ export default function AnswerQuestion({ navigation, route }) {
     if (answer === "") {
       setErrorStatus(true);
     } else {
-      storeQAnswer(currentQuestion.question, answer);
+      storeQAnswer(currentQuestion, answer, currentUser, currentDate);
       alert("Successfully posted!");
       navigation.navigate("Question", { screen: "QList" });
     }
