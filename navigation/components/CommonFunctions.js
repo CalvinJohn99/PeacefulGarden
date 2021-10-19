@@ -203,3 +203,26 @@ export function getCurrentDateString() {
 
   return year + "-" + month + "-" + date;
 }
+
+export function useCategoryList() {
+  const [categoryList, setCategoryList] = useState([]);
+  useEffect(() => {
+    const postCategoryRef = fbdata
+      .database()
+      .ref("/postCategory/")
+      .orderByChild("key");
+    const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
+      setCategoryList([]);
+      snapshot.forEach((childSnapshot) => {
+        setCategoryList((categoryList) => [
+          ...categoryList,
+          childSnapshot.val(),
+        ]);
+      });
+    });
+    return () => {
+      postCategoryRef.off();
+    };
+  }, []);
+  return categoryList;
+}

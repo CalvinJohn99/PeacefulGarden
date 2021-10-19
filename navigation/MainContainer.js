@@ -16,6 +16,7 @@ import commonStyles, { SCREEN_WIDTH, SCREEN_HEIGHT } from "../commonStyles";
 // import screens
 import HomeScreen from "./screens/HomeScreen";
 import GPostScreen from "./screens/GPostScreen";
+import CreatePost from "./screens/CreatePost.js";
 import QuestionScreen from "./screens/QuestionScreen";
 import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
@@ -26,13 +27,44 @@ import History from "./screens/History";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
+// Create Gratefulness Post stack
+const GPostStack = createStackNavigator();
+
+const GPostStackScreen = () => {
+  return (
+    <GPostStack.Navigator
+      initialRouteName="GPostList"
+      screenOptions={{
+        headerStyle: commonStyles.headerBGColor,
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <QuesStack.Screen
+        name="GPostList"
+        component={GPostScreen}
+        options={{ headerTitle: "Gratefulness Post" }}
+      />
+      <QuesStack.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={() => ({
+          headerTitle: "Create Gratefulness Post",
+        })}
+      />
+    </GPostStack.Navigator>
+  );
+};
+
 // Create Self-awareness Question stack
 const QuesStack = createStackNavigator();
 // const QuesStack = createSharedElementStackNavigator();
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
-      // initialRouteName="QList"
+      initialRouteName="QList"
       screenOptions={{
         headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
@@ -184,8 +216,17 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Post"
-        component={GPostScreen}
-        options={{ headerTitle: "Gratefulness Post" }}
+        component={GPostStackScreen}
+        options={{ headerShown: false }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            const routeName =
+              getFocusedRouteNameFromRoute(route) ?? "GPostList";
+            if (routeName !== "GPostList") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Question"
