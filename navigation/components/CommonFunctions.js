@@ -195,3 +195,11 @@ export function decreasePostCount(currentUserID) {
     userRef.update({ postCount: newCount });
   });
 }
+
+export function getCurrentDateString() {
+  var date = new Date().getDate();
+  var month = new Date().getMonth() + 1;
+  var year = new Date().getFullYear();
+
+  return year + "-" + month + "-" + date;
+}

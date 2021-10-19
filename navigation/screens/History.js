@@ -1,8 +1,8 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
-  TextInput,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -10,19 +10,20 @@ import {
   Image,
   Animated,
 } from "react-native";
-
-import { useState, useEffect } from "react";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import { FontAwesome, Octicons } from "@expo/vector-icons";
 
 import fbdata from "../../firebase.js";
-import useCurrentDate from "../components/CommonFunctions.js";
+import useCurrentDate, {
+  useAccountUsername,
+} from "../components/CommonFunctions.js";
 import FloatingButton from "../components/FloatingButton.js";
 //import ViewMood from "./ViewMood";
 //import {Card, Avatar} from 'react-native-paper';
 
 export default function History({ navigation }) {
   const currentDate = useCurrentDate();
+  const currentUsername = useAccountUsername();
   const mood = { color: "green" };
   const journal = { color: "blue" };
 
@@ -53,7 +54,10 @@ export default function History({ navigation }) {
           }}
           maxDate={new Date()}
           onDayPress={(day) => {
-            console.log("selected day", day);
+            navigation.navigate("Journal", {
+              screen: "ViewMood",
+              params: { currentUsername, day },
+            });
           }}
           onDayLongPress={(day) => {
             console.log("selected day", day);

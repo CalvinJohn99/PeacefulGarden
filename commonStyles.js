@@ -41,6 +41,16 @@ const commonStyles = StyleSheet.create({
     //justifyContent: 'center',
   },
 
+  todayDate: {
+    width: "100%",
+    textAlign: "center",
+    top: 20,
+    fontWeight: "bold",
+    fontSize: 26,
+    // borderWidth: 2,
+    // borderColor: "red",
+  },
+
   openingImageWrapper: {
     width: SCREEN_WIDTH * 0.85,
     height: "30%",
@@ -136,6 +146,8 @@ const commonStyles = StyleSheet.create({
     paddingTop: 20,
   },
 
+  // Mood and Journal
+
   // Music Screen StyleSheet
   playMusic: {
     alignSelf: "center",
@@ -192,7 +204,7 @@ const commonStyles = StyleSheet.create({
     top: 40,
     padding: 8,
     width: "100%",
-    height: 300,
+    height: SCREEN_HEIGHT * 0.3,
     shadowColor: "grey",
     shadowOffset: {
       width: 2,
