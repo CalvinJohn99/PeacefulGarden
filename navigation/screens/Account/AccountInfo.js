@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import Avatar_Default from '../../../assets/Avatar_Default.png'
-import { Avatar} from "react-native-elements";
+import Avatar_Default from "../../../assets/Avatar_Default.png";
+import { Avatar } from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import QuestByAcc from "./QuestByAcc.js";
 
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "react-native-elements";
+const sleep = m => new Promise(r => setTimeout(r, m))
 function AccountInfo() {
   const [uid, setUid] = useState("");
   const [image, setImage] = useState(Avatar_Default);
@@ -19,11 +28,13 @@ function AccountInfo() {
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
   const [verify, setVerify] = useState(false);
   const [isLoading, setShowLoading] = useState(false);
+  const [updateEmail, setUpdateEmail] = useState(null);
+  const [updateUserName, setUpdateUserName] = useState(null);
 
   useEffect(() => {
     setShowLoading(true);
     __isTheUserAuthenticated();
-  }, []); 
+  }, []);
 
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
@@ -31,7 +42,7 @@ function AccountInfo() {
     setImage(fbdata.auth().currentUser.photoURL);
     setUserName(fbdata.auth().currentUser.displayName);
     setVerify(fbdata.auth().currentUser.emailVerified);
-    
+
     if (userId !== null) {
       fbdata
         .database()
@@ -76,6 +87,21 @@ function AccountInfo() {
     fbdata.auth().currentUser.sendEmailVerification();
   }
 
+  async function handleUpdateSetting() {
+    const auth = fbdata.auth();
+    try {
+      await auth.currentUser.updateEmail(updateEmail);
+      await auth.currentUser.updateProfile({displayName: updateUserName});
+      console.log("Email updated!!");
+      alert("Email updated!! Please sign in again");
+      await sleep(3000);
+      handleSignOut();
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  }
+
   const updateCustomSegment = (index) => {
     setCustomSelectedIndex(index);
   };
@@ -109,14 +135,12 @@ function AccountInfo() {
     );
   });
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topInfo}>
         <View style={styles.userInfo}>
           <Avatar
-            containerStyle={{borderWidth: 3, borderColor:"white"}}
+            containerStyle={{ borderWidth: 3, borderColor: "white" }}
             size="large"
             rounded
             source={{
@@ -124,26 +148,64 @@ function AccountInfo() {
             }}
           />
 
-          <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start", marginHorizontal: 10}}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+              marginHorizontal: 10,
+            }}
+          >
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginVertical: 5 }}
             >
               {username}
             </Text>
             {verify ? (
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
                 <AntDesign name="checkcircle" color="green" size={12} />
-                <Text style={{color: "green", fontSize: 12}}> Verified Email</Text>
+                <Text style={{ color: "green", fontSize: 12 }}>
+                  {" "}
+                  Verified Email
+                </Text>
               </View>
             ) : (
-              <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start"}}>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
-                <FontAwesome name="warning" color="red" size={12} />
-                <Text style={{color: "red", fontSize: 12}}> Please verify your email</Text>
-              </View>
-              <TouchableOpacity style={{marginVertical: 5}} onPress={() => handleSendVerifyEmail()}>
-                <Text>Send Again</Text>
-              </TouchableOpacity>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                }}
+              >
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <FontAwesome name="warning" color="red" size={12} />
+                  <Text style={{ color: "red", fontSize: 12 }}>
+                    {" "}
+                    Please verify your email
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{ marginVertical: 5 }}
+                  onPress={() => handleSendVerifyEmail()}
+                >
+                  <Text>Send Again</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -207,13 +269,33 @@ function AccountInfo() {
               </View>
             )}
             {customSelectedIndex === 2 && (
-              <View>
-                <Text style={stylesSheet.tabTextStyle}>
-                  {" "}
-                  Selected Tab = Put your setting here{" "}
-                </Text>
-                <TouchableOpacity>
-                  <Text>change color to red</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  paddingVertical: 20,
+                }}
+              >
+                <Text style={styles.text}>Username</Text>
+                <Input
+                  placeholder={fbdata.auth().currentUser.displayName}
+                  onChangeText={(value) => setUpdateUserName(value)}
+                  value={updateUserName}
+                />
+                <Text style={styles.text}>Email</Text>
+                <Input
+                  placeholder={fbdata.auth().currentUser.email}
+                  onChangeText={(value) => setUpdateEmail(value)}
+                  value={updateEmail}
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    handleUpdateSetting();
+                  }}
+                >
+                  <Button title="Update" color="#fff" />
                 </TouchableOpacity>
               </View>
             )}
@@ -303,6 +385,16 @@ const styles = StyleSheet.create({
   },
   tabview: {
     backgroundColor: "#000000",
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  text: {
+    fontSize: 16,
+    marginHorizontal: 10,
   },
 });
 
