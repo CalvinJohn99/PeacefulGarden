@@ -43,156 +43,33 @@ export default function ViewMood({ navigation, route }) {
     };
   }, []);
 
-  // const renderItem = ({ item }) => {
-  //   return (
-  //     <View>
-  //       <TouchableOpacity
-  //         style={{
-  //           width: "90%",
-  //           marginVertical: 20,
-  //           display: "flex",
-  //           flexDirection: "row",
-  //           alignSelf: "center",
-  //           backgroundColor: "white",
-  //           // borderWidth: 2,
-  //           // borderColor: "grey",
-  //           borderRadius: 20,
-  //           shadowColor: "grey",
-  //           shadowOffset: {
-  //             width: 5,
-  //             height: 5,
-  //           },
-  //           shadowOpacity: 0.36,
-  //           shadowRadius: 10,
-  //           elevation: 9,
-  //         }}
-  //         onLongPress={() => {
-  //           setModalVisible(true);
-  //         }}
-  //         activeOpacity={0.6}
-  //       >
-  //         <FontAwesome5
-  //           name={item.moodFontAwesome5Icon}
-  //           size={40}
-  //           color={item.color}
-  //           style={{ flex: 1, marginLeft: 10, marginVertical: 10 }}
-  //         />
-  //         <Text
-  //           style={{
-  //             flex: 3,
-  //             marginLeft: 10,
-  //             marginTop: 15,
-  //             marginBottom: 10,
-  //             fontSize: 16,
-  //           }}
-  //         >
-  //           {" "}
-  //           {item.comment}{" "}
-  //         </Text>
-  //       </TouchableOpacity>
-
-  //       <Modal
-  //         animationType="slide"
-  //         transparent={true}
-  //         visible={modalVisible}
-  //         onRequestClose={() => {
-  //           setModalVisible(!modalVisible);
-  //         }}
-  //       >
-  //         <View style={commonStyles.modalFirstView}>
-  //           <View
-  //             style={[
-  //               commonStyles.modalSecondView,
-  //               { backgroundColor: "rgba(0,188,212,0.2)" },
-  //             ]}
-  //           >
-  //             <TouchableOpacity
-  //               onPress={() => {
-  //                 setModalVisible(!modalVisible);
-  //               }}
-  //             >
-  //               <FontAwesome5 name="times" size={40} color="black" />
-  //             </TouchableOpacity>
-
-  //             <View style={{ flexDirection: "row", marginTop: 40 }}>
-  //               <TouchableOpacity
-  //                 style={[
-  //                   commonStyles.modalButton,
-  //                   { backgroundColor: "#F3B000" },
-  //                 ]}
-  //                 onPress={() => {}}
-  //               >
-  //                 <Text style={commonStyles.modalButtonText}>Edit</Text>
-  //               </TouchableOpacity>
-  //               <TouchableOpacity
-  //                 style={[
-  //                   commonStyles.modalButton,
-  //                   { backgroundColor: "#F02A4B" },
-  //                 ]}
-  //                 onPress={() => {
-  //                   setDeleteModalVisible(true);
-  //                 }}
-  //               >
-  //                 <Text style={commonStyles.modalButtonText}>Delete</Text>
-  //               </TouchableOpacity>
-  //             </View>
-
-  //             <Modal
-  //               animationType="fade"
-  //               transparent={true}
-  //               visible={deleteModalVisible}
-  //               onRequestClose={() => {
-  //                 setDeleteModalVisible(!deleteModalVisible);
-  //               }}
-  //             >
-  //               <View style={commonStyles.modalFirstView}>
-  //                 <View style={commonStyles.modalSecondView}>
-  //                   <Text style={commonStyles.deleteWarningTitle}>
-  //                     Confirm delete?
-  //                   </Text>
-  //                   <Text style={commonStyles.deleteWarningText}>
-  //                     * Once delete, it is unrecoverable!
-  //                   </Text>
-  //                   <View style={{ flexDirection: "row", marginVertical: 10 }}>
-  //                     <TouchableOpacity
-  //                       style={[
-  //                         commonStyles.modalButton,
-  //                         { backgroundColor: "#00BCD4" },
-  //                       ]}
-  //                       onPress={() => {
-  //                         setDeleteModalVisible(!deleteModalVisible);
-  //                       }}
-  //                     >
-  //                       <Text style={commonStyles.modalButtonText}>Cancel</Text>
-  //                     </TouchableOpacity>
-  //                     <TouchableOpacity
-  //                       style={[
-  //                         commonStyles.modalButton,
-  //                         { backgroundColor: "#F02A4B" },
-  //                       ]}
-  //                       onPress={() => {
-  //                         deleteMood(item, currentUsername, day.dateString);
-  //                       }}
-  //                     >
-  //                       <Text style={commonStyles.modalButtonText}>Delete</Text>
-  //                     </TouchableOpacity>
-  //                   </View>
-  //                 </View>
-  //               </View>
-  //             </Modal>
-  //           </View>
-  //         </View>
-  //       </Modal>
-  //     </View>
-  //   );
-  // };
-
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
-      <View>
+      {/* <View style={{ borderWidth: 2, borderColor: "red" }}>
         <Text style={commonStyles.todayDate}> {currentDate} </Text>
-        <Text style={commonStyles.todayDate}> {day.dateString} </Text>
-      </View>
+        <Text
+          style={[
+            commonStyles.todayDate,
+            { borderWidth: 2, borderColor: "blue" },
+          ]}
+        >
+          {" "}
+          {day.dateString}{" "}
+        </Text>
+      </View> */}
+      <Text
+        style={[
+          commonStyles.todayDate,
+          // { borderWidth: 2, borderColor: "blue" },
+        ]}
+      >
+        {" "}
+        {day.dateString}{" "}
+      </Text>
+
+      <Text style={{ marginTop: 50, fontSize: 20, fontWeight: "bold" }}>
+        Mood
+      </Text>
 
       <FlatList
         style={{

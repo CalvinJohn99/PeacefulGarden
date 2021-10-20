@@ -204,6 +204,43 @@ export function getCurrentDateString() {
   return year + "-" + month + "-" + date;
 }
 
+export function getDateFormatOne(dateOb) {
+  // let dateOb = new Date(date);
+  let dd = dateOb.getDate();
+  let mm = dateOb.getMonth() + 1;
+  let yyyy = dateOb.getFullYear();
+  if (dd < 10) {
+    dd = "0" + dd;
+  }
+  if (mm < 10) {
+    mm = "0" + mm;
+  }
+  const formatedDateOb = yyyy + "-" + mm + "-" + dd;
+  return formatedDateOb;
+}
+
+export function getDateFormatTwo(dateOb) {
+  var months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  var day = dateOb.getDate();
+  var monthWord = months[dateOb.getMonth()];
+  var fullYear = dateOb.getFullYear();
+  const formatedDateOb = day + " " + monthWord + " " + fullYear;
+  return formatedDateOb;
+}
+
 export function useCategoryList() {
   const [categoryList, setCategoryList] = useState([]);
   useEffect(() => {

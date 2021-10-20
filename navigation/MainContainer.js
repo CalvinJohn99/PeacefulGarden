@@ -22,6 +22,7 @@ import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
 import JournalMoodScreen from "./screens/JournalMoodScreen";
 import CreateMood from "./screens/CreateMood";
+import CreateJournal from "./screens/CreateJournal.js";
 import ViewMood from "./screens/ViewMood";
 import History from "./screens/History";
 import MusicScreen from "./screens/MusicScreen";
@@ -130,6 +131,13 @@ const JMStackScreen = () => {
         component={CreateMood}
         options={{ headerTitle: "Create Mood" }}
       />
+
+      <JMStack.Screen
+        name="CreateJournal"
+        component={CreateJournal}
+        options={{ headerTitle: "Create Journal" }}
+      />
+
       <JMStack.Screen
         name="ViewMood"
         component={ViewMood}
