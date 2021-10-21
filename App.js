@@ -12,6 +12,8 @@ import SigninForm from "./navigation/screens/Auth/SigninForm";
 import MainAccountScreen from "./navigation/screens/Auth/MainAccountScreen";
 import AccountQuestion from "./navigation/screens/Auth/AccountQuestion";
 import AccountAge from "./navigation/screens/Auth/AccountAge";
+import ResetPassword from './navigation/screens/Auth/ResetPassword'
+import Test from './navigation/screens/Auth/Test'
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -27,6 +29,9 @@ function App() {
   }
 
   useEffect(() => {
+    // fbdata
+    //   .auth()
+    //   .signOut()
     const subscriber = fbdata.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
@@ -73,6 +78,16 @@ function App() {
               component={AccountAge}
               options={{ title: "Create New Account" }}
             />
+            <Stack.Screen
+              name="ResetPassword"
+              component={ResetPassword}
+              options={{ title: "Reset Password" }}
+            />
+             <Stack.Screen
+              name="Test"
+              component={Test}
+              options={{ title: "Test" }}
+            />
           </>
         ) : (
           <Stack.Screen
@@ -80,6 +95,7 @@ function App() {
             component={MainContainer}
             options={{ headerShown: false }}
           />
+          
         )}
       </Stack.Navigator>
     </NavigationContainer>

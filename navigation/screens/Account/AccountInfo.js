@@ -1,59 +1,48 @@
-// @refresh state
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Button } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import { Avatar } from "react-native-elements";
+import Avatar_Default from '../../../assets/Avatar_Default.png'
+import { Avatar} from "react-native-elements";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import QuestByAcc from "./QuestByAcc.js";
-import PostByAcc from "./PostByAcc.js";
 
 function AccountInfo() {
-  const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
+  const [image, setImage] = useState(Avatar_Default);
+  const [username, setUserName] = useState("");
   const [interest, setInterest] = useState(Interest);
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
-  // const [postCount, setPostCount] = useState(0);
-  // console.log("111:", postCount);
   const [verify, setVerify] = useState(false);
   const [isLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
+    setShowLoading(true);
     __isTheUserAuthenticated();
-  }, []);
+  }, []); 
 
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
     setUid(userId);
+    setImage(fbdata.auth().currentUser.photoURL);
+    setUserName(fbdata.auth().currentUser.displayName);
+    setVerify(fbdata.auth().currentUser.emailVerified);
+    
     if (userId !== null) {
       fbdata
         .database()
         .ref("users/" + userId)
         .on("value", (querySnapShot) => {
           let userinfo = querySnapShot.val() ? querySnapShot.val() : {};
-          setUser(userinfo);
           setInterest(userinfo["interest"]);
         });
     }
+    setShowLoading(false);
   }
-
-  // useEffect(() => {
-  //   const postCountRef = fbdata
-  //     .database()
-  //     .ref("/postsbyacc/" + user["username"]);
-  //   const OnLoadingListener = postCountRef.on("value", (snapshot) => {
-  //     setPostCount(0);
-  //     if (snapshot.exists) {
-  //       setPostCount(snapshot.numChildren());
-  //     }
-  //   });
-  //   return () => {
-  //     postCountRef.off("value", OnLoadingListener);
-  //   };
-  // }, []);
-
   function handleSignOut() {
     fbdata
       .auth()
@@ -81,6 +70,10 @@ function AccountInfo() {
           }
         }
       );
+  }
+
+  function handleSendVerifyEmail() {
+    fbdata.auth().currentUser.sendEmailVerification();
   }
 
   const updateCustomSegment = (index) => {
@@ -116,22 +109,44 @@ function AccountInfo() {
     );
   });
 
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topInfo}>
         <View style={styles.userInfo}>
           <Avatar
+            containerStyle={{borderWidth: 3, borderColor:"white"}}
             size="large"
             rounded
             source={{
-              uri: `${user["img"]}`,
+              uri: `${image}`,
             }}
           />
-          <Text
-            style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}
-          >
-            {user["username"]}
-          </Text>
+
+          <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start", marginHorizontal: 10}}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", marginVertical: 5 }}
+            >
+              {username}
+            </Text>
+            {verify ? (
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+                <AntDesign name="checkcircle" color="green" size={12} />
+                <Text style={{color: "green", fontSize: 12}}> Verified Email</Text>
+              </View>
+            ) : (
+              <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start"}}>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+                <FontAwesome name="warning" color="red" size={12} />
+                <Text style={{color: "red", fontSize: 12}}> Please verify your email</Text>
+              </View>
+              <TouchableOpacity style={{marginVertical: 5}} onPress={() => handleSendVerifyEmail()}>
+                <Text>Send Again</Text>
+              </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
         <TouchableOpacity
           style={stylesSheet.button_submit}
@@ -139,16 +154,14 @@ function AccountInfo() {
             handleSignOut();
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "black" }}>
-            Logout
-          </Text>
+          <Button title="Logout" color="#fff" />
         </TouchableOpacity>
       </View>
       <View style={stylesSheet.MainContainer}>
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
-            badges={[user["postCount"], user["answerCount"]]}
+            badges={[40, 36]}
             values={["Post", "Quest", "Setting", "Interest"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
@@ -162,7 +175,7 @@ function AccountInfo() {
               borderRadius: 10,
               marginHorizontal: 4,
             }}
-            activeTabStyle={{ backgroundColor: "#00BCD4" }}
+            activeTabStyle={{ backgroundColor: "#1067CC" }}
             tabTextStyle={{
               color: "#000000",
               fontWeight: "bold",
@@ -172,20 +185,10 @@ function AccountInfo() {
           />
           <View style={stylesSheet.contentStyle}>
             {customSelectedIndex === 0 && (
-              // <Text style={stylesSheet.tabTextStyle}>
-              //   {" "}
-              //   Selected Tab = Put your posts here{" "}
-              // </Text>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  top: 10,
-                  // justifyContent: "center",
-                }}
-              >
-                <PostByAcc username={user["username"]} userID={uid} />
-              </View>
+              <Text style={stylesSheet.tabTextStyle}>
+                {" "}
+                Selected Tab = Put your posts here{" "}
+              </Text>
             )}
             {customSelectedIndex === 1 && (
               // <Text style={stylesSheet.tabTextStyle}>
@@ -235,11 +238,7 @@ function AccountInfo() {
                     handleUpdate();
                   }}
                 >
-                  <Text
-                    style={{ fontSize: 20, fontWeight: "bold", color: "white" }}
-                  >
-                    Update
-                  </Text>
+                  <Button title="Update" color="#fff" />
                 </TouchableOpacity>
               </View>
             )}
@@ -282,11 +281,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    marginTop: 40,
     height: 50,
     width: 130,
     borderRadius: 14,
-    backgroundColor: "#F3B000",
+    backgroundColor: "#1067CC",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -356,14 +354,14 @@ const stylesSheet = StyleSheet.create({
     padding: 8,
   },
   button_submit: {
-    height: 45,
-    width: 105,
+    height: 40,
+    width: 100,
     borderRadius: 14,
-    backgroundColor: "white",
+    backgroundColor: "#1067CC",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // color: "black",
+    color: "white",
     alignSelf: "center",
   },
 
