@@ -21,7 +21,7 @@ export default function ListAnswerbyQuestion(props) {
       .orderByChild("negTimestamp");
     const OnLoadingListener = accQARef.on("value", (snapshot) => {
       setQabyacc([]);
-      if (snapshot.exists) {
+      if (snapshot.exists()) {
         snapshot.forEach((childSnapshot) => {
           setQabyacc((qabyacc) => [...qabyacc, childSnapshot.val()]);
         });
@@ -36,14 +36,68 @@ export default function ListAnswerbyQuestion(props) {
     return null;
   }
   return (
-    <View>
-      <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-        {props.question.question}
-      </Text>
+    <View
+      style={{
+        width: "100%",
+        // borderWidth: 2,
+        // borderColor: "black",
+        backgroundColor: "white",
+        borderRadius: 20,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        marginVertical: 20,
+        borderWidth: 1,
+        borderColor: "rgba(178,185,214,0.5)",
+        // shadowColor: "grey",
+        // shadowOffset: {
+        //   width: 2,
+        //   height: 5,
+        // },
+        // shadowOpacity: 0.36,
+        // shadowRadius: 5,
+        // elevation: 11,
+      }}
+    >
+      <View
+        style={{
+          width: "100%",
+          backgroundColor: props.question.color,
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: 20,
+          paddingHorizontal: 15,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          shadowColor: "grey",
+          shadowOffset: {
+            width: 0,
+            height: 5,
+          },
+          shadowOpacity: 0.36,
+          shadowRadius: 5,
+          elevation: 11,
+        }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+          {props.question.question}
+        </Text>
+      </View>
       <FlatList
-        // style={{ top: 20 }}
+        style={{
+          alignItems: "left",
+          marginHorizontal: 10,
+          paddingBottom: 20,
+        }}
         data={qabyacc}
-        renderItem={({ item }) => <EditAnswerInput item={item} />}
+        renderItem={({ item }) => (
+          <EditAnswerInput
+            item={item}
+            username={props.username}
+            userID={props.userID}
+          />
+        )}
       />
     </View>
   );

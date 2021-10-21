@@ -9,25 +9,25 @@ import {
   StatusBar,
   TouchableOpacity,
 } from "react-native";
+
 import fbdata from "../../firebase.js";
-import commonStyles from "../../commonStyles.js";
 
 import useCurrentDate from "../components/CommonFunctions.js";
-import { SharedElement } from "react-navigation-shared-element";
+import { SharedElement } from "react-native-shared-element";
 
-// const getBackgroundColor = (id) => {
-//   if (id % 3 === 1) {
-//     return "#B6E4CB";
-//   } else if (id % 3 === 2) {
-//     return "#B5CBDF";
-//   } else if (id % 3 === 0) {
-//     return "#E8D8D8";
-//   }
-// };
+const getBackgroundColor = (id) => {
+  if (id % 3 === 1) {
+    return "#B6E4CB";
+  } else if (id % 3 === 2) {
+    return "#B5CBDF";
+  } else if (id % 3 === 0) {
+    return "#E8D8D8";
+  }
+};
 
-function QuestionScreen({ navigation }) {
+export default function QuestionScreen({ navigation }) {
   const [QList, setQList] = useState([]);
-  useEffect(() => {
+  React.useEffect(() => {
     const questionRef = fbdata
       .database()
       .ref("/sa-question")
@@ -36,6 +36,7 @@ function QuestionScreen({ navigation }) {
       setQList([]);
       snapshot.forEach((childSnapshot) => {
         setQList((QList) => [...QList, childSnapshot.val()]);
+        console.log(childSnapshot.val());
       });
     });
     return () => {
@@ -46,13 +47,13 @@ function QuestionScreen({ navigation }) {
   const currentDate = useCurrentDate();
 
   return (
-    <SafeAreaView style={commonStyles.pageContainer}>
-      {/* <View>
+    <SafeAreaView style={styles.container}>
+      <View>
         <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 26 }}>
           {" "}
           {currentDate}{" "}
         </Text>
-      </View> */}
+      </View>
 
       <FlatList
         style={{ top: 20 }}
@@ -65,14 +66,13 @@ function QuestionScreen({ navigation }) {
                 screen: "QViewAnswer",
                 params: { item },
               });
+              console.log({ item });
             }}
           >
-            <SharedElement id={`item.${item.id}.question`}>
-              <Text style={styles.question}>
-                {" "}
-                {item.id}. {item.question}{" "}
-              </Text>
-            </SharedElement>
+            <Text style={styles.question}>
+              {" "}
+              {item.id}. {item.question}{" "}
+            </Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -81,9 +81,13 @@ function QuestionScreen({ navigation }) {
   );
 }
 
-export default QuestionScreen;
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // marginTop: StatusBar.currentHeight || 20,
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
   item: {
     margin: 20,
     padding: 20,

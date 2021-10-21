@@ -8,31 +8,30 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Animated,
 } from "react-native";
-
+import * as Animatable from "react-native-animatable";
 import fbdata from "../../firebase.js";
+import commonStyles from "../../commonStyles.js";
 
 import useCurrentDate from "../components/CommonFunctions.js";
 import LikeButton from "../components/LikeButton";
+import { SharedElement } from "react-navigation-shared-element";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const getBackgroundColor = (id) => {
-  if (id % 3 === 1) {
-    return "#B6E4CB";
-  } else if (id % 3 === 2) {
-    return "#B5CBDF";
-  } else if (id % 3 === 0) {
-    return "#E8D8D8";
-  }
-};
-
-export default function QuestionViewAnswer({ navigation, route }) {
+function QuestionViewAnswer({ navigation, route }) {
+  const { item } = route.params;
   const questionid = route.params.item.id;
   const questiontext = route.params.item.question;
-  const currentQuestion = { id: questionid, question: questiontext };
-  const currentDate = useCurrentDate();
+  const questioncolor = route.params.item.color;
+  const currentQuestion = {
+    id: questionid,
+    question: questiontext,
+    color: questioncolor,
+  };
 
   const [QAList, setQAList] = useState([]);
-  React.useEffect(() => {
+  useEffect(() => {
     const questionAnswerRef = fbdata
       .database()
       .ref("/qanswer/" + questiontext)
@@ -41,7 +40,6 @@ export default function QuestionViewAnswer({ navigation, route }) {
       setQAList([]);
       snapshot.forEach((childSnapshot) => {
         setQAList((QAList) => [...QAList, childSnapshot.val()]);
-        console.log(childSnapshot.val());
       });
     });
     return () => {
@@ -50,8 +48,23 @@ export default function QuestionViewAnswer({ navigation, route }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.submitSection}>
+    <SafeAreaView style={commonStyles.pageContainer}>
+      <Animatable.View
+        // animation="fadeInUp"
+        style={[
+          commonStyles.questionHeaderWrapper,
+          { backgroundColor: questioncolor },
+        ]}
+      >
+        <View />
+        <SharedElement id={`item.${item.id}.question`}>
+          <Text style={commonStyles.questionText}>
+            {" "}
+            {item.id}. {item.question}{" "}
+          </Text>
+        </SharedElement>
+      </Animatable.View>
+      {/* <View style={styles.submitSection}>
         <View style={styles.dateCon}>
           <Text style={styles.todayDate}> {currentDate} </Text>
         </View>
@@ -66,78 +79,105 @@ export default function QuestionViewAnswer({ navigation, route }) {
         >
           <Text style={styles.newbuttontext}>New</Text>
         </TouchableOpacity>
-      </View>
-      <View
-        style={[
-          styles.question,
-          { backgroundColor: getBackgroundColor(questionid) },
-        ]}
-      >
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-          {" "}
-          {questionid}. {questiontext}{" "}
-        </Text>
-      </View>
+      </View> */}
 
-      <FlatList
-        style={{ top: 20, width: "90%" }}
-        data={QAList}
-        renderItem={({ item }) => (
-          <View style={styles.answerCon}>
-            <Text style={styles.answerText}> {item.answer} </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-              }}
-            >
-              <View
-                style={{
-                  flexGrow: 1,
-                  marginTop: 4,
-                }}
-              >
-                <Text
-                  style={{
-                    paddingTop: 6,
-                    paddingLeft: 20,
-                    fontWeight: "bold",
-                  }}
-                >
-                  by {item.username}
-                </Text>
-              </View>
+      <Animatable.View style={commonStyles.answerContainer}>
+        <Animatable.View animation="zoomIn">
+          <TouchableOpacity
+            // animation="fadeInUp"
+            style={styles.newbutton}
+            onPress={() => {
+              navigation.navigate("Question", {
+                screen: "QCreateAnswer",
+                params: { currentQuestion },
+              });
+            }}
+          >
+            <Ionicons name="add-circle" size={60} color="#f3b000" />
+          </TouchableOpacity>
+        </Animatable.View>
+
+        <FlatList
+          style={{
+            width: "95%",
+            marginTop: 20,
+          }}
+          data={QAList}
+          renderItem={({ item }) => (
+            <Animatable.View animation="fadeInUp" style={styles.answerCon}>
+              <Text style={{ marginTop: 10, right: "-47%" }}>
+                {" "}
+                Posted on {item.creationDate}{" "}
+              </Text>
+              <Text style={styles.answerText}> {item.answer} </Text>
+
               <View
                 style={{
                   display: "flex",
-                  flexDirection: "row-reverse",
-                  marginTop: 4,
-                  flexGrow: 1,
+                  flexDirection: "row",
+                  width: "100%",
                 }}
               >
-                <LikeButton question={currentQuestion} answer={item} />
+                <View
+                  style={{
+                    flexGrow: 1,
+                    marginTop: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      paddingTop: 6,
+                      paddingLeft: 20,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    by {item.username}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    marginTop: 4,
+                    marginLeft: 10,
+                    flexGrow: 1,
+                  }}
+                >
+                  <LikeButton question={currentQuestion} answer={item} />
+                </View>
               </View>
-            </View>
-          </View>
-        )}
-        keyExtractor={(item) => item.id}
-      ></FlatList>
+            </Animatable.View>
+          )}
+          keyExtractor={(item) => item.id}
+        ></FlatList>
+      </Animatable.View>
     </SafeAreaView>
   );
 }
 
+// QuestionViewAnswer.SharedElement = (route, otherRoute, showing) => {
+//   const { item } = route.params;
+//   return [
+//     // { id: `item.${item.id}.question` },
+//     { id: `item.${item.id}.question`, animation: "fadeInUp" },
+//   ];
+// };
+
+export default QuestionViewAnswer;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 20,
-    alignItems: "center",
-  },
+  // container: {
+  //   flex: 1,
+  //   // marginTop: StatusBar.currentHeight || 20,
+  //   alignItems: "center",
+  //   backgroundColor: "#ffffff",
+  // },
 
   answerCon: {
     marginVertical: 20,
-    padding: 10,
-    width: "100%",
+    padding: 5,
+    width: "95%",
+    alignSelf: "center",
     backgroundColor: "white",
     borderRadius: 20,
     shadowColor: "grey",
@@ -151,44 +191,40 @@ const styles = StyleSheet.create({
   },
 
   answerText: {
-    padding: 20,
+    padding: 10,
     color: "black",
+    fontSize: 18,
   },
 
-  question: {
-    top: 20,
-    margin: 20,
-    padding: 20,
-    borderRadius: 20,
-    width: "90%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // submitSection: {
+  //   flexDirection: "row",
+  //   height: 100,
+  // },
 
-  submitSection: {
-    flexDirection: "row",
-    height: 100,
-  },
+  // dateCon: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   flex: 3,
+  //   left: 5,
+  // },
 
-  dateCon: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 3,
-    left: 5,
-  },
-
-  todayDate: {
-    fontWeight: "bold",
-    fontSize: 26,
-  },
+  // todayDate: {
+  //   fontWeight: "bold",
+  //   fontSize: 26,
+  // },
 
   newbutton: {
-    backgroundColor: "#1067CC",
     justifyContent: "center",
     alignItems: "center",
-    margin: 15,
-    borderRadius: 20,
-    flex: 1,
+    marginTop: -30,
+    shadowColor: "#f3b000",
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 9,
   },
 
   newbuttontext: {

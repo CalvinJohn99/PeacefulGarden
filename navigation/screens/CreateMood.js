@@ -1,3 +1,4 @@
+// @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
 import {
@@ -9,37 +10,52 @@ import {
   TouchableWithoutFeedback,
   View,
   TouchableOpacity,
-  Image,
+  FlatList,
 } from "react-native";
 import fbdata from "../../firebase.js";
-import useCurrentDate from "../components/CommonFunctions.js";
+import {
+  useAccountUsername,
+  getCurrentDateString,
+} from "../components/CommonFunctions.js";
+import commonStyles, {
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from "../../commonStyles.js";
+import { FontAwesome5 } from "@expo/vector-icons";
 
-const getBackgroundColor = (id) => {
-  if (id % 3 === 1) {
-    return "#B6E4CB";
-  } else if (id % 3 === 2) {
-    return "#B5CBDF";
-  } else if (id % 3 === 0) {
-    return "#E8D8D8";
-  }
-};
-
-function storeMComment(moodURL, comment) {
+function storeMComment(
+  moodIconName,
+  moodID,
+  comment,
+  currentDateString,
+  currentUsername,
+  moodColor
+) {
   var newMoodCommentKey = fbdata
     .database()
-    .ref("/Mood/AAA/03Sep2021/")
+    .ref("/Mood/" + currentUsername + "/" + currentDateString + "/")
     .push().key;
   var dataToSave = {
     id: newMoodCommentKey,
-    moodURL: moodURL,
+    moodFontAwesome5Icon: moodIconName,
+    moodID: moodID,
     comment: comment,
+    creationDate: currentDateString,
+    color: moodColor,
     timestamp: {
       ".sv": "timestamp",
     },
     negTimestamp: 0,
   };
   var updates = {};
-  updates["/Mood/AAA/03Sep2021/" + newMoodCommentKey] = dataToSave;
+  updates[
+    "/Mood/" +
+      currentUsername +
+      "/" +
+      currentDateString +
+      "/" +
+      newMoodCommentKey
+  ] = dataToSave;
 
   return fbdata
     .database()
@@ -49,83 +65,150 @@ function storeMComment(moodURL, comment) {
         console.log(error);
       } else {
         console.log("update is sucessful");
-        updateNegTimestamp(newMoodCommentKey);
+        updateNegTimestamp(
+          currentDateString,
+          currentUsername,
+          newMoodCommentKey
+        );
       }
     });
 }
 
-function updateNegTimestamp(newMoodCommentKey) {
+function updateNegTimestamp(
+  currentDateString,
+  currentUsername,
+  newMoodCommentKey
+) {
   const timeRef = fbdata
     .database()
-    .ref("/Mood/AAA/03Sep2021/" + newMoodCommentKey + "/timestamp/");
+    .ref(
+      "/Mood/" +
+        currentUsername +
+        "/" +
+        currentDateString +
+        "/" +
+        newMoodCommentKey +
+        "/timestamp/"
+    );
   const negTimeRef = fbdata
     .database()
-    .ref("/Mood/AAA/03Sep2021/" + newMoodCommentKey);
+    .ref(
+      "/Mood/" +
+        currentUsername +
+        "/" +
+        currentDateString +
+        "/" +
+        newMoodCommentKey
+    );
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
     negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
 
-function getMoodIconURL() {
-  const moodIconURLRef = fbdata.database().ref("/MoodIconURL/");
-  moodIconURLRef.get().then((snapshot) => {
-    return snapshot.val();
-  });
-}
+// function getMoodIconURL() {
+//   const moodIconURLRef = fbdata.database().ref("/MoodIconURL/");
+//   moodIconURLRef.get().then((snapshot) => {
+//     return snapshot.val();
+//   });
+// }
 
 export default function CreateMood({ navigation }) {
-  const currentDate = useCurrentDate();
-  const [moodURL, setMoodURL] = useState("");
-  const [comment, setComment] = useState("");
+  const currentDateString = getCurrentDateString();
+  const currentUsername = useAccountUsername();
+  const [moodFontAwesome5Icon, setMoodFontAwesome5Icon] = useState([]);
+  const [moodColor, setMoodColor] = useState([]);
   const [focusedText, setFocusedText] = useState(false);
-  const [focusedExcited, setFocusedExcited] = useState(false);
-  const [focusedHappy, setFocusedHappy] = useState(false);
-  const [focusedBored, setFocusedBored] = useState(false);
-  const [focusedSad, setFocusedSad] = useState(false);
-  const [focusedAngry, setFocusedAngry] = useState(false);
-  const moodIconURL = getMoodIconURL();
+  const [comment, setComment] = useState("");
+  const [selectedID, setSelectedID] = useState(null);
+  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [commentErrorStatus, setCommentErrorStatus] = useState(false);
+  const [moodErrorStatus, setMoodErrorStatus] = useState(false);
+
+  useEffect(() => {
+    const moodRef = fbdata
+      .database()
+      .ref("/MoodFontAwesome5/")
+      .orderByChild("id");
+    const OnLoadingListener = moodRef.once("value", (snapshot) => {
+      setMoodFontAwesome5Icon([]);
+      snapshot.forEach((childSnapshot) => {
+        setMoodFontAwesome5Icon((moodFontAwesome5Icon) => [
+          ...moodFontAwesome5Icon,
+          childSnapshot.val(),
+        ]);
+      });
+    });
+    return () => {
+      moodRef.off();
+    };
+  }, []);
 
   const getBorderColorText = () => {
     if (focusedText) {
-      return "blue";
+      return "#00BCD4";
     }
     return "white";
   };
 
-  const getBorderColorExcited = () => {
-    if (focusedExcited) {
-      return "blue";
-    }
-    return "white";
+  const renderItem = ({ item }) => {
+    const iconBackgroundColor = item.id === selectedID ? item.color : "white";
+    const iconfilledColor = selectedID === item.id ? "white" : item.color;
+    return (
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          marginVertical: 2.5,
+          // paddingHorizontal: 5,
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginHorizontal: SCREEN_WIDTH * 0.001,
+          borderWidth: 3,
+          borderColor: "white",
+        }}
+        onPress={() => {
+          setSelectedID(item.id);
+          setSelectedIcon(item.FontAwesome5Name);
+          setMoodColor(item.color);
+          setMoodErrorStatus(false);
+        }}
+      >
+        <View
+          style={{ borderRadius: 50, backgroundColor: iconBackgroundColor }}
+        >
+          <FontAwesome5
+            name={item.FontAwesome5Name}
+            size={SCREEN_WIDTH * 0.15}
+            color={iconfilledColor}
+          />
+        </View>
+      </TouchableOpacity>
+    );
   };
 
-  const getBorderColorHappy = () => {
-    if (focusedHappy) {
-      return "blue";
+  const onSubmit = () => {
+    if (selectedIcon === null || comment === "") {
+      if (selectedIcon === null) {
+        setMoodErrorStatus(true);
+      }
+      if (comment === "") {
+        setCommentErrorStatus(true);
+      }
+    } else {
+      storeMComment(
+        selectedIcon,
+        selectedID,
+        comment,
+        currentDateString,
+        currentUsername,
+        moodColor
+      );
+      alert("Successfully saved!");
+      navigation.navigate("MoodJournal", {
+        screen: "MoodJournalCalendar",
+      });
     }
-    return "white";
-  };
-
-  const getBorderColorBored = () => {
-    if (focusedBored) {
-      return "blue";
-    }
-    return "white";
-  };
-
-  const getBorderColorSad = () => {
-    if (focusedSad) {
-      return "blue";
-    }
-    return "white";
-  };
-
-  const getBorderColorAngry = () => {
-    if (focusedAngry) {
-      return "blue";
-    }
-    return "white";
   };
 
   return (
@@ -135,176 +218,102 @@ export default function CreateMood({ navigation }) {
         setFocusedText(false);
       }}
     >
-      <SafeAreaView style={styles.outerContainer}>
-        <Text style={styles.todayDate}> {currentDate} </Text>
-
+      <SafeAreaView style={commonStyles.pageContainer}>
         <View>
-          <Text style={{ fontWeight: "bold", fontSize: 22, paddingTop: 50 }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 26,
+              marginTop: 30,
+              marginBottom: 20,
+            }}
+          >
             How do you feel today?
           </Text>
         </View>
 
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={[
-              styles.moodBorder,
-              { borderColor: getBorderColorExcited() },
-            ]}
-            onPress={() => {
-              setFocusedExcited(true);
-              setFocusedHappy(false);
-              setFocusedBored(false);
-              setFocusedSad(false);
-              setFocusedAngry(false);
-
-              setMoodURL(
-                "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/MoodIcons%2FExcited.jpg?alt=media&token=bb96a203-67dd-4e89-9da6-de5f43b073b6"
-              );
+        <View
+          style={{
+            marginTop: 20,
+            height: SCREEN_HEIGHT * 0.08,
+          }}
+        >
+          <FlatList
+            // horizontal
+            // pagingEnabled={true}
+            // showsHorizontalScrollIndicator={false}
+            // lagacyImplementation={false}
+            // style={{ width: "100%" }}
+            // showsVerticalScrollIndicator={false}
+            data={moodFontAwesome5Icon}
+            numColumns={5}
+            style={{
+              width: SCREEN_WIDTH * 0.9,
             }}
-          >
-            <Image
-              style={styles.moodIcon}
-              source={require("../../assets/Excited.jpg")}
-            ></Image>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.moodBorder, { borderColor: getBorderColorHappy() }]}
-            onPress={() => {
-              setFocusedHappy(true);
-              setFocusedExcited(false);
-              setFocusedBored(false);
-              setFocusedSad(false);
-              setFocusedAngry(false);
-              setMoodURL(
-                "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/MoodIcons%2FHappy.jpg?alt=media&token=731740b2-c734-4270-8913-75825afd6416"
-              );
-            }}
-          >
-            <Image
-              style={styles.moodIcon}
-              source={require("../../assets/Happy.jpg")}
-            ></Image>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.moodBorder, { borderColor: getBorderColorBored() }]}
-            onPress={() => {
-              setFocusedBored(true);
-              setFocusedExcited(false);
-              setFocusedHappy(false);
-              setFocusedSad(false);
-              setFocusedAngry(false);
-              setMoodURL(
-                "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/MoodIcons%2FBored.jpg?alt=media&token=50513fb4-a7b1-4fe5-afe3-9b65a0d50092"
-              );
-            }}
-          >
-            <Image
-              style={styles.moodIcon}
-              source={require("../../assets/Bored.jpg")}
-            ></Image>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.moodBorder, { borderColor: getBorderColorSad() }]}
-            onPress={() => {
-              setFocusedSad(true);
-              setFocusedExcited(false);
-              setFocusedHappy(false);
-              setFocusedBored(false);
-              setFocusedAngry(false);
-              setMoodURL(
-                "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/MoodIcons%2FSad.jpg?alt=media&token=a2bd9511-1887-42b3-b887-bcf1b500a799"
-              );
-            }}
-          >
-            <Image
-              style={styles.moodIcon}
-              source={require("../../assets/Sad.jpg")}
-            ></Image>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.moodBorder, { borderColor: getBorderColorAngry() }]}
-            onPress={() => {
-              setFocusedAngry(true);
-              setFocusedExcited(false);
-              setFocusedHappy(false);
-              setFocusedBored(false);
-              setFocusedSad(false);
-              setMoodURL(
-                "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/MoodIcons%2FAngry.jpg?alt=media&token=3ceaa2f8-82e8-41e2-b974-0114b1beb77f"
-              );
-            }}
-          >
-            <Image
-              style={styles.moodIcon}
-              source={require("../../assets/Angry.jpg")}
-            ></Image>
-          </TouchableOpacity>
+            columnWrapperStyle={{ flex: 1, justifyContent: "center" }}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+          ></FlatList>
         </View>
-
-        <View>
-          <Text style={{ fontWeight: "bold", fontSize: 22, paddingTop: 30 }}>
-            Comments
+        {moodErrorStatus === true ? (
+          <Text style={[styles.formErrorMsg]}>
+            Please select a mood to proceed!
           </Text>
-        </View>
+        ) : null}
 
-        <View style={styles.inputWrapper}>
+        <View
+          style={[commonStyles.inputBoxWrapper, { height: "40%", top: 20 }]}
+        >
           <TextInput
-            style={[styles.input, { borderColor: getBorderColorText() }]}
+            style={[
+              commonStyles.inputBox,
+              { borderColor: getBorderColorText() },
+            ]}
             multiline={true}
             editable={true}
             autofocus={true}
             placeholder="Please insert your comments here"
-            onChangeText={(text) => setComment(text)}
+            onChangeText={(text) => {
+              setComment(text);
+              setCommentErrorStatus(false);
+            }}
             value={comment}
             onFocus={() => {
               setFocusedText(true);
             }}
             //returnKeyType="done"
           />
+          {commentErrorStatus === true ? (
+            <Text style={styles.formErrorMsg}>
+              Please insert your comment to proceed!
+            </Text>
+          ) : null}
         </View>
         <View style={styles.submitSection}>
           <TouchableOpacity
             style={styles.postbutton}
             onPress={() => {
-              storeMComment(moodURL, comment);
-              navigation.navigate("Journal", { screen: "ViewMood" });
+              onSubmit();
             }}
           >
             <Text style={styles.postbuttontext}>Save</Text>
           </TouchableOpacity>
         </View>
-
-        {/* <View style={styles.submitSection}>
-          <TouchableOpacity
-            style={styles.postbutton}
-            onPress={() => {
-              navigation.navigate("Journal", { screen: "ViewMood" });
-            }}
-          >
-            <Text style={styles.postbuttontext}>Change</Text>
-          </TouchableOpacity>
-        </View> */}
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    alignItems: "center",
-    //justifyContent: "center",
-  },
-
-  todayDate: {
-    top: 20,
-    fontWeight: "bold",
-    fontSize: 26,
-  },
+  // todayDate: {
+  //   width: "100%",
+  //   textAlign: "center",
+  //   top: 20,
+  //   fontWeight: "bold",
+  //   fontSize: 26,
+  //   borderWidth: 2,
+  //   borderColor: "red",
+  // },
 
   moodIcon: {
     width: 60,
@@ -357,7 +366,7 @@ const styles = StyleSheet.create({
 
   submitSection: {
     flexDirection: "row",
-    top: 50,
+    top: 70,
     height: 100,
   },
 
@@ -370,7 +379,7 @@ const styles = StyleSheet.create({
   },
 
   postbutton: {
-    backgroundColor: "#1067CC",
+    backgroundColor: "#F3B000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,
@@ -383,5 +392,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     fontSize: 22,
+  },
+
+  formErrorMsg: {
+    color: "red",
+    fontSize: 20,
+    // marginLeft: 5,
+    marginVertical: 10,
   },
 });

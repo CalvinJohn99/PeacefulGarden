@@ -9,24 +9,23 @@ import {
   TouchableWithoutFeedback,
   View,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import fbdata from "../../firebase.js";
 import useCurrentDate, {
   useAccountUsername,
-  useDateString,
+  useAccountUserid,
+  increaseAnswerCount,
 } from "../components/CommonFunctions.js";
+import commonStyles from "../../commonStyles.js";
 
-const getBackgroundColor = (id) => {
-  if (id % 3 === 1) {
-    return "#B6E4CB";
-  } else if (id % 3 === 2) {
-    return "#B5CBDF";
-  } else if (id % 3 === 0) {
-    return "#E8D8D8";
-  }
-};
-
-function storeQAnswer(currentQuestion, answer, currentUser, currentDate) {
+function storeQAnswer(
+  currentQuestion,
+  answer,
+  currentUser,
+  currentUserID,
+  currentDate
+) {
   var newAnswerKey = fbdata
     .database()
     .ref()
@@ -69,6 +68,7 @@ function storeQAnswer(currentQuestion, answer, currentUser, currentDate) {
           currentUser,
           newAnswerKey
         );
+        increaseAnswerCount(currentUserID);
       }
     });
 }
@@ -110,7 +110,7 @@ function updateNegTimestampQAbyAcc(question, currentUser, key) {
 export default function AnswerQuestion({ navigation, route }) {
   const currentDate = useCurrentDate();
   const currentUser = useAccountUsername();
-  // const dateString = useDateString();
+  const currentUserID = useAccountUserid();
   const { currentQuestion } = route.params;
   const [answer, setAnswer] = useState("");
   const [focused, setFocused] = useState(false);
@@ -118,7 +118,7 @@ export default function AnswerQuestion({ navigation, route }) {
 
   const getBorderColor = () => {
     if (focused) {
-      return "blue";
+      return "#00BCD4";
     }
     return "white";
   };
@@ -127,7 +127,13 @@ export default function AnswerQuestion({ navigation, route }) {
     if (answer === "") {
       setErrorStatus(true);
     } else {
-      storeQAnswer(currentQuestion, answer, currentUser, currentDate);
+      storeQAnswer(
+        currentQuestion,
+        answer,
+        currentUser,
+        currentUserID,
+        currentDate
+      );
       alert("Successfully posted!");
       navigation.navigate("Question", { screen: "QList" });
     }
@@ -150,59 +156,75 @@ export default function AnswerQuestion({ navigation, route }) {
         setFocused(false);
       }}
     >
-      <SafeAreaView style={styles.outerContainer}>
-        <Text style={styles.todayDate}> {currentDate} </Text>
+      <SafeAreaView style={commonStyles.pageContainer}>
+        {/* <Text style={styles.todayDate}> {currentDate} </Text> */}
+
         <View
           style={[
-            styles.question,
-            { backgroundColor: getBackgroundColor(currentQuestion.id) },
+            commonStyles.questionHeaderWrapper,
+            { backgroundColor: currentQuestion.color },
           ]}
+        >
+          <Text style={commonStyles.questionText}>
+            {" "}
+            {currentQuestion.id}. {currentQuestion.question}{" "}
+          </Text>
+        </View>
+
+        {/* <View
+          style={[styles.question, { backgroundColor: currentQuestion.color }]}
         >
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
             {" "}
             {currentQuestion.id}. {currentQuestion.question}{" "}
           </Text>
-        </View>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, { borderColor: getBorderColor() }]}
-            multiline={true}
-            editable={true}
-            autofocus={true}
-            placeholder="Please insert your answer here"
-            onChangeText={(text) => setAnswer(text)}
-            value={answer}
-            onFocus={() => {
-              setFocused(true);
-            }}
-            //returnKeyType="done"
-          />
-        </View>
-        {errorStatus === true ? (
-          <Text style={styles.formErrorMsg}>
-            Please enter your answer to post!
-          </Text>
-        ) : null}
+        </View> */}
 
-        <View style={styles.submitSection}>
-          <View style={styles.warningTextCon}>
-            <Text style={{ color: "red", fontWeight: "bold" }}>
-              *This answer will be made public once you "Post" it!
-            </Text>
+        <View style={commonStyles.answerContainer}>
+          <View style={commonStyles.inputBoxWrapper}>
+            <TextInput
+              style={[commonStyles.inputBox, { borderColor: getBorderColor() }]}
+              multiline={true}
+              editable={true}
+              autofocus={true}
+              placeholder="Please insert your answer here"
+              onChangeText={(text) => {
+                setAnswer(text);
+                setErrorStatus(false);
+              }}
+              value={answer}
+              onFocus={() => {
+                setFocused(true);
+              }}
+              //returnKeyType="done"
+            />
           </View>
-          <TouchableOpacity
-            style={styles.postbutton}
-            onPress={() => {
-              onSubmit();
-            }}
-            // onPress={() => {
-            //   storeQAnswer(currentQuestion.question, answer);
-            //   alert("Successfully posted!");
-            //   navigation.navigate("Question", { screen: "QList" });
-            // }}
-          >
-            <Text style={styles.postbuttontext}>Post</Text>
-          </TouchableOpacity>
+          {errorStatus === true ? (
+            <Text style={styles.formErrorMsg}>
+              Please enter your answer to post!
+            </Text>
+          ) : null}
+
+          <View style={styles.submitSection}>
+            <View style={styles.warningTextCon}>
+              <Text style={{ color: "red", fontWeight: "bold" }}>
+                *This answer will be made public once you "Post" it!
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.postbutton}
+              onPress={() => {
+                onSubmit();
+              }}
+              // onPress={() => {
+              //   storeQAnswer(currentQuestion.question, answer);
+              //   alert("Successfully posted!");
+              //   navigation.navigate("Question", { screen: "QList" });
+              // }}
+            >
+              <Text style={styles.postbuttontext}>Post</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -210,58 +232,32 @@ export default function AnswerQuestion({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    alignItems: "center",
-    //justifyContent: "center",
-  },
+  // outerContainer: {
+  //   flex: 1,
+  //   alignItems: "center",
+  //   //justifyContent: "center",
+  // },
 
-  todayDate: {
-    top: 20,
-    fontWeight: "bold",
-    fontSize: 26,
-  },
+  // todayDate: {
+  //   top: 20,
+  //   fontWeight: "bold",
+  //   fontSize: 26,
+  // },
 
-  question: {
-    top: 20,
-    margin: 20,
-    padding: 20,
-    borderRadius: 20,
-    width: "90%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  inputWrapper: {
-    top: 20,
-    padding: 8,
-    margin: 10,
-    width: "90%",
-    height: "50%",
-    borderColor: "black",
-    shadowColor: "grey",
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.36,
-    shadowRadius: 5,
-    elevation: 11,
-  },
-
-  input: {
-    width: "100%",
-    height: "100%",
-    borderWidth: 1,
-    borderRadius: 20,
-    backgroundColor: "white",
-    padding: 20,
-    paddingTop: 20,
-  },
+  // question: {
+  //   top: 20,
+  //   margin: 20,
+  //   padding: 20,
+  //   borderRadius: 20,
+  //   width: "90%",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
 
   submitSection: {
     flexDirection: "row",
-    top: 50,
+    top: 60,
+    width: "90%",
     height: 100,
   },
 
@@ -269,12 +265,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 2,
-    left: 10,
     padding: 15,
   },
 
   postbutton: {
-    backgroundColor: "#1067CC",
+    backgroundColor: "#f3b000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,
@@ -292,6 +287,7 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    marginLeft: -70,
+    marginTop: 30,
+    marginLeft: -50,
   },
 });

@@ -2,8 +2,10 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput } from "react-native";
 import fbdata from "../../firebase.js";
+import { decreaseAnswerCount } from "../components/CommonFunctions.js";
+import commonStyles from "../../commonStyles.js";
 
-function deleteAnswer(question, answerID, username) {
+function deleteAnswer(question, answerID, username, userID) {
   const answerRef = fbdata
     .database()
     .ref("/qanswer/" + question.question + "/" + answerID + "/");
@@ -30,6 +32,8 @@ function deleteAnswer(question, answerID, username) {
       answerbyUserRef.remove();
     }
   });
+
+  decreaseAnswerCount(userID);
 }
 
 function updateAnswer(question, answerID, username, newAnswer) {
@@ -52,72 +56,134 @@ function updateAnswer(question, answerID, username, newAnswer) {
 }
 
 export default function EditAnswerInput(props) {
-  console.log(props.item);
   const [editAnswer, setEditAnswer] = useState(props.item.answer);
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  const getBorderColor = () => {
+    if (focused) {
+      return "#00BCD4";
+    }
+    return "white";
+  };
 
   return (
-    <View>
-      <Text>{props.item.creationDate}</Text>
-      <Text>{props.item.answer}</Text>
+    <View
+      style={{
+        width: "100%",
+        marginTop: 20,
+        padding: 5,
+        paddingLeft: 15,
+        alignItems: "left",
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        shadowColor: "grey",
+        shadowOffset: {
+          width: 2,
+          height: 2,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 5,
+        elevation: 11,
+      }}
+    >
+      <Text
+        style={{
+          marginTop: 10,
+          // fontSize: 16,
+        }}
+      >
+        Posted on: {props.item.creationDate}
+      </Text>
+      <Text style={{ marginTop: 10 }}>{props.item.answer}</Text>
       <View
         style={{
           flexDirection: "row",
           alignItem: "center",
           justifyContent: "center",
+          marginVertical: 20,
         }}
       >
-        <View
-          style={{
-            flexGrow: 1,
-            alignItem: "center",
-            justifyContent: "center",
-            marginHorizontal: "10%",
-            marginVertical: 10,
-            //   marginLeft: "10%",
-            //   marginRight: "10%",
-          }}
+        <TouchableOpacity
+          style={[
+            commonStyles.modalButton,
+            {
+              backgroundColor: "#F3B000",
+            },
+          ]}
         >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "blue",
-            }}
-          >
-            <Text
-              style={{ textAlign: "center", color: "white" }}
-              onPress={() => {
-                setModalVisible(true);
-              }}
-            >
-              Edit
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexGrow: 1,
-            alignItem: "center",
-            justifyContent: "center",
-            marginHorizontal: "10%",
-            marginVertical: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "green",
-            }}
+          <Text
+            style={commonStyles.modalButtonText}
             onPress={() => {
-              deleteAnswer(
-                props.item.question,
-                props.item.id,
-                props.item.username
-              );
+              setModalVisible(true);
             }}
           >
-            <Text style={{ textAlign: "center", color: "white" }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+            Edit
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            commonStyles.modalButton,
+            {
+              backgroundColor: "#F02A4B",
+            },
+          ]}
+          onPress={() => {
+            setDeleteModalVisible(true);
+          }}
+        >
+          <Text style={commonStyles.modalButtonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModalVisible}
+        onRequestClose={() => {
+          setDeleteModalVisible(!deleteModalVisible);
+        }}
+      >
+        <View style={commonStyles.modalFirstView}>
+          <View style={commonStyles.modalSecondView}>
+            <Text style={commonStyles.deleteWarningTitle}>Confirm delete?</Text>
+            <Text style={commonStyles.deleteWarningText}>
+              * Once delete, it is unrecoverable!
+            </Text>
+            <View style={{ flexDirection: "row", marginVertical: 10 }}>
+              <TouchableOpacity
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#00BCD4" },
+                ]}
+                onPress={() => {
+                  setDeleteModalVisible(!deleteModalVisible);
+                }}
+              >
+                <Text style={commonStyles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#F02A4B" },
+                ]}
+                onPress={() => {
+                  deleteAnswer(
+                    props.item.question,
+                    props.item.id,
+                    props.item.username,
+                    props.userID
+                  );
+                }}
+              >
+                <Text style={commonStyles.modalButtonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         animationType="slide"
@@ -127,79 +193,71 @@ export default function EditAnswerInput(props) {
           setModalVisible(!modalVisible);
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <View style={commonStyles.modalFirstView}>
           <View
-            style={{
-              width: "70%",
-              backgroundColor: "white",
-              borderRadius: 20,
-              padding: 35,
-              alignItem: "center",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacit: 0.25,
-              shadowRadius: 4,
-              elevation: 5,
-            }}
+            style={[
+              commonStyles.modalSecondView,
+              { backgroundColor: "rgba(0,188,212,0.2)" },
+            ]}
           >
-            <Text>Edit answer</Text>
-            {/* <TouchableOpacity
-                style={{ margin: 10 }}
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+              }}
+            >
+              Edit answer
+            </Text>
+
+            <View style={commonStyles.modalInputBoxWrapper}>
+              <TextInput
+                multiline={true}
+                editable={true}
+                autofocus={true}
+                // placeholder={props.item.answer}
+                onChangeText={(text) => {
+                  setEditAnswer(text);
+                }}
+                value={editAnswer}
+                // clearTextOnFocus={true}
+                style={[
+                  commonStyles.inputBox,
+                  { borderColor: getBorderColor() },
+                ]}
+                onFocus={() => {
+                  setFocused(true);
+                }}
+              />
+            </View>
+            <View style={{ flexDirection: "row", marginTop: 40 }}>
+              <TouchableOpacity
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#00BCD4" },
+                ]}
                 onPress={() => {
                   setModalVisible(!modalVisible);
                 }}
               >
-                <Text>Cancel</Text>
-              </TouchableOpacity> */}
-
-            <TextInput
-              multiline={true}
-              editable={true}
-              autofocus={true}
-              // placeholder={props.item.answer}
-              onChangeText={(text) => {
-                setEditAnswer(text);
-              }}
-              value={editAnswer}
-              clearTextOnFocus={true}
-              style={{ height: "30%", top: 20 }}
-              // onFocus={() => {
-              // setFocused(true);
-              // }}
-            />
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
-                <TouchableOpacity
-                  style={{ margin: 10 }}
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
-                  }}
-                >
-                  <Text>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flex: 1 }}>
-                <TouchableOpacity
-                  style={{ margin: 10 }}
-                  onPress={() => {
-                    updateAnswer(
-                      props.item.question,
-                      props.item.id,
-                      props.item.username,
-                      editAnswer
-                    );
-                    setModalVisible(!modalVisible);
-                  }}
-                >
-                  <Text>Save</Text>
-                </TouchableOpacity>
-              </View>
+                <Text style={commonStyles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  commonStyles.modalButton,
+                  { backgroundColor: "#F3B000" },
+                ]}
+                onPress={() => {
+                  updateAnswer(
+                    props.item.question,
+                    props.item.id,
+                    props.item.username,
+                    editAnswer
+                  );
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={commonStyles.modalButtonText}>Save</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

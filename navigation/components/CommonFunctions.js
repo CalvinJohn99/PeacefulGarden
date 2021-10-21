@@ -70,6 +70,20 @@ export function useOpeningImage() {
   return openingImageURL;
 }
 
+export function useAccountUserid() {
+  const [userid, setUserid] = useState([]);
+
+  useEffect(() => {
+    __isTheUserAuthenticated();
+  }, []);
+
+  function __isTheUserAuthenticated() {
+    const userId = fbdata.auth().currentUser.uid;
+    setUserid(userId);
+  }
+  return userid;
+}
+
 export function useAccountUsername() {
   const [username, setUserName] = useState([]);
   const [uid, setUid] = useState("");
@@ -136,4 +150,136 @@ export function useUserAnswer(question, username) {
     };
   }, []);
   return answerbyUserList;
+}
+
+export function increaseAnswerCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const answerCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/answerCount/");
+  answerCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() + 1;
+    userRef.update({ answerCount: newCount });
+  });
+}
+
+export function decreaseAnswerCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const answerCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/answerCount/");
+  answerCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() - 1;
+    userRef.update({ answerCount: newCount });
+  });
+}
+
+export function increasePostCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const postCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/postCount/");
+  postCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() + 1;
+    userRef.update({ postCount: newCount });
+  });
+}
+
+export function decreasePostCount(currentUserID) {
+  const userRef = fbdata.database().ref("users/" + currentUserID);
+  const postCountRef = fbdata
+    .database()
+    .ref("users/" + currentUserID + "/postCount/");
+  postCountRef.once("value", (snapshot) => {
+    var newCount = snapshot.val() - 1;
+    userRef.update({ postCount: newCount });
+  });
+}
+
+export function getCurrentDateString() {
+  var date = new Date().getDate();
+  var month = new Date().getMonth() + 1;
+  var year = new Date().getFullYear();
+
+  return year + "-" + month + "-" + date;
+}
+
+export function getDateFormatOne(dateOb) {
+  // let dateOb = new Date(date);
+  let dd = dateOb.getDate();
+  let mm = dateOb.getMonth() + 1;
+  let yyyy = dateOb.getFullYear();
+  if (dd < 10) {
+    dd = "0" + dd;
+  }
+  if (mm < 10) {
+    mm = "0" + mm;
+  }
+  const formatedDateOb = yyyy + "-" + mm + "-" + dd;
+  return formatedDateOb;
+}
+
+export function getDateFormatTwo(dateOb) {
+  var months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  var day = dateOb.getDate();
+  var monthWord = months[dateOb.getMonth()];
+  var fullYear = dateOb.getFullYear();
+  const formatedDateOb = day + " " + monthWord + " " + fullYear;
+  return formatedDateOb;
+}
+
+export function getDateFormatThree(day, month, year) {
+  var months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  var monthWord = months[month - 1];
+  const formatedDateOb = day + " " + monthWord + " " + year;
+  return formatedDateOb;
+}
+
+export function useCategoryList() {
+  const [categoryList, setCategoryList] = useState([]);
+  useEffect(() => {
+    const postCategoryRef = fbdata
+      .database()
+      .ref("/postCategory/")
+      .orderByChild("key");
+    const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
+      setCategoryList([]);
+      snapshot.forEach((childSnapshot) => {
+        setCategoryList((categoryList) => [
+          ...categoryList,
+          childSnapshot.val(),
+        ]);
+      });
+    });
+    return () => {
+      postCategoryRef.off();
+    };
+  }, []);
+  return categoryList;
 }

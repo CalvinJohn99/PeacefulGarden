@@ -9,35 +9,64 @@ import {
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import commonStyles, { SCREEN_WIDTH, SCREEN_HEIGHT } from "../commonStyles";
 
 // import screens
 import HomeScreen from "./screens/HomeScreen";
 import GPostScreen from "./screens/GPostScreen";
+import CreatePost from "./screens/CreatePost.js";
 import QuestionScreen from "./screens/QuestionScreen";
 import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
-import JournalMoodScreen from "./screens/JournalMoodScreen";
+import MoodJournalScreen from "./screens/MoodJournalScreen";
 import CreateMood from "./screens/CreateMood";
-import ViewMood from "./screens/ViewMood";
-import History from "./screens/History";
+import CreateJournal from "./screens/CreateJournal.js";
+import ViewMoodJournal from "./screens/ViewMoodJournal";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
-import { RelaxMusicScreen } from "./screens/MusicScreen";
-import { PianoMusicScreen } from "./screens/MusicScreen";
-import { RainDropMusicScreen } from "./screens/MusicScreen";
-import { MedMusicScreen } from "./screens/MusicScreen";
-import { SleepMusicScreen } from "./screens/MusicScreen";
 
+// Create Gratefulness Post stack
+const GPostStack = createStackNavigator();
+
+const GPostStackScreen = () => {
+  return (
+    <GPostStack.Navigator
+      initialRouteName="GPostList"
+      screenOptions={{
+        headerStyle: commonStyles.headerBGColor,
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <QuesStack.Screen
+        name="GPostList"
+        component={GPostScreen}
+        options={{ headerTitle: "Gratefulness Post" }}
+      />
+      <QuesStack.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={() => ({
+          headerTitle: "Create Gratefulness Post",
+        })}
+      />
+    </GPostStack.Navigator>
+  );
+};
 
 // Create Self-awareness Question stack
-const QuesStack = createNativeStackNavigator();
+const QuesStack = createStackNavigator();
+// const QuesStack = createSharedElementStackNavigator();
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
       initialRouteName="QList"
       screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -52,7 +81,21 @@ const QuesStackScreen = () => {
       <QuesStack.Screen
         name="QViewAnswer"
         component={QuestionViewAnswer}
-        options={{ headerTitle: "View Answer" }}
+        options={() => ({
+          headerTitle: "View Answer",
+          // gestureEnabled: false,
+          // transitionSpec: {
+          //   open: { animation: "timing", config: { duration: 5000 } },
+          //   close: { animation: "timing", config: { duration: 500 } },
+          // },
+          // cardStyleInterpolator: ({ current: { progress } }) => {
+          //   return {
+          //     cardStyle: {
+          //       opacity: progress,
+          //     },
+          //   };
+          // },
+        })}
       />
       <QuesStack.Screen
         name="QCreateAnswer"
@@ -62,59 +105,14 @@ const QuesStackScreen = () => {
     </QuesStack.Navigator>
   );
 };
-const MusicStack = createStackNavigator();
-const MusicStackScreen = () => {
-  return (
-    <MusicStack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
-        headerTintColor: "white",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      }}
-    >
-      <MusicStack.Screen
-        name="A1"
-        component={MusicScreen}
-        options={{ headerTitle: "Music Screen" }}
-      />
-      <MusicStack.Screen
-        name="A2"
-        component={RelaxMusicScreen}
-        options={{ headerTitle: "Relax Music" }}
-      />
-      <MusicStack.Screen
-        name="A3"
-        component={PianoMusicScreen}
-        options={{ headerTitle: "Piano Music" }}
-      />
-      <MusicStack.Screen
-        name="A4"
-        component={RainDropMusicScreen}
-        options={{ headerTitle: "Rain Music" }}
-      />
-      <MusicStack.Screen
-        name="A5"
-        component={MedMusicScreen}
-        options={{ headerTitle: "Med Music" }}
-      />
-      <MusicStack.Screen
-        name="A6"
-        component={SleepMusicScreen}
-        options={{ headerTitle: "Sleep Music" }}
-      />      
-    </MusicStack.Navigator>
-  );
-};
 
 const JMStack = createNativeStackNavigator();
 const JMStackScreen = () => {
   return (
     <JMStack.Navigator
-      initialRouteName="JMNav"
+      initialRouteName="MoodJournalCalendar"
       screenOptions={{
-        headerStyle: { backgroundColor: "#1067CC" },
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -122,9 +120,9 @@ const JMStackScreen = () => {
       }}
     >
       <JMStack.Screen
-        name="JMNav"
-        component={JournalMoodScreen}
-        options={{ headerTitle: "Journal and Mood" }}
+        name="MoodJournalCalendar"
+        component={MoodJournalScreen}
+        options={{ headerTitle: "Mood and Journal" }}
       />
 
       <JMStack.Screen
@@ -132,16 +130,17 @@ const JMStackScreen = () => {
         component={CreateMood}
         options={{ headerTitle: "Create Mood" }}
       />
+
       <JMStack.Screen
-        name="ViewMood"
-        component={ViewMood}
-        options={{ headerTitle: "View Mood" }}
+        name="CreateJournal"
+        component={CreateJournal}
+        options={{ headerTitle: "Create Journal" }}
       />
 
       <JMStack.Screen
-        name="History"
-        component={History}
-        options={{ headerTitle: "History" }}
+        name="ViewMoodJournal"
+        component={ViewMoodJournal}
+        options={{ headerTitle: "My Mood and Journal" }}
       />
     </JMStack.Navigator>
   );
@@ -154,9 +153,10 @@ function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: {
-          backgroundColor: "#1067CC",
-        },
+        // headerStyle: {
+        //   backgroundColor: "#1067CC",
+        // },
+        headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -171,7 +171,7 @@ function MyTabs() {
             iconName = focused ? "earth" : "earth-outline";
           } else if (route.name === "Question") {
             iconName = focused ? "bulb" : "bulb-outline";
-          } else if (route.name === "Journal") {
+          } else if (route.name === "MoodJournal") {
             iconName = focused ? "book" : "book-outline";
           } else if (route.name === "Music") {
             iconName = focused ? "musical-notes" : "musical-notes-outline";
@@ -182,20 +182,52 @@ function MyTabs() {
         },
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "white",
-        tabBarStyle: {
-          backgroundColor: "#1067CC",
-        },
+        // tabBarStyle: {
+        //   backgroundColor: "#1067CC",
+        // },
+        tabBarStyle: commonStyles.bottomBGColor,
       })}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerTitle: "Home" }}
+        options={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: "rgba(0, 188, 212, 0.45)",
+            position: "absolute",
+            bottom: 60,
+            marginHorizontal: 25,
+            paddingTop: 15,
+            height: 90,
+            borderRadius: 20,
+            shadowColor: "black",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0.8,
+            shadowRadius: 5,
+            elevation: 20,
+
+            // alignItems: "center",
+            // justifyContent: "center",
+          },
+        }}
       />
       <Tab.Screen
         name="Post"
-        component={GPostScreen}
-        options={{ headerTitle: "Gratefulness Post" }}
+        component={GPostStackScreen}
+        options={{ headerShown: false }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            const routeName =
+              getFocusedRouteNameFromRoute(route) ?? "GPostList";
+            if (routeName !== "GPostList") {
+              navigation.dispatch(StackActions.popToTop());
+            }
+          },
+        })}
       />
       <Tab.Screen
         name="Question"
@@ -228,15 +260,16 @@ function MyTabs() {
         })}
       />
       <Tab.Screen
-        name="Journal"
+        name="MoodJournal"
         component={JMStackScreen}
         options={{ headerShown: false }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             // navigation.dispatch(StackActions.popToTop());
 
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
-            if (routeName !== "JMNav") {
+            const routeName =
+              getFocusedRouteNameFromRoute(route) ?? "MoodJournalCalendar";
+            if (routeName !== "MoodJournalCalendar") {
               navigation.dispatch(StackActions.popToTop());
             }
           },
@@ -244,8 +277,8 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Music"
-        component={MusicStackScreen}
-        options={{ headerShown: false }}
+        component={MusicScreen}
+        options={{ headerTitle: "Relaxing Music" }}
       />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
