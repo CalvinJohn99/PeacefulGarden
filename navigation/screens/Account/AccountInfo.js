@@ -17,6 +17,8 @@ function AccountInfo() {
   const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
   // const [postCount, setPostCount] = useState(0);
   // console.log("111:", postCount);
+  const [verify, setVerify] = useState(false);
+  const [isLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
     __isTheUserAuthenticated();
