@@ -42,7 +42,8 @@ export default function HomeScreen({ navigation }) {
 
       <ImageBackground
         source={{
-          uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/openingImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=3b044c73-9cb0-4efe-83b6-291cb3db81a8",
+          // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/openingImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=3b044c73-9cb0-4efe-83b6-291cb3db81a8",
+          uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=43c8c539-60fd-4cbb-bfd3-27f82bad3c27",
         }}
         resizeMode="cover"
         style={{ width: "100%", height: "100%" }}
