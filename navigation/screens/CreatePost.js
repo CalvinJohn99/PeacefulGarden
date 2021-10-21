@@ -14,6 +14,7 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import useCurrentDate, {
@@ -39,7 +40,8 @@ function storePost(
   username,
   date,
   imageRef,
-  currentUserID
+  currentUserID,
+  navigation
 ) {
   var newPostKey = fbdata
     .database()
@@ -71,14 +73,14 @@ function storePost(
         console.log(error);
       } else {
         console.log("Post data successfuly uploaded.");
-        updateNegTimestampPosts(category, newPostKey);
+        updateNegTimestampPosts(category, newPostKey, navigation);
         updateNegTimestampPostsAcc(username, newPostKey);
         increasePostCount(currentUserID);
       }
     });
 }
 
-function updateNegTimestampPosts(category, key) {
+function updateNegTimestampPosts(category, key, navigation) {
   const timeRef = fbdata
     .database()
     .ref("/posts/" + category + "/" + key + "/timestamp/");
@@ -90,6 +92,9 @@ function updateNegTimestampPosts(category, key) {
     console.log(negTimestampValue);
     negTimeRef.update({ negTimestamp: negTimestampValue });
   });
+
+  alert("Successfully posted!");
+  navigation.navigate("Post", { screen: "GPostList" });
 }
 
 function updateNegTimestampPostsAcc(username, key) {
@@ -120,7 +125,11 @@ export default function GPostScreen({ navigation }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  console.log(categoryValue);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+  const [titleErrorStatus, setTitleErrorStatus] = useState(false);
+  const [contentErrorStatus, setContentErrorStatus] = useState(false);
+  const [photoErrorStatus, setPhotoErrorStatus] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -142,10 +151,11 @@ export default function GPostScreen({ navigation }) {
       quality: 1,
     });
 
-    console.log(result);
+    // console.log(result);
 
     if (!result.cancelled) {
       setImage(result.uri);
+      setPhotoErrorStatus(false);
     }
   };
 
@@ -183,7 +193,7 @@ export default function GPostScreen({ navigation }) {
       () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false);
-          console.log("download url", url);
+          // console.log("download url", url);
           blob.close();
           if (title === "" || content === "" || image === "") {
             setErrorStatus(true);
@@ -196,15 +206,32 @@ export default function GPostScreen({ navigation }) {
               username,
               currentDate,
               ref.toString(),
-              currentUserID
+              currentUserID,
+              navigation
             );
-            alert("Successfully posted!");
-            navigation.navigate("Post", { screen: "GPostList" });
+            // alert("Successfully posted!");
+            // navigation.navigate("Post", { screen: "GPostList" });
           }
           return url;
         });
       }
     );
+  };
+
+  const onSubmit = () => {
+    if (title === "" || content === "" || image === "") {
+      if (title === "") {
+        setTitleErrorStatus(true);
+      }
+      if (content === "") {
+        setContentErrorStatus(true);
+      }
+      if (image === "") {
+        setPhotoErrorStatus(true);
+      }
+    } else {
+      makePost();
+    }
   };
 
   return (
@@ -270,21 +297,29 @@ export default function GPostScreen({ navigation }) {
             style={{
               width: "100%",
               marginBottom: 25,
-              alignItems: "center",
-              justifyContent: "center",
+              // alignItems: "center",
+              // justifyContent: "center",
             }}
           >
-            <Text style={[styles.header, { alignSelf: "left" }]}>Title</Text>
+            <Text style={[styles.header]}>Title</Text>
             <TextInput
               style={[styles.input, { paddingTop: 0 }]}
               numberOfLines={1}
-              onChangeText={(text) => setTitle(text)}
+              onChangeText={(text) => {
+                setTitle(text);
+                setTitleErrorStatus(false);
+              }}
               value={title}
               placeholder="Enter title here..."
             />
+            {titleErrorStatus === true ? (
+              <Text style={styles.formErrorMsg}>
+                Please enter your title to post!
+              </Text>
+            ) : null}
           </View>
           <View style={{ width: "100%", marginBottom: 25 }}>
-            <Text style={[styles.header, { alignSelf: "left" }]}>Content</Text>
+            <Text style={styles.header}>Content</Text>
             <TextInput
               style={[
                 styles.input,
@@ -293,28 +328,50 @@ export default function GPostScreen({ navigation }) {
               multiline={true}
               editable={true}
               autofocus={true}
-              onChangeText={(text) => setContent(text)}
+              onChangeText={(text) => {
+                setContent(text);
+                setContentErrorStatus(false);
+              }}
               value={content}
               placeholder="Enter Content here..."
             />
+            {contentErrorStatus === true ? (
+              <Text style={styles.formErrorMsg}>
+                Please enter your content to post!
+              </Text>
+            ) : null}
           </View>
-          <View style={{ width: "100%", alignItems: "center" }}>
-            <Text
-              style={[styles.header, { alignSelf: "left", paddingBottom: 10 }]}
-            >
-              Photo
-            </Text>
-            {image === "" ? (
-              <TouchableOpacity
-                onPress={() => {
-                  pickImage();
-                }}
-              >
-                <FontAwesome5 name="plus" size={40} color="grey" />
-              </TouchableOpacity>
-            ) : (
-              <Image source={{ uri: image }} style={styles.postImage} />
-            )}
+          <View style={{ width: "100%" }}>
+            <Text style={[styles.header, { paddingBottom: 10 }]}>Photo</Text>
+            <View style={{ alignItems: "center" }}>
+              {image === "" ? (
+                <TouchableOpacity
+                  style={{ alignSelf: "center" }}
+                  onPress={() => {
+                    pickImage();
+                  }}
+                >
+                  <FontAwesome5 name="plus" size={40} color="grey" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.postImage}
+                  onPress={() => {
+                    setDeleteModalVisible(true);
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "100%", height: 200, borderRadius: 20 }}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            {photoErrorStatus === true ? (
+              <Text style={styles.formErrorMsg}>
+                Please enter your answer to post!
+              </Text>
+            ) : null}
             {/* <Image source={{ uri: image }} style={styles.postImage} /> */}
             {/* <Button title="choose picture" onPress={pickImage} /> */}
           </View>
@@ -329,7 +386,8 @@ export default function GPostScreen({ navigation }) {
             <TouchableOpacity
               style={styles.postbutton}
               onPress={() => {
-                makePost();
+                onSubmit();
+                // makePost();
               }}
             >
               <Text style={styles.postbuttontext}>Post</Text>
@@ -338,6 +396,49 @@ export default function GPostScreen({ navigation }) {
             <ActivityIndicator size="large" color="#000" />
           )}
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={deleteModalVisible}
+          onRequestClose={() => {
+            setDeleteModalVisible(!deleteModalVisible);
+          }}
+        >
+          <View style={commonStyles.modalFirstView}>
+            <View style={commonStyles.modalSecondView}>
+              <Text style={commonStyles.deleteWarningTitle}>Delete image?</Text>
+              {/* <Text style={commonStyles.deleteWarningText}>
+                * Once delete, it is unrecoverable!
+              </Text> */}
+              <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                <TouchableOpacity
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#00BCD4" },
+                  ]}
+                  onPress={() => {
+                    setDeleteModalVisible(!deleteModalVisible);
+                  }}
+                >
+                  <Text style={commonStyles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#F02A4B" },
+                  ]}
+                  onPress={() => {
+                    setImage("");
+                    setDeleteModalVisible(!deleteModalVisible);
+                  }}
+                >
+                  <Text style={commonStyles.modalButtonText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* <View
           style={{
@@ -379,6 +480,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingLeft: 10,
   },
+
   dropDown: {
     justifyContent: "center",
     backgroundColor: "#ffffff",
@@ -388,6 +490,7 @@ const styles = StyleSheet.create({
     height: 30,
     paddingLeft: 15,
   },
+
   input: {
     paddingLeft: 15,
     paddingRight: 15,
@@ -405,8 +508,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   postImage: {
+    alignItems: "center",
     width: "95%",
-    height: 200,
+    // height: 200,
     marginBottom: 10,
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -446,6 +550,6 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    marginLeft: -70,
+    marginLeft: 5,
   },
 });

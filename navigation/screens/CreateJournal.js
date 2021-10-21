@@ -14,6 +14,7 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import useCurrentDate, {
@@ -100,6 +101,10 @@ export default function CreateJournal({ navigation }) {
   const [uploading, setUploading] = useState(false);
   const [errorStatus, setErrorStatus] = useState(false);
   const [journalContent, setJournalContent] = useState("");
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteImage, setDeleteImage] = useState("");
+  const [contentErrorStatus, setContentErrorStatus] = useState(false);
+  const [imageErrorStatus, setImageErrorStatus] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -120,6 +125,22 @@ export default function CreateJournal({ navigation }) {
     setJournalDate(formatedJournalDate);
   };
 
+  const onRemoveSelectImages = (item) => {
+    console.log(item);
+    setImages(images.filter((it) => it !== item));
+    // console.log("inner images: ", images);
+  };
+
+  // console.log("outer images: ", images);
+
+  // const onRemoveSelectImages = (index) => {
+  //   console.log(index);
+  //   setImages((images) => {
+  //     images.remove(index);
+  //   });
+  //   console.log("images: ", images);
+  // };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -130,6 +151,7 @@ export default function CreateJournal({ navigation }) {
 
     if (!result.cancelled) {
       setImages((images) => [...images, result.uri]);
+      setImageErrorStatus(false);
     }
   };
 
@@ -179,8 +201,8 @@ export default function CreateJournal({ navigation }) {
             imageURLs.push(url);
             imageRefs.push(ref.toString());
             blob.close();
-            setUploading(false);
             if (i === numberOfImages) {
+              setUploading(false);
               console.log("number of images uploaded: ", i);
               // console.log("imageURLSet: ", imageURLSet);
               storeJournal(
@@ -191,6 +213,9 @@ export default function CreateJournal({ navigation }) {
                 imageURLs,
                 imageRefs
               );
+              navigation.navigate("MoodJournal", {
+                screen: "MoodJournalCalendar",
+              });
             }
           });
         }
@@ -210,6 +235,25 @@ export default function CreateJournal({ navigation }) {
   //     );
   //   }
   // };
+
+  console.log(images.length);
+  console.log(imageErrorStatus);
+
+  const onSubmit = () => {
+    if (journalContent === "" || images.length === 0) {
+      if (journalContent === "") {
+        setContentErrorStatus(true);
+      }
+      if (images.length === 0) {
+        setImageErrorStatus(true);
+      }
+    } else {
+      createJournal();
+      // navigation.navigate("MoodJournal", {
+      //   screen: "MoodJournalCalendar",
+      // });
+    }
+  };
 
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
@@ -255,18 +299,28 @@ export default function CreateJournal({ navigation }) {
             borderRadius: 20,
           }}
         >
-          <View style={{ width: "100%", marginBottom: 25 }}>
+          <View
+            style={{
+              width: "100%",
+              marginBottom: 25,
+              // borderWidth: 2,
+              // borderColor: "red",
+            }}
+          >
             <Text style={styles.header}>Select Date</Text>
             <View
               style={{
-                alignSelf: "center",
-                width: "90%",
+                // alignSelf: "center",
+                width: "45%",
                 alignItems: "center",
                 backgroundColor: "white",
                 marginTop: 10,
                 paddingVertical: 5,
                 paddingHorizontal: 20,
                 borderRadius: 10,
+                marginLeft: "2%",
+                // borderWidth: 2,
+                // borderColor: "blue",
               }}
             >
               <DateTimePicker
@@ -274,6 +328,7 @@ export default function CreateJournal({ navigation }) {
                 value={date}
                 mode="date"
                 display="default"
+                maximumDate={new Date()}
                 onChange={onChange}
                 style={{
                   width: 125,
@@ -292,14 +347,22 @@ export default function CreateJournal({ navigation }) {
               multiline={true}
               editable={true}
               autofocus={true}
-              onChangeText={(text) => setJournalContent(text)}
+              onChangeText={(text) => {
+                setJournalContent(text);
+                setContentErrorStatus(false);
+              }}
               value={journalContent}
               placeholder="Start to write your journal here..."
             />
+            {contentErrorStatus === true ? (
+              <Text style={[styles.formErrorMsg, { marginLeft: 10 }]}>
+                Please enter journal content to proceed!
+              </Text>
+            ) : null}
           </View>
           <View style={{ width: "100%", alignItems: "center" }}>
             <Text
-              style={[styles.header, { alignSelf: "left", paddingBottom: 10 }]}
+              style={[styles.header, { paddingBottom: 10, marginLeft: "-80%" }]}
             >
               Photo
             </Text>
@@ -315,7 +378,7 @@ export default function CreateJournal({ navigation }) {
             >
               {images.map((image) => {
                 return (
-                  <View
+                  <TouchableOpacity
                     style={{
                       width: "30%",
                       height: 100,
@@ -326,12 +389,16 @@ export default function CreateJournal({ navigation }) {
                       backgroundColor: "white",
                       margin: 5,
                     }}
+                    onPress={() => {
+                      setDeleteImage(image);
+                      setDeleteModalVisible(true);
+                    }}
                   >
                     <Image
                       source={{ uri: image }}
                       style={{ width: "100%", height: "100%" }}
                     />
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
 
@@ -399,6 +466,11 @@ export default function CreateJournal({ navigation }) {
                 <Image source={{ uri: images[1] }} style={styles.postImage} />
               )} */}
             </View>
+            {imageErrorStatus === true ? (
+              <Text style={[styles.formErrorMsg, { marginLeft: "-18%" }]}>
+                Please upload at least one photo!
+              </Text>
+            ) : null}
 
             {/* <Image source={{ uri: image }} style={styles.postImage} /> */}
             {/* <Button title="choose picture" onPress={pickImage} /> */}
@@ -407,23 +479,17 @@ export default function CreateJournal({ navigation }) {
         <View style={styles.submitSection}>
           <View style={styles.warningTextCon}>
             <Text style={{ color: "red", fontWeight: "bold" }}>
-              *This answer will be made public once you "Post" it!
+              *The maximum number of images allowed is 9!
             </Text>
           </View>
           {!uploading ? (
             <TouchableOpacity
               style={styles.postbutton}
               onPress={() => {
-                createJournal();
-                // uploadJournal(
-                //   username,
-                //   journalDate,
-                //   journalContent,
-                //   imageURLs,
-                //   currentDate
-                // );
-                // navigation.navigate("Journal", {
-                //   screen: "History",
+                onSubmit();
+                // createJournal();
+                // navigation.navigate("MoodJournal", {
+                //   screen: "MoodJournalCalendar",
                 // });
               }}
             >
@@ -433,6 +499,49 @@ export default function CreateJournal({ navigation }) {
             <ActivityIndicator size="large" color="#000" />
           )}
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={deleteModalVisible}
+          onRequestClose={() => {
+            setDeleteModalVisible(!deleteModalVisible);
+          }}
+        >
+          <View style={commonStyles.modalFirstView}>
+            <View style={commonStyles.modalSecondView}>
+              <Text style={commonStyles.deleteWarningTitle}>Delete image?</Text>
+              {/* <Text style={commonStyles.deleteWarningText}>
+                  * Once delete, it is unrecoverable!
+                </Text> */}
+              <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                <TouchableOpacity
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#00BCD4" },
+                  ]}
+                  onPress={() => {
+                    setDeleteModalVisible(!deleteModalVisible);
+                  }}
+                >
+                  <Text style={commonStyles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    commonStyles.modalButton,
+                    { backgroundColor: "#F02A4B" },
+                  ]}
+                  onPress={() => {
+                    onRemoveSelectImages(deleteImage);
+                    setDeleteModalVisible(!deleteModalVisible);
+                  }}
+                >
+                  <Text style={commonStyles.modalButtonText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* <View
           style={{
@@ -541,6 +650,7 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    marginLeft: -70,
+    marginTop: 3,
+    // marginLeft: -70,
   },
 });

@@ -16,6 +16,7 @@ import useCurrentDate, {
 import fbdata from "../../firebase.js";
 import commonStyles from "../../commonStyles.js";
 import PostList from "../components/PostList.js";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function GPostScreen({ navigation }) {
   const currentDate = useCurrentDate();
@@ -33,7 +34,7 @@ export default function GPostScreen({ navigation }) {
       fbdata
         .database()
         .ref("/users/" + userId + "/interest/")
-        .once("value", (snapshot) => {
+        .on("value", (snapshot) => {
           setUserInterest([]);
           snapshot.forEach((childSnapshot) => {
             setUserInterest((userInterest) => [
@@ -48,7 +49,7 @@ export default function GPostScreen({ navigation }) {
   const renderItem = ({ item: interestItem }) => {
     if (interestItem.check) {
       return (
-        <View>
+        <View style={{ marginBottom: 30 }}>
           <PostList interestItem={interestItem} />
         </View>
       );
@@ -56,7 +57,7 @@ export default function GPostScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView styoe={commonStyles.pageContainer}>
+    <SafeAreaView style={commonStyles.pageContainer}>
       <View
         style={{
           flexDirection: "row",
@@ -76,7 +77,7 @@ export default function GPostScreen({ navigation }) {
         <View style={{ paddingRight: 20 }}>
           <TouchableOpacity
             style={{
-              backgroundColor: "#F3B000",
+              // backgroundColor: "#F3B000",
               paddingVertical: 5,
               paddingHorizontal: 10,
               borderRadius: 20,
@@ -85,9 +86,10 @@ export default function GPostScreen({ navigation }) {
               navigation.navigate("Post", { screen: "CreatePost" });
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+            {/* <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
               Create Post
-            </Text>
+            </Text> */}
+            <Ionicons name="add-circle" size={60} color="#f3b000" />
           </TouchableOpacity>
         </View>
       </View>

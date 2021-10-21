@@ -241,6 +241,26 @@ export function getDateFormatTwo(dateOb) {
   return formatedDateOb;
 }
 
+export function getDateFormatThree(day, month, year) {
+  var months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  var monthWord = months[month - 1];
+  const formatedDateOb = day + " " + monthWord + " " + year;
+  return formatedDateOb;
+}
+
 export function useCategoryList() {
   const [categoryList, setCategoryList] = useState([]);
   useEffect(() => {

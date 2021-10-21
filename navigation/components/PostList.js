@@ -17,6 +17,7 @@ import commonStyles, {
   SCREEN_HEIGHT,
 } from "../../commonStyles.js";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { LikePostButton } from "../components/LikeButton";
 
 export default function PostList(props) {
   const interestItem = props.interestItem;
@@ -42,8 +43,8 @@ export default function PostList(props) {
     };
   }, []);
 
-  console.log(interestItem);
-  console.log(postByCategory);
+  // console.log(interestItem);
+  // console.log(postByCategory);
 
   if (postByCategory.length === 0) {
     return null;
@@ -57,7 +58,7 @@ export default function PostList(props) {
           fontWeight: "bold",
           paddingLeft: 15,
           paddingVertical: 20,
-          alignSelf: "left",
+          // alignSelf: "left",
         }}
       >
         {interestItem.value}
@@ -87,21 +88,54 @@ export default function PostList(props) {
             >
               <ImageBackground
                 source={{ uri: item.imageURL }}
-                imageStyle={{ opacity: 0.4, borderRadius: 20 }}
+                imageStyle={{ opacity: 0.9, borderRadius: 20 }}
                 style={{ width: "100%", height: "100%" }}
               >
-                <Text
+                <View
                   style={{
-                    color: "black",
-                    fontSize: 22,
-                    fontWeight: "bold",
+                    width: "100%",
+                    backgroundColor: "#E8E6F4",
                     position: "absolute",
-                    left: 15,
-                    bottom: 20,
+                    bottom: 0,
+                    borderBottomLeftRadius: 20,
+                    borderBottomRightRadius: 20,
+                    flexDirection: "row",
                   }}
                 >
-                  {item.title}
-                </Text>
+                  <Text
+                    style={{
+                      color: "black",
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      // position: "absolute",
+                      marginHorizontal: 15,
+                      paddingVertical: 10,
+                      flex: 5,
+                      // borderWidth: 2,
+                      // borderColor: "red",
+                    }}
+                  >
+                    {item.title}
+                  </Text>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row-reverse",
+                      // marginTop: 4,
+                      marginLeft: 10,
+                      flex: 1,
+                      flexGrow: 1,
+                      // borderWidth: 2,
+                      // borderColor: "blue",
+                      alignItems: "flex-end",
+                      paddingBottom: 6,
+                      // alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <LikePostButton post={item} />
+                  </View>
+                </View>
               </ImageBackground>
             </TouchableOpacity>
 
@@ -118,7 +152,7 @@ export default function PostList(props) {
                   style={[
                     commonStyles.modalSecondView,
                     {
-                      backgroundColor: "rgba(0,188,212,0.5)",
+                      backgroundColor: "#DBF0FF",
                       alignItems: "center",
                     },
                   ]}
@@ -129,7 +163,7 @@ export default function PostList(props) {
                       setModalVisible(!modalVisible);
                     }}
                   >
-                    <FontAwesome5 name="times" size={40} color="black" />
+                    <FontAwesome5 name="times" size={40} color="grey" />
                   </TouchableOpacity>
 
                   <View
@@ -148,27 +182,30 @@ export default function PostList(props) {
                     </Text>
                     <Text
                       style={{
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: "bold",
-                        marginTop: 10,
+                        marginTop: 20,
+                        color: "grey",
                       }}
                     >
                       Posted by {item.username}
                     </Text>
                     <Text
                       style={{
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: "bold",
                         marginTop: 5,
+                        color: "grey",
                       }}
                     >
                       Posted on {item.creationDate}
                     </Text>
                     <Text
                       style={{
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: "bold",
                         marginTop: 5,
+                        color: "grey",
                       }}
                     >
                       Category: {item.category}
@@ -180,7 +217,7 @@ export default function PostList(props) {
                         style={{ width: "100%", height: "100%" }}
                       ></ImageBackground>
                     </View>
-                    <Text style={{ fontSize: 16, marginTop: 30 }}>
+                    <Text style={{ fontSize: 18, marginTop: 30 }}>
                       {item.content}
                     </Text>
                   </View>

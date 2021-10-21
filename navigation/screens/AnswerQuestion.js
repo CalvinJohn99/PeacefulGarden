@@ -188,7 +188,10 @@ export default function AnswerQuestion({ navigation, route }) {
               editable={true}
               autofocus={true}
               placeholder="Please insert your answer here"
-              onChangeText={(text) => setAnswer(text)}
+              onChangeText={(text) => {
+                setAnswer(text);
+                setErrorStatus(false);
+              }}
               value={answer}
               onFocus={() => {
                 setFocused(true);
@@ -284,6 +287,7 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    marginLeft: -70,
+    marginTop: 30,
+    marginLeft: -50,
   },
 });

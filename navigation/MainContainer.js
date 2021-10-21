@@ -20,11 +20,10 @@ import CreatePost from "./screens/CreatePost.js";
 import QuestionScreen from "./screens/QuestionScreen";
 import QuestionViewAnswer from "./screens/QuestionViewAnswer";
 import AnswerQuestion from "./screens/AnswerQuestion";
-import JournalMoodScreen from "./screens/JournalMoodScreen";
+import MoodJournalScreen from "./screens/MoodJournalScreen";
 import CreateMood from "./screens/CreateMood";
 import CreateJournal from "./screens/CreateJournal.js";
-import ViewMood from "./screens/ViewMood";
-import History from "./screens/History";
+import ViewMoodJournal from "./screens/ViewMoodJournal";
 import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
@@ -111,7 +110,7 @@ const JMStack = createNativeStackNavigator();
 const JMStackScreen = () => {
   return (
     <JMStack.Navigator
-      initialRouteName="JMNav"
+      initialRouteName="MoodJournalCalendar"
       screenOptions={{
         headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
@@ -121,9 +120,9 @@ const JMStackScreen = () => {
       }}
     >
       <JMStack.Screen
-        name="JMNav"
-        component={JournalMoodScreen}
-        options={{ headerTitle: "Journal and Mood" }}
+        name="MoodJournalCalendar"
+        component={MoodJournalScreen}
+        options={{ headerTitle: "Mood and Journal" }}
       />
 
       <JMStack.Screen
@@ -139,15 +138,9 @@ const JMStackScreen = () => {
       />
 
       <JMStack.Screen
-        name="ViewMood"
-        component={ViewMood}
-        options={{ headerTitle: "View Mood" }}
-      />
-
-      <JMStack.Screen
-        name="History"
-        component={History}
-        options={{ headerTitle: "History" }}
+        name="ViewMoodJournal"
+        component={ViewMoodJournal}
+        options={{ headerTitle: "My Mood and Journal" }}
       />
     </JMStack.Navigator>
   );
@@ -178,7 +171,7 @@ function MyTabs() {
             iconName = focused ? "earth" : "earth-outline";
           } else if (route.name === "Question") {
             iconName = focused ? "bulb" : "bulb-outline";
-          } else if (route.name === "Journal") {
+          } else if (route.name === "MoodJournal") {
             iconName = focused ? "book" : "book-outline";
           } else if (route.name === "Music") {
             iconName = focused ? "musical-notes" : "musical-notes-outline";
@@ -267,15 +260,16 @@ function MyTabs() {
         })}
       />
       <Tab.Screen
-        name="Journal"
+        name="MoodJournal"
         component={JMStackScreen}
         options={{ headerShown: false }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             // navigation.dispatch(StackActions.popToTop());
 
-            const routeName = getFocusedRouteNameFromRoute(route) ?? "JMNav";
-            if (routeName !== "JMNav") {
+            const routeName =
+              getFocusedRouteNameFromRoute(route) ?? "MoodJournalCalendar";
+            if (routeName !== "MoodJournalCalendar") {
               navigation.dispatch(StackActions.popToTop());
             }
           },

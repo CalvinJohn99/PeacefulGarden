@@ -68,21 +68,25 @@ export default function FloatingButton(props) {
     <View style={[styles.container, props.style]}>
       <TouchableWithoutFeedback
         onPress={() => {
-          props.navigation.navigate("Journal", { screen: "CreateMood" });
+          props.navigation.navigate("MoodJournal", { screen: "CreateMood" });
         }}
       >
         <Animated.View
           style={[styles.button, styles.secondary, moodStyle, opacity]}
         >
-          <FontAwesome5 name="laugh-beam" size={24} color="#F02A4B" />
+          <FontAwesome5 name="laugh-beam" size={24} color="#F3B000" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
-      <TouchableWithoutFeedback onPress={() => {}}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          props.navigation.navigate("MoodJournal", { screen: "CreateJournal" });
+        }}
+      >
         <Animated.View
           style={[styles.button, styles.secondary, journalStyle, opacity]}
         >
-          <AntDesign name="book" size={24} color="#F02A4B" />
+          <AntDesign name="book" size={24} color="#F3B000" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     //position: "absolute",
-    right: -140,
+    // right: -140,
     bottom: 80,
   },
 
@@ -115,13 +119,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     shadowRadius: 10,
-    shadowColor: "#F02A4B",
+    shadowColor: "#F3B000",
     shadowOpacity: 0.3,
     shadowOffset: { height: 10 },
   },
 
   menu: {
-    backgroundColor: "#F02A4B",
+    backgroundColor: "#F3B000",
   },
 
   secondary: {

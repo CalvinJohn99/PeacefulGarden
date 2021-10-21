@@ -96,8 +96,8 @@ export default function EditMoodInput(props) {
   };
 
   const renderItem = ({ item }) => {
-    const iconBackgroundColor =
-      selectedID === item.id ? "rgba(211,211,211,0.5)" : "white";
+    const iconBackgroundColor = selectedID === item.id ? item.color : "white";
+    const iconfilledColor = selectedID === item.id ? "white" : item.color;
     return (
       <TouchableOpacity
         style={{
@@ -123,7 +123,7 @@ export default function EditMoodInput(props) {
           <FontAwesome5
             name={item.FontAwesome5Name}
             size={SCREEN_WIDTH * 0.1}
-            color={item.color}
+            color={iconfilledColor}
           />
         </View>
       </TouchableOpacity>
@@ -134,8 +134,8 @@ export default function EditMoodInput(props) {
     <View>
       <TouchableOpacity
         style={{
-          width: "90%",
-          marginVertical: 20,
+          width: "98%",
+          marginVertical: 12,
           display: "flex",
           flexDirection: "row",
           alignSelf: "center",
@@ -271,7 +271,7 @@ export default function EditMoodInput(props) {
               <TouchableOpacity
                 style={[
                   commonStyles.modalButton,
-                  { backgroundColor: "#F3B000" },
+                  { backgroundColor: "#F3B000", marginHorizontal: "7%" },
                 ]}
                 onPress={() => {
                   updateMood(
@@ -291,7 +291,7 @@ export default function EditMoodInput(props) {
               <TouchableOpacity
                 style={[
                   commonStyles.modalButton,
-                  { backgroundColor: "#F02A4B" },
+                  { backgroundColor: "#F02A4B", marginHorizontal: "7%" },
                 ]}
                 onPress={() => {
                   setDeleteModalVisible(true);

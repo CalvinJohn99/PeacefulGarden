@@ -122,6 +122,8 @@ export default function CreateMood({ navigation }) {
   const [comment, setComment] = useState("");
   const [selectedID, setSelectedID] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState(null);
+  const [commentErrorStatus, setCommentErrorStatus] = useState(false);
+  const [moodErrorStatus, setMoodErrorStatus] = useState(false);
 
   useEffect(() => {
     const moodRef = fbdata
@@ -150,8 +152,8 @@ export default function CreateMood({ navigation }) {
   };
 
   const renderItem = ({ item }) => {
-    const iconBackgroundColor =
-      item.id === selectedID ? "rgba(211,211,211,0.5)" : "white";
+    const iconBackgroundColor = item.id === selectedID ? item.color : "white";
+    const iconfilledColor = selectedID === item.id ? "white" : item.color;
     return (
       <TouchableOpacity
         style={{
@@ -169,6 +171,7 @@ export default function CreateMood({ navigation }) {
           setSelectedID(item.id);
           setSelectedIcon(item.FontAwesome5Name);
           setMoodColor(item.color);
+          setMoodErrorStatus(false);
         }}
       >
         <View
@@ -177,11 +180,35 @@ export default function CreateMood({ navigation }) {
           <FontAwesome5
             name={item.FontAwesome5Name}
             size={SCREEN_WIDTH * 0.15}
-            color={item.color}
+            color={iconfilledColor}
           />
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const onSubmit = () => {
+    if (selectedIcon === null || comment === "") {
+      if (selectedIcon === null) {
+        setMoodErrorStatus(true);
+      }
+      if (comment === "") {
+        setCommentErrorStatus(true);
+      }
+    } else {
+      storeMComment(
+        selectedIcon,
+        selectedID,
+        comment,
+        currentDateString,
+        currentUsername,
+        moodColor
+      );
+      alert("Successfully saved!");
+      navigation.navigate("MoodJournal", {
+        screen: "MoodJournalCalendar",
+      });
+    }
   };
 
   return (
@@ -228,9 +255,14 @@ export default function CreateMood({ navigation }) {
             keyExtractor={(item) => item.id.toString()}
           ></FlatList>
         </View>
+        {moodErrorStatus === true ? (
+          <Text style={[styles.formErrorMsg]}>
+            Please select a mood to proceed!
+          </Text>
+        ) : null}
 
         <View
-          style={[commonStyles.inputBoxWrapper, { height: "45%", top: 20 }]}
+          style={[commonStyles.inputBoxWrapper, { height: "40%", top: 20 }]}
         >
           <TextInput
             style={[
@@ -241,29 +273,27 @@ export default function CreateMood({ navigation }) {
             editable={true}
             autofocus={true}
             placeholder="Please insert your comments here"
-            onChangeText={(text) => setComment(text)}
+            onChangeText={(text) => {
+              setComment(text);
+              setCommentErrorStatus(false);
+            }}
             value={comment}
             onFocus={() => {
               setFocusedText(true);
             }}
             //returnKeyType="done"
           />
+          {commentErrorStatus === true ? (
+            <Text style={styles.formErrorMsg}>
+              Please insert your comment to proceed!
+            </Text>
+          ) : null}
         </View>
         <View style={styles.submitSection}>
           <TouchableOpacity
             style={styles.postbutton}
             onPress={() => {
-              storeMComment(
-                selectedIcon,
-                selectedID,
-                comment,
-                currentDateString,
-                currentUsername,
-                moodColor
-              );
-              navigation.navigate("Journal", {
-                screen: "History",
-              });
+              onSubmit();
             }}
           >
             <Text style={styles.postbuttontext}>Save</Text>
@@ -336,7 +366,7 @@ const styles = StyleSheet.create({
 
   submitSection: {
     flexDirection: "row",
-    top: 30,
+    top: 70,
     height: 100,
   },
 
@@ -362,5 +392,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     fontSize: 22,
+  },
+
+  formErrorMsg: {
+    color: "red",
+    fontSize: 20,
+    // marginLeft: 5,
+    marginVertical: 10,
   },
 });

@@ -187,7 +187,7 @@ const commonStyles = StyleSheet.create({
   modalButton: {
     flex: 1,
     marginTop: 20,
-    marginHorizontal: "10%",
+    marginHorizontal: "7%",
     padding: 10,
     borderRadius: 20,
     justifyContent: "center",

@@ -1,3 +1,4 @@
+// @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
 import {
@@ -18,10 +19,14 @@ import useCurrentDate, {
   useAccountUsername,
 } from "../components/CommonFunctions.js";
 import FloatingButton from "../components/FloatingButton.js";
+import commonStyles, {
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from "../../commonStyles.js";
 //import ViewMood from "./ViewMood";
 //import {Card, Avatar} from 'react-native-paper';
 
-export default function History({ navigation }) {
+export default function MoodJournalScreen({ navigation }) {
   const currentDate = useCurrentDate();
   const currentUsername = useAccountUsername();
   const mood = { color: "green" };
@@ -29,12 +34,12 @@ export default function History({ navigation }) {
 
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <View>
+      {/* <View>
         <Text style={{ top: 20, fontWeight: "bold", fontSize: 26 }}>
           {" "}
           {currentDate}{" "}
         </Text>
-      </View>
+      </View> */}
 
       {/* <View style={styles.submitSection}>
         <TouchableOpacity
@@ -54,14 +59,14 @@ export default function History({ navigation }) {
           }}
           maxDate={new Date()}
           onDayPress={(day) => {
-            navigation.navigate("Journal", {
-              screen: "ViewMood",
+            navigation.navigate("MoodJournal", {
+              screen: "ViewMoodJournal",
               params: { currentUsername, day },
             });
           }}
-          onDayLongPress={(day) => {
-            console.log("selected day", day);
-          }}
+          // onDayLongPress={(day) => {
+          //   console.log("selected day", day);
+          // }}
           monthFormat={"MMM yyyy"}
           onMonthChange={(month) => {
             console.log("month changed", month);
@@ -73,21 +78,21 @@ export default function History({ navigation }) {
           onPressArrowLeft={(subtractMonth) => subtractMonth()}
           onPressArrowRight={(addMonth) => addMonth()}
           enableSwipeMonths={false}
-          markingType={"multi-dot"}
-          markedDates={{
-            "2021-10-01": { dots: [mood, journal] },
-            "2021-10-06": { dots: [mood, journal] },
-            "2021-10-07": { dots: [mood] },
-            "2021-10-14": {
-              dots: [mood],
-              selected: true,
-              selectedColor: "lightblue",
-            },
-          }}
+          // markingType={"multi-dot"}
+          // markedDates={{
+          //   "2021-10-01": { dots: [mood, journal] },
+          //   "2021-10-06": { dots: [mood, journal] },
+          //   "2021-10-07": { dots: [mood] },
+          //   "2021-10-14": {
+          //     dots: [mood],
+          //     selected: true,
+          //     selectedColor: "lightblue",
+          //   },
+          // }}
         />
       </View>
 
-      <View style={styles.remarks}>
+      {/* <View style={styles.remarks}>
         <Text style={[styles.remarksDetails]}>Remarks:</Text>
 
         <View style={[styles.remarksDetails]}>
@@ -107,7 +112,7 @@ export default function History({ navigation }) {
             <Octicons name="primitive-dot" size={24} color="blue" /> : Journal
           </Text>
         </View>
-      </View>
+      </View> */}
 
       <View style={styles.container}>
         <FloatingButton navigation={navigation} />
@@ -125,36 +130,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    marginTop: 150,
+    position: "absolute",
+    bottom: SCREEN_HEIGHT * 0.1,
   },
 
   calendar: {
     marginTop: 50,
     width: "80%",
-  },
-
-  submitSection: {
-    flexDirection: "row",
-    //top: 50,
-    height: 40,
-    right: -100,
-    marginBottom: 30,
-  },
-
-  postbutton: {
-    backgroundColor: "#1067CC",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 15,
-    padding: 15,
-    borderRadius: 20,
-    flex: 1,
-  },
-
-  postbuttontext: {
-    fontWeight: "bold",
-    color: "white",
-    fontSize: 18,
   },
 
   remarks: {
