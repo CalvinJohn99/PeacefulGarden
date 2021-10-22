@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
 import Interest from "../../../assets/Interest";
-import Avatar_Default from '../../../assets/Avatar_Default.png'
-import { Avatar} from "react-native-elements";
+import Avatar_Default from "../../../assets/Avatar_Default.png";
+import { Avatar } from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import QuestByAcc from "./QuestByAcc.js";
@@ -23,7 +30,7 @@ function AccountInfo() {
   useEffect(() => {
     setShowLoading(true);
     __isTheUserAuthenticated();
-  }, []); 
+  }, []);
 
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
@@ -31,7 +38,7 @@ function AccountInfo() {
     setImage(fbdata.auth().currentUser.photoURL);
     setUserName(fbdata.auth().currentUser.displayName);
     setVerify(fbdata.auth().currentUser.emailVerified);
-    
+
     if (userId !== null) {
       fbdata
         .database()
@@ -109,14 +116,12 @@ function AccountInfo() {
     );
   });
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topInfo}>
         <View style={styles.userInfo}>
           <Avatar
-            containerStyle={{borderWidth: 3, borderColor:"white"}}
+            containerStyle={{ borderWidth: 3, borderColor: "white" }}
             size="large"
             rounded
             source={{
@@ -124,26 +129,64 @@ function AccountInfo() {
             }}
           />
 
-          <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start", marginHorizontal: 10}}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+              marginHorizontal: 10,
+            }}
+          >
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginVertical: 5 }}
             >
               {username}
             </Text>
             {verify ? (
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
                 <AntDesign name="checkcircle" color="green" size={12} />
-                <Text style={{color: "green", fontSize: 12}}> Verified Email</Text>
+                <Text style={{ color: "green", fontSize: 12 }}>
+                  {" "}
+                  Verified Email
+                </Text>
               </View>
             ) : (
-              <View style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems:"flex-start"}}>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems:"center"}}>
-                <FontAwesome name="warning" color="red" size={12} />
-                <Text style={{color: "red", fontSize: 12}}> Please verify your email</Text>
-              </View>
-              <TouchableOpacity style={{marginVertical: 5}} onPress={() => handleSendVerifyEmail()}>
-                <Text>Send Again</Text>
-              </TouchableOpacity>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                }}
+              >
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <FontAwesome name="warning" color="red" size={12} />
+                  <Text style={{ color: "red", fontSize: 12 }}>
+                    {" "}
+                    Please verify your email
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{ marginVertical: 5 }}
+                  onPress={() => handleSendVerifyEmail()}
+                >
+                  <Text>Send Again</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -161,7 +204,7 @@ function AccountInfo() {
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
-            badges={[40, 36]}
+            badges={[user["postCount"], user["answerCount"]]}
             values={["Post", "Quest", "Setting", "Interest"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
@@ -185,10 +228,13 @@ function AccountInfo() {
           />
           <View style={stylesSheet.contentStyle}>
             {customSelectedIndex === 0 && (
-              <Text style={stylesSheet.tabTextStyle}>
-                {" "}
-                Selected Tab = Put your posts here{" "}
-              </Text>
+              <View style={{ flex: 1, alignItems: "center", top: 10 }}>
+                <PostByAcc username={user["username"]} userID={uid} />
+              </View>
+              // <Text style={stylesSheet.tabTextStyle}>
+              //   {" "}
+              //   Selected Tab = Put your posts here{" "}
+              // </Text>
             )}
             {customSelectedIndex === 1 && (
               // <Text style={stylesSheet.tabTextStyle}>
