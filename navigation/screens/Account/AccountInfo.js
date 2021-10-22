@@ -17,8 +17,10 @@ import { Avatar } from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import QuestByAcc from "./QuestByAcc.js";
+import PostByAcc from "./PostByAcc";
 
 function AccountInfo() {
+  const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
   const [image, setImage] = useState(Avatar_Default);
   const [username, setUserName] = useState("");
@@ -45,6 +47,7 @@ function AccountInfo() {
         .ref("users/" + userId)
         .on("value", (querySnapShot) => {
           let userinfo = querySnapShot.val() ? querySnapShot.val() : {};
+          setUser(userinfo);
           setInterest(userinfo["interest"]);
         });
     }
@@ -204,8 +207,8 @@ function AccountInfo() {
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
-            badges={[user["postCount"], user["answerCount"]]}
-            values={["Post", "Quest", "Setting", "Interest"]}
+            // badges={(null, [user["postCount"], user["answerCount"]])}
+            values={["Interest", "Post", "Quest", "Setting"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
             tabsContainerStyle={{
@@ -227,7 +230,7 @@ function AccountInfo() {
             activeTabTextStyle={{ color: "#fff", fontSize: 16 }}
           />
           <View style={stylesSheet.contentStyle}>
-            {customSelectedIndex === 0 && (
+            {customSelectedIndex === 1 && (
               <View style={{ flex: 1, alignItems: "center", top: 10 }}>
                 <PostByAcc username={user["username"]} userID={uid} />
               </View>
@@ -236,7 +239,7 @@ function AccountInfo() {
               //   Selected Tab = Put your posts here{" "}
               // </Text>
             )}
-            {customSelectedIndex === 1 && (
+            {customSelectedIndex === 2 && (
               // <Text style={stylesSheet.tabTextStyle}>
               //   {" "}
               //   Selected Tab = Put your questions here{" "}
@@ -252,7 +255,7 @@ function AccountInfo() {
                 <QuestByAcc />
               </View>
             )}
-            {customSelectedIndex === 2 && (
+            {customSelectedIndex === 3 && (
               <View>
                 <Text style={stylesSheet.tabTextStyle}>
                   {" "}
@@ -263,7 +266,7 @@ function AccountInfo() {
                 </TouchableOpacity>
               </View>
             )}
-            {customSelectedIndex === 3 && (
+            {customSelectedIndex === 0 && (
               <View>
                 <View style={stylesSheet.wrapperText}>
                   <Text style={stylesSheet.headerText}>Interest</Text>
