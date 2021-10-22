@@ -119,7 +119,6 @@ export default function GPostScreen({ navigation }) {
 
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [errorStatus, setErrorStatus] = useState(false);
 
   const [categoryValue, setCategoryValue] = useState("Others");
   const [title, setTitle] = useState("");
@@ -155,7 +154,7 @@ export default function GPostScreen({ navigation }) {
 
     if (!result.cancelled) {
       setImage(result.uri);
-      setPhotoErrorStatus(false);
+      // setPhotoErrorStatus(false);
     }
   };
 
@@ -195,23 +194,17 @@ export default function GPostScreen({ navigation }) {
           setUploading(false);
           // console.log("download url", url);
           blob.close();
-          if (title === "" || content === "" || image === "") {
-            setErrorStatus(true);
-          } else {
-            storePost(
-              categoryValue,
-              title,
-              content,
-              url,
-              username,
-              currentDate,
-              ref.toString(),
-              currentUserID,
-              navigation
-            );
-            // alert("Successfully posted!");
-            // navigation.navigate("Post", { screen: "GPostList" });
-          }
+          storePost(
+            categoryValue,
+            title,
+            content,
+            url,
+            username,
+            currentDate,
+            ref.toString(),
+            currentUserID,
+            navigation
+          );
           return url;
         });
       }
@@ -307,7 +300,7 @@ export default function GPostScreen({ navigation }) {
               numberOfLines={1}
               onChangeText={(text) => {
                 setTitle(text);
-                setTitleErrorStatus(false);
+                // setTitleErrorStatus(false);
               }}
               value={title}
               placeholder="Enter title here..."
@@ -330,7 +323,7 @@ export default function GPostScreen({ navigation }) {
               autofocus={true}
               onChangeText={(text) => {
                 setContent(text);
-                setContentErrorStatus(false);
+                // setContentErrorStatus(false);
               }}
               value={content}
               placeholder="Enter Content here..."
@@ -430,6 +423,7 @@ export default function GPostScreen({ navigation }) {
                   ]}
                   onPress={() => {
                     setImage("");
+                    // setPhotoErrorStatus(false);
                     setDeleteModalVisible(!deleteModalVisible);
                   }}
                 >
