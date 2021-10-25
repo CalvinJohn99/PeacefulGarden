@@ -38,35 +38,28 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const index = Math.floor(Math.random() * num) + 1;
-  //   const openingImageRef = fbdata
-  //     .database()
-  //     .ref("/OpeningImage/" + index + "/url/");
-  //   const OnLoadingListener = openingImageRef.once("value", (snapshot) => {
-  //     setOpeningImageURL(snapshot.val().toString());
-  //   });
-  //   return () => {
-  //     openingImageRef.off();
-  //   };
-  // }, []);
+  useEffect(() => {
+    const index = Math.floor(Math.random() * num) + 1;
+    const openingImageRef = fbdata
+      .database()
+      .ref("/OpeningImage/" + index + "/url/");
+    const OnLoadingListener = openingImageRef.once("value", (snapshot) => {
+      setOpeningImageURL(snapshot.val().toString());
+    });
+    return () => {
+      openingImageRef.off();
+    };
+  }, []);
 
   return (
     <View>
-      {/* <View>
-        <Text style={{ marginTop: 50, fontWeight: "bold", fontSize: 26 }}>
-          {" "}
-          {currentDate}{" "}
-        </Text>
-      </View> */}
-
       <ImageBackground
         source={{
           // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/openingImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=3b044c73-9cb0-4efe-83b6-291cb3db81a8",
           // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=43c8c539-60fd-4cbb-bfd3-27f82bad3c27",
-          uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImage%2FMotivationQuote5b.jpg?alt=media&token=0bc61efb-632f-4ea7-baf1-1649136f6fd0",
+          // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImage%2FMotivationQuote10a.jpg?alt=media&token=98085806-9c25-43aa-8563-632e67dc3ee7",
 
-          // uri: openingImageURL ? openingImageURL : null,
+          uri: openingImageURL ? openingImageURL : null,
         }}
         resizeMode="cover"
         style={{ width: "100%", height: "100%" }}

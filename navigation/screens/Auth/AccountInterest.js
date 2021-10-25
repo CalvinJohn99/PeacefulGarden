@@ -152,7 +152,7 @@ function AccountInterest({ navigation, route }) {
       .auth()
       .createUserWithEmailAndPassword(newdata.email, newdata.password)
       .then(function (user) {
-        fbdata.auth().currentUser.sendEmailVerification();
+        // fbdata.auth().currentUser.sendEmailVerification();
         // console.log("User account created & signed in!");
         handleData(user["user"]["uid"]);
         addRealTimeDatabase();
@@ -224,6 +224,12 @@ function AccountInterest({ navigation, route }) {
         <View style={styles.questionForm}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>
             Interest
+          </Text>
+          <Text style={{ marginLeft: 15, marginTop: 20, color: "#00BCD4" }}>
+            *Post feed is based on the selected interest category.
+          </Text>
+          <Text style={{ marginLeft: 15, marginTop: 10, color: "#00BCD4" }}>
+            *Interest categories can be amended in setting after login.
           </Text>
           <View style={styles.checkBoxGroup}>{renderCheckBox}</View>
         </View>

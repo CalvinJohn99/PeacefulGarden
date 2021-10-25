@@ -104,19 +104,17 @@ export default function AccountInfo(props) {
     fbdata.auth().currentUser.sendEmailVerification();
   }
 
-  async function handleUpdateUsername() {
-    const auth = fbdata.auth();
-    try {
-      await auth.currentUser.updateProfile({ displayName: updateUserName });
-      __isTheUserAuthenticated();
-      console.log("Username updated!");
-      // await sleep(3000);
-      // handleSignOut();
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
-  }
+  // async function handleUpdateUsername() {
+  //   const auth = fbdata.auth();
+  //   try {
+  //     await auth.currentUser.updateProfile({ displayName: updateUserName });
+  //     __isTheUserAuthenticated();
+  //     console.log("Username updated!");
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert(err);
+  //   }
+  // }
 
   async function handleUpdateEmail() {
     const auth = fbdata.auth();
@@ -274,19 +272,20 @@ export default function AccountInfo(props) {
           </Text>
         </TouchableOpacity>
       </View>
+
       <View style={stylesSheet.MainContainer}>
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
             badges={[user["postCount"], user["answerCount"]]}
-            values={["Post", "Quest", "Setting", "Interest"]}
+            values={["Post", "Q&A", "Setting", "Interest"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
             tabsContainerStyle={{
               height: 50,
             }}
             tabStyle={{
-              backgroundColor: "#F0F0F0",
+              backgroundColor: "white",
               borderWidth: 0,
               borderColor: "transparent",
               borderRadius: 10,
@@ -298,7 +297,7 @@ export default function AccountInfo(props) {
               fontWeight: "bold",
               fontSize: 16,
             }}
-            activeTabTextStyle={{ color: "#fff", fontSize: 16 }}
+            activeTabTextStyle={{ color: "white", fontSize: 16 }}
           />
           <View style={stylesSheet.contentStyle}>
             {customSelectedIndex === 0 && (
@@ -340,33 +339,6 @@ export default function AccountInfo(props) {
                     paddingVertical: 20,
                   }}
                 >
-                  <View>
-                    <Text style={styles.text}>Username</Text>
-                    <Input
-                      placeholder={fbdata.auth().currentUser.displayName}
-                      autoCapitalize="none"
-                      onChangeText={(value) => setUpdateUserName(value)}
-                      value={updateUserName}
-                    />
-
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={() => {
-                        handleUpdateUsername();
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: "bold",
-                          color: "white",
-                        }}
-                      >
-                        Update
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-
                   <View style={{ marginTop: 30 }}>
                     <Text style={styles.text}>Email</Text>
                     <Input
@@ -463,9 +435,20 @@ export default function AccountInfo(props) {
                   </Text>
                 </TouchableOpacity>
 
-                <Text style={{ marginLeft: 15, marginTop: 20 }}>
-                  *Post will shown based on the interest category selected.
+                <Text
+                  style={{ marginLeft: 15, marginTop: 20, color: "#00BCD4" }}
+                >
+                  *Post feed is based on the selected interest category.
                 </Text>
+                <Text
+                  style={{ marginLeft: 15, marginTop: 10, color: "#00BCD4" }}
+                >
+                  *Interest categories can be amended in setting after login.
+                </Text>
+
+                {/* <Text style={{ marginLeft: 15, marginTop: 20 }}>
+                  *Post will shown based on the interest category selected.
+                </Text> */}
 
                 {/* <View
                   style={{
@@ -545,10 +528,10 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingVertical: 0,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: "#f2f2f2",
   },
   topInfo: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "white",
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -587,7 +570,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#60C8ED",
   },
   tabview: {
-    backgroundColor: "#000000",
+    backgroundColor: "#f2f2f2",
   },
   text: {
     fontSize: 20,
@@ -611,7 +594,7 @@ const stylesSheet = StyleSheet.create({
   },
   contentStyle: {
     marginTop: 10,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "white",
     width: "100%",
     height: "90%",
   },
@@ -653,7 +636,7 @@ const stylesSheet = StyleSheet.create({
     height: 40,
     width: 100,
     borderRadius: 14,
-    backgroundColor: "white",
+    backgroundColor: "#F2F2F2",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
