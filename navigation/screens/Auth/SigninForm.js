@@ -2,7 +2,8 @@ import React, { useState, useLayoutEffect } from "react";
 import { Button, StyleSheet, SafeAreaView, View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import fbdata from "../../../firebase";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons";
+// import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import commonStyles from "../../../commonStyles.js";
 
@@ -102,7 +103,13 @@ export default function SigninForm({ navigation }) {
           }}
           style={{ paddingLeft: 10 }}
           placeholder="Email@address.com"
-          leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
+          // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
+          leftIcon={{
+            type: "ionicons",
+            name: "mail",
+            size: 24,
+            color: "#00BCD4",
+          }}
           autoCapitalize="none"
           onChangeText={(value) => {
             setEmail(value);
@@ -123,7 +130,13 @@ export default function SigninForm({ navigation }) {
           style={{ paddingLeft: 10 }}
           placeholder="Password"
           secureTextEntry={true}
-          leftIcon={<Icon name="lock" size={24} color="#00BCD4" />}
+          // leftIcon={<Icon name="lock" size={24} color="#00BCD4" />}
+          leftIcon={{
+            type: "font-awesome",
+            name: "lock",
+            size: 24,
+            color: "#00BCD4",
+          }}
           autoCapitalize="none"
           onChangeText={(value) => {
             setPassword(value);

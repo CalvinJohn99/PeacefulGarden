@@ -140,7 +140,7 @@ const JMStackScreen = () => {
       <JMStack.Screen
         name="ViewMoodJournal"
         component={ViewMoodJournal}
-        options={{ headerTitle: "My Mood and Journal" }}
+        options={{ headerTitle: "My Story" }}
       />
     </JMStack.Navigator>
   );

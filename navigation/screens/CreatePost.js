@@ -112,10 +112,11 @@ function updateNegTimestampPostsAcc(username, key) {
 }
 
 export default function GPostScreen({ navigation }) {
-  const categoryList = useCategoryList();
+  // const categoryList = useCategoryList();
   const currentDate = useCurrentDate();
   const username = useAccountUsername();
   const currentUserID = useAccountUserid();
+  const [categoryList, setCategoryList] = useState([]);
 
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -140,7 +141,32 @@ export default function GPostScreen({ navigation }) {
         }
       }
     })();
+    __isTheUserAuthenticated();
   }, []);
+
+  // useEffect(() => {
+  //   __isTheUserAuthenticated();
+  // }, []);
+
+  function __isTheUserAuthenticated() {
+    const userId = fbdata.auth().currentUser.uid;
+    if (userId !== null) {
+      fbdata
+        .database()
+        .ref("/users/" + userId + "/interest/")
+        .once("value", (snapshot) => {
+          setCategoryList([]);
+          snapshot.forEach((childSnapshot) => {
+            if (childSnapshot.val().check) {
+              setCategoryList((categoryList) => [
+                ...categoryList,
+                childSnapshot.val(),
+              ]);
+            }
+          });
+        });
+    }
+  }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

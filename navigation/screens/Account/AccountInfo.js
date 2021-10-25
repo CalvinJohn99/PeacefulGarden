@@ -173,15 +173,17 @@ export default function AccountInfo(props) {
 
   const renderCheckBox = interest.map((item, index) => {
     return (
-      <CheckBox
-        checkedColor="green"
-        checked={item.check}
-        title={item.value}
-        uncheckedIcon="circle-o"
-        checkedIcon="dot-circle-o"
-        onPress={() => onChangeBox(item, index)}
-        key={index}
-      />
+      <View style={{ width: "48%" }}>
+        <CheckBox
+          checkedColor="green"
+          checked={item.check}
+          title={item.value}
+          uncheckedIcon="circle-o"
+          checkedIcon="dot-circle-o"
+          onPress={() => onChangeBox(item, index)}
+          key={index}
+        />
+      </View>
     );
   });
 
@@ -434,6 +436,7 @@ export default function AccountInfo(props) {
                   <Text style={stylesSheet.headerText}>Interest</Text>
                   <Text style={stylesSheet.subText}>Multi-selection</Text>
                 </View>
+
                 <View
                   style={{
                     display: "flex",
@@ -459,6 +462,10 @@ export default function AccountInfo(props) {
                     Update
                   </Text>
                 </TouchableOpacity>
+
+                <Text style={{ marginLeft: 15, marginTop: 20 }}>
+                  *Post will shown based on the interest category selected.
+                </Text>
 
                 {/* <View
                   style={{

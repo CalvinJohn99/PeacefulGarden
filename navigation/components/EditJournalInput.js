@@ -241,7 +241,7 @@ export default function EditJournalInput(props) {
           elevation: 9,
           marginVertical: 12,
         }}
-        onLongPress={() => {
+        onPress={() => {
           setModalVisible(true);
         }}
         activeOpacity={0.6}

@@ -118,7 +118,7 @@ function QuestionViewAnswer({ navigation, route }) {
               </Text>
               <Text style={styles.answerText}> {item.answer} </Text>
 
-              <View
+              {/* <View
                 style={{
                   flexGrow: 1,
                   marginTop: 4,
@@ -136,9 +136,9 @@ function QuestionViewAnswer({ navigation, route }) {
                 >
                   by {item.username}
                 </Text>
-              </View>
+              </View> */}
 
-              {/* <View
+              <View
                 style={{
                   display: "flex",
                   flexDirection: "row",
@@ -172,7 +172,7 @@ function QuestionViewAnswer({ navigation, route }) {
                 >
                   <LikeButton question={currentQuestion} answer={item} />
                 </View>
-              </View> */}
+              </View>
             </Animatable.View>
           )}
           keyExtractor={(item) => item.id}
