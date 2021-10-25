@@ -199,11 +199,19 @@ export default function AnswerQuestion({ navigation, route }) {
               //returnKeyType="done"
             />
           </View>
-          {errorStatus === true ? (
-            <Text style={styles.formErrorMsg}>
-              Please enter your answer to post!
-            </Text>
-          ) : null}
+          <View
+            style={{
+              marginTop: 30,
+              alignSelf: "flex-start",
+              marginLeft: "10%",
+            }}
+          >
+            {errorStatus === true ? (
+              <Text style={styles.formErrorMsg}>
+                Please enter your answer to post!
+              </Text>
+            ) : null}
+          </View>
 
           <View style={styles.submitSection}>
             <View style={styles.warningTextCon}>
@@ -256,7 +264,7 @@ const styles = StyleSheet.create({
 
   submitSection: {
     flexDirection: "row",
-    top: 60,
+    top: 40,
     width: "90%",
     height: 100,
   },
@@ -272,8 +280,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3b000",
     justifyContent: "center",
     alignItems: "center",
-    margin: 15,
-    padding: 15,
+    // marginVertical: 20,
+    // marginHorizontal: 20,
+    margin: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
     borderRadius: 20,
     flex: 1,
   },
@@ -287,7 +298,9 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    marginTop: 30,
-    marginLeft: -50,
+    // marginTop: 10,
+    // alignSelf: "flex-start",
+    // marginLeft: "10%",
+    // marginLeft: -50,
   },
 });

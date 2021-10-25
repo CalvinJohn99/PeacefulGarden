@@ -11,7 +11,13 @@ import { useState } from "react";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 
 export default function FloatingButton(props) {
-  const [animation] = useState(new Animated.Value(0));
+  // const [animation] = useState(new Animated.Value(0));
+  const [animation, setAnimation] = React.useState(new Animated.Value(0));
+  React.useEffect(() => {
+    props.navigation.addListener("focus", () => {
+      setAnimation(new Animated.Value(0));
+    });
+  });
 
   const toggleMenu = () => {
     const toValue = animation.open ? 0 : 1;
@@ -68,7 +74,7 @@ export default function FloatingButton(props) {
     <View style={[styles.container, props.style]}>
       <TouchableWithoutFeedback
         onPress={() => {
-          props.navigation.navigate("MoodJournal", { screen: "CreateMood" });
+          props.navigation.navigate("Diary", { screen: "CreateMood" });
         }}
       >
         <Animated.View
@@ -80,7 +86,7 @@ export default function FloatingButton(props) {
 
       <TouchableWithoutFeedback
         onPress={() => {
-          props.navigation.navigate("MoodJournal", { screen: "CreateJournal" });
+          props.navigation.navigate("Diary", { screen: "CreateJournal" });
         }}
       >
         <Animated.View

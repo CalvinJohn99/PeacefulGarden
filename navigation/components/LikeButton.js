@@ -36,7 +36,11 @@ export default function LikeButton(props) {
     const addLikeAnswerRef = fbdata
       .database()
       .ref(
-        "/qanswer/" + props.question.question + "/" + props.answer.id + "/likes"
+        "/qanswer/" +
+          props.question.question +
+          "/" +
+          props.answer.id +
+          "/likes/"
       );
     checkLikeAnswerRef.get().then((snapshot) => {
       if (!snapshot.exists()) {

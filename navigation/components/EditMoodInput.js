@@ -152,7 +152,7 @@ export default function EditMoodInput(props) {
           shadowRadius: 10,
           elevation: 9,
         }}
-        onLongPress={() => {
+        onPress={() => {
           setModalVisible(true);
         }}
         activeOpacity={0.6}

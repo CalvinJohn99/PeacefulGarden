@@ -4,34 +4,51 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   Button,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { CheckBox } from "react-native-elements";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import fbdata from "../../../firebase";
-import Interest from "../../../assets/Interest";
 import Avatar_Default from "../../../assets/Avatar_Default.png";
 import { Avatar } from "react-native-elements";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "react-native-elements";
 import QuestByAcc from "./QuestByAcc.js";
 import PostByAcc from "./PostByAcc";
+import * as Animatable from "react-native-animatable";
 
-function AccountInfo() {
+const sleep = (m) => new Promise((r) => setTimeout(r, m));
+
+export default function AccountInfo(props) {
   const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
   const [image, setImage] = useState(Avatar_Default);
   const [username, setUserName] = useState("");
-  const [interest, setInterest] = useState(Interest);
-  const [customSelectedIndex, setCustomSelectedIndex] = useState(0);
+  const [interest, setInterest] = useState([]);
+  const [customSelectedIndex, setCustomSelectedIndex] = useState(3);
   const [verify, setVerify] = useState(false);
   const [isLoading, setShowLoading] = useState(false);
+  const [updateEmail, setUpdateEmail] = useState(null);
+  const [updateUserName, setUpdateUserName] = useState(null);
+  const [showResetMessage, setShowResetMessage] = useState(false);
+
+  // useEffect(() => {
+  //   setShowLoading(true);
+  //   __isTheUserAuthenticated();
+  // }, []);
 
   useEffect(() => {
-    setShowLoading(true);
-    __isTheUserAuthenticated();
+    props.navigation.addListener("focus", () => {
+      setShowLoading(true);
+      __isTheUserAuthenticated();
+      setCustomSelectedIndex(3);
+    });
   }, []);
 
   function __isTheUserAuthenticated() {
@@ -53,6 +70,7 @@ function AccountInfo() {
     }
     setShowLoading(false);
   }
+
   function handleSignOut() {
     fbdata
       .auth()
@@ -86,6 +104,51 @@ function AccountInfo() {
     fbdata.auth().currentUser.sendEmailVerification();
   }
 
+  // async function handleUpdateUsername() {
+  //   const auth = fbdata.auth();
+  //   try {
+  //     await auth.currentUser.updateProfile({ displayName: updateUserName });
+  //     __isTheUserAuthenticated();
+  //     console.log("Username updated!");
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert(err);
+  //   }
+  // }
+
+  async function handleUpdateEmail() {
+    const auth = fbdata.auth();
+    try {
+      await auth.currentUser.updateEmail(updateEmail);
+      console.log("Email updated!");
+      alert("Email updated!! Please sign in again");
+      await sleep(3000);
+      handleSignOut();
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (verify) {
+      const registeredEmail = fbdata.auth().currentUser.email;
+      // console.log(registeredEmail);
+      try {
+        await fbdata.auth().sendPasswordResetEmail(registeredEmail);
+        setShowResetMessage(true);
+        await sleep(3000);
+        handleSignOut();
+      } catch (e) {
+        Alert.alert("Please enter your registered email to reset password!");
+        console.log(e);
+        // Alert.alert(e.message);
+      }
+    } else {
+      Alert.alert("Please verify your email before reset password!");
+    }
+  }
+
   const updateCustomSegment = (index) => {
     setCustomSelectedIndex(index);
   };
@@ -105,17 +168,20 @@ function AccountInfo() {
     });
     setInterest(newData);
   };
+
   const renderCheckBox = interest.map((item, index) => {
     return (
-      <CheckBox
-        checkedColor="green"
-        checked={item.check}
-        title={item.value}
-        uncheckedIcon="circle-o"
-        checkedIcon="dot-circle-o"
-        onPress={() => onChangeBox(item, index)}
-        key={index}
-      />
+      <View style={{ width: "48%" }}>
+        <CheckBox
+          checkedColor="green"
+          checked={item.check}
+          title={item.value}
+          uncheckedIcon="circle-o"
+          checkedIcon="dot-circle-o"
+          onPress={() => onChangeBox(item, index)}
+          key={index}
+        />
+      </View>
     );
   });
 
@@ -200,37 +266,41 @@ function AccountInfo() {
             handleSignOut();
           }}
         >
-          <Button title="Logout" color="#fff" />
+          {/* <Button title="Logout" color="#fff" /> */}
+          <Text style={{ fontSize: 20, fontWeight: "bold", color: "grey" }}>
+            Logout
+          </Text>
         </TouchableOpacity>
       </View>
+
       <View style={stylesSheet.MainContainer}>
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
             borderRadius={10}
-            // badges={(null, [user["postCount"], user["answerCount"]])}
-            values={["Interest", "Post", "Quest", "Setting"]}
+            badges={[user["postCount"], user["answerCount"]]}
+            values={["Post", "Q&A", "Setting", "Interest"]}
             selectedIndex={customSelectedIndex}
             onTabPress={updateCustomSegment}
             tabsContainerStyle={{
               height: 50,
             }}
             tabStyle={{
-              backgroundColor: "#F0F0F0",
+              backgroundColor: "white",
               borderWidth: 0,
               borderColor: "transparent",
               borderRadius: 10,
               marginHorizontal: 4,
             }}
-            activeTabStyle={{ backgroundColor: "#1067CC" }}
+            activeTabStyle={{ backgroundColor: "#00BCD4" }}
             tabTextStyle={{
               color: "#000000",
               fontWeight: "bold",
               fontSize: 16,
             }}
-            activeTabTextStyle={{ color: "#fff", fontSize: 16 }}
+            activeTabTextStyle={{ color: "white", fontSize: 16 }}
           />
           <View style={stylesSheet.contentStyle}>
-            {customSelectedIndex === 1 && (
+            {customSelectedIndex === 0 && (
               <View style={{ flex: 1, alignItems: "center", top: 10 }}>
                 <PostByAcc username={user["username"]} userID={uid} />
               </View>
@@ -239,7 +309,7 @@ function AccountInfo() {
               //   Selected Tab = Put your posts here{" "}
               // </Text>
             )}
-            {customSelectedIndex === 2 && (
+            {customSelectedIndex === 1 && (
               // <Text style={stylesSheet.tabTextStyle}>
               //   {" "}
               //   Selected Tab = Put your questions here{" "}
@@ -255,23 +325,90 @@ function AccountInfo() {
                 <QuestByAcc />
               </View>
             )}
-            {customSelectedIndex === 3 && (
-              <View>
-                <Text style={stylesSheet.tabTextStyle}>
-                  {" "}
-                  Selected Tab = Put your setting here{" "}
-                </Text>
-                <TouchableOpacity>
-                  <Text>change color to red</Text>
-                </TouchableOpacity>
-              </View>
+            {customSelectedIndex === 2 && (
+              <ScrollView
+                contentContainerStyle={{
+                  paddingBottom: 100,
+                }}
+              >
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "95%",
+                    paddingVertical: 20,
+                  }}
+                >
+                  <View style={{ marginTop: 30 }}>
+                    <Text style={styles.text}>Email</Text>
+                    <Input
+                      placeholder={fbdata.auth().currentUser.email}
+                      autoCapitalize="none"
+                      onChangeText={(value) => setUpdateEmail(value)}
+                      value={updateEmail}
+                    />
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => {
+                        handleUpdateEmail();
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                      >
+                        Update
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={{ marginTop: 30 }}>
+                    <Text style={styles.text}>Password</Text>
+                    <Text style={{ marginTop: 5, marginLeft: 10 }}>
+                      Reset password via registered email
+                    </Text>
+                    {showResetMessage && (
+                      <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>
+                          Check your email box to reset your password!
+                        </Text>
+                      </Animatable.View>
+                    )}
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => {
+                        handleResetPassword();
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                      >
+                        Reset
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </ScrollView>
             )}
-            {customSelectedIndex === 0 && (
-              <View>
+            {customSelectedIndex === 3 && (
+              <ScrollView
+                contentContainerStyle={{
+                  paddingBottom: 100,
+                }}
+              >
                 <View style={stylesSheet.wrapperText}>
                   <Text style={stylesSheet.headerText}>Interest</Text>
                   <Text style={stylesSheet.subText}>Multi-selection</Text>
                 </View>
+
                 <View
                   style={{
                     display: "flex",
@@ -287,9 +424,92 @@ function AccountInfo() {
                     handleUpdate();
                   }}
                 >
-                  <Button title="Update" color="#fff" />
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Update
+                  </Text>
                 </TouchableOpacity>
-              </View>
+
+                <Text
+                  style={{ marginLeft: 15, marginTop: 20, color: "#00BCD4" }}
+                >
+                  *Post feed is based on the selected interest category.
+                </Text>
+                <Text
+                  style={{ marginLeft: 15, marginTop: 10, color: "#00BCD4" }}
+                >
+                  *Interest categories can be amended in setting after login.
+                </Text>
+
+                {/* <Text style={{ marginLeft: 15, marginTop: 20 }}>
+                  *Post will shown based on the interest category selected.
+                </Text> */}
+
+                {/* <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "95%",
+                    marginTop: 50,
+                    paddingVertical: 20,
+                  }}
+                >
+                  <Text style={styles.text}>Username</Text>
+                  <Input
+                    placeholder={fbdata.auth().currentUser.displayName}
+                    autoCapitalize="none"
+                    onChangeText={(value) => setUpdateUserName(value)}
+                    value={updateUserName}
+                  />
+
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                      handleUpdateUsername();
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Update
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text style={styles.text}>Email</Text>
+                  <Input
+                    placeholder={fbdata.auth().currentUser.email}
+                    autoCapitalize="none"
+                    onChangeText={(value) => setUpdateEmail(value)}
+                    value={updateEmail}
+                  />
+
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                      handleUpdateEmail();
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Update
+                    </Text>
+                  </TouchableOpacity>
+                </View> */}
+              </ScrollView>
             )}
           </View>
         </View>
@@ -297,8 +517,6 @@ function AccountInfo() {
     </SafeAreaView>
   );
 }
-
-export default AccountInfo;
 
 const styles = StyleSheet.create({
   container: {
@@ -310,10 +528,10 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingVertical: 0,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: "#f2f2f2",
   },
   topInfo: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "white",
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -333,13 +551,14 @@ const styles = StyleSheet.create({
     height: 50,
     width: 130,
     borderRadius: 14,
-    backgroundColor: "#1067CC",
+    backgroundColor: "#F3B000",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
     color: "white",
     marginHorizontal: 20,
+    marginTop: 20,
   },
   profileimage: {
     width: "100%",
@@ -351,7 +570,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#60C8ED",
   },
   tabview: {
-    backgroundColor: "#000000",
+    backgroundColor: "#f2f2f2",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  errorMsg: {
+    marginTop: 10,
+    marginLeft: 10,
+    color: "green",
+    fontSize: 14,
   },
 });
 
@@ -364,7 +594,7 @@ const stylesSheet = StyleSheet.create({
   },
   contentStyle: {
     marginTop: 10,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "white",
     width: "100%",
     height: "90%",
   },
@@ -406,7 +636,7 @@ const stylesSheet = StyleSheet.create({
     height: 40,
     width: 100,
     borderRadius: 14,
-    backgroundColor: "#1067CC",
+    backgroundColor: "#F2F2F2",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

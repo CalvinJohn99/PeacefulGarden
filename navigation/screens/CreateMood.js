@@ -16,31 +16,33 @@ import fbdata from "../../firebase.js";
 import {
   useAccountUsername,
   getCurrentDateString,
+  getDateFormatOne,
 } from "../components/CommonFunctions.js";
 import commonStyles, {
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
 } from "../../commonStyles.js";
 import { FontAwesome5 } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 function storeMComment(
   moodIconName,
   moodID,
   comment,
-  currentDateString,
+  moodDate,
   currentUsername,
   moodColor
 ) {
   var newMoodCommentKey = fbdata
     .database()
-    .ref("/Mood/" + currentUsername + "/" + currentDateString + "/")
+    .ref("/Mood/" + currentUsername + "/" + moodDate + "/")
     .push().key;
   var dataToSave = {
     id: newMoodCommentKey,
     moodFontAwesome5Icon: moodIconName,
     moodID: moodID,
     comment: comment,
-    creationDate: currentDateString,
+    creationDate: moodDate,
     color: moodColor,
     timestamp: {
       ".sv": "timestamp",
@@ -49,12 +51,7 @@ function storeMComment(
   };
   var updates = {};
   updates[
-    "/Mood/" +
-      currentUsername +
-      "/" +
-      currentDateString +
-      "/" +
-      newMoodCommentKey
+    "/Mood/" + currentUsername + "/" + moodDate + "/" + newMoodCommentKey
   ] = dataToSave;
 
   return fbdata
@@ -65,41 +62,26 @@ function storeMComment(
         console.log(error);
       } else {
         console.log("update is sucessful");
-        updateNegTimestamp(
-          currentDateString,
-          currentUsername,
-          newMoodCommentKey
-        );
+        updateNegTimestamp(moodDate, currentUsername, newMoodCommentKey);
       }
     });
 }
 
-function updateNegTimestamp(
-  currentDateString,
-  currentUsername,
-  newMoodCommentKey
-) {
+function updateNegTimestamp(moodDate, currentUsername, newMoodCommentKey) {
   const timeRef = fbdata
     .database()
     .ref(
       "/Mood/" +
         currentUsername +
         "/" +
-        currentDateString +
+        moodDate +
         "/" +
         newMoodCommentKey +
         "/timestamp/"
     );
   const negTimeRef = fbdata
     .database()
-    .ref(
-      "/Mood/" +
-        currentUsername +
-        "/" +
-        currentDateString +
-        "/" +
-        newMoodCommentKey
-    );
+    .ref("/Mood/" + currentUsername + "/" + moodDate + "/" + newMoodCommentKey);
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
     negTimeRef.update({ negTimestamp: negTimestampValue });
@@ -116,6 +98,8 @@ function updateNegTimestamp(
 export default function CreateMood({ navigation }) {
   const currentDateString = getCurrentDateString();
   const currentUsername = useAccountUsername();
+  const [date, setDate] = useState(new Date());
+  const [moodDate, setMoodDate] = useState(getDateFormatOne(new Date()));
   const [moodFontAwesome5Icon, setMoodFontAwesome5Icon] = useState([]);
   const [moodColor, setMoodColor] = useState([]);
   const [focusedText, setFocusedText] = useState(false);
@@ -143,6 +127,13 @@ export default function CreateMood({ navigation }) {
       moodRef.off();
     };
   }, []);
+
+  const onChange = (event, selectedDate) => {
+    const currentMoodDate = selectedDate || date;
+    setDate(currentMoodDate);
+    const formatedMoodDate = getDateFormatOne(currentMoodDate);
+    setMoodDate(formatedMoodDate);
+  };
 
   const getBorderColorText = () => {
     if (focusedText) {
@@ -200,12 +191,12 @@ export default function CreateMood({ navigation }) {
         selectedIcon,
         selectedID,
         comment,
-        currentDateString,
+        moodDate,
         currentUsername,
         moodColor
       );
       alert("Successfully saved!");
-      navigation.navigate("MoodJournal", {
+      navigation.navigate("Diary", {
         screen: "MoodJournalCalendar",
       });
     }
@@ -230,6 +221,47 @@ export default function CreateMood({ navigation }) {
           >
             How do you feel today?
           </Text>
+        </View>
+
+        <View
+          style={{
+            width: "100%",
+            marginTop: 20,
+            // marginBottom: 25,
+            // borderWidth: 2,
+            // borderColor: "red",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Text style={styles.header}>Select Date</Text>
+          <View
+            style={{
+              // alignSelf: "center",
+              // width: "45%",
+              // alignItems: "center",
+              backgroundColor: "white",
+              paddingVertical: 5,
+              // paddingHorizontal: 40,
+              borderRadius: 10,
+              marginLeft: "2%",
+              // borderWidth: 2,
+              // borderColor: "blue",
+              flex: 2,
+            }}
+          >
+            <DateTimePicker
+              testID="dateTimerPicker"
+              value={date}
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              onChange={onChange}
+              style={{
+                width: 125,
+              }}
+            />
+          </View>
         </View>
 
         <View
@@ -367,23 +399,23 @@ const styles = StyleSheet.create({
   submitSection: {
     flexDirection: "row",
     top: 70,
-    height: 100,
+    height: 80,
   },
 
-  warningTextCon: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 2,
-    left: 10,
-    padding: 15,
-  },
+  // warningTextCon: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   flex: 2,
+  //   left: 10,
+  //   padding: 15,
+  // },
 
   postbutton: {
     backgroundColor: "#F3B000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,
-    padding: 15,
+    // padding: 15,
     borderRadius: 20,
     flex: 1,
   },
@@ -399,5 +431,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     // marginLeft: 5,
     marginVertical: 10,
+  },
+  header: {
+    color: "black",
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingLeft: 35,
+    // marginTop: 20,
+    flex: 1,
   },
 });

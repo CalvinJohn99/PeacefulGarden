@@ -262,24 +262,75 @@ export function getDateFormatThree(day, month, year) {
 }
 
 export function useCategoryList() {
+  const userId = fbdata.auth().currentUser.uid;
+  console.log(userId);
   const [categoryList, setCategoryList] = useState([]);
   useEffect(() => {
-    const postCategoryRef = fbdata
-      .database()
-      .ref("/postCategory/")
-      .orderByChild("key");
-    const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
-      setCategoryList([]);
-      snapshot.forEach((childSnapshot) => {
-        setCategoryList((categoryList) => [
-          ...categoryList,
-          childSnapshot.val(),
-        ]);
+    if (userId !== null) {
+      const postCategoryRef = fbdata
+        .database()
+        .ref("/users/" + userId + "/interest/");
+      postCategoryRef.once("value", (snapshot) => {
+        setCategoryList([]);
+        snapshot.forEach((childSnapshot) => {
+          if (childSnapshot.val().check) {
+            setCategoryList((categoryList) => [
+              ...categoryList,
+              childSnapshot.val(),
+            ]);
+          }
+        });
       });
-    });
+    }
     return () => {
       postCategoryRef.off();
     };
   }, []);
   return categoryList;
+}
+
+// export function useCategoryList() {
+//   const [categoryList, setCategoryList] = useState([]);
+//   useEffect(() => {
+//     const postCategoryRef = fbdata
+//       .database()
+//       .ref("/postCategory/")
+//       .orderByChild("id");
+//     const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
+//       setCategoryList([]);
+//       snapshot.forEach((childSnapshot) => {
+//         setCategoryList((categoryList) => [
+//           ...categoryList,
+//           childSnapshot.val(),
+//         ]);
+//       });
+//     });
+//     return () => {
+//       postCategoryRef.off();
+//     };
+//   }, []);
+//   return categoryList;
+// }
+
+export function useAgegroupList() {
+  const [ageGroupList, setAgeGroupList] = useState([]);
+  useEffect(() => {
+    const AgeGroupRef = fbdata
+      .database()
+      .ref("/ageCategory/")
+      .orderByChild("key");
+    const OnLoadingListener = AgeGroupRef.once("value", (snapshot) => {
+      setAgeGroupList([]);
+      snapshot.forEach((childSnapshot) => {
+        setAgeGroupList((ageGroupList) => [
+          ...ageGroupList,
+          childSnapshot.val(),
+        ]);
+      });
+    });
+    return () => {
+      AgeGroupRef.off();
+    };
+  }, []);
+  return ageGroupList;
 }

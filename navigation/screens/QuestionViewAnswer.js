@@ -101,15 +101,42 @@ function QuestionViewAnswer({ navigation, route }) {
           style={{
             width: "95%",
             marginTop: 20,
+            marginBottom: 30,
           }}
           data={QAList}
           renderItem={({ item }) => (
             <Animatable.View animation="fadeInUp" style={styles.answerCon}>
-              <Text style={{ marginTop: 10, right: "-47%" }}>
+              <Text
+                style={{
+                  marginTop: 10,
+                  alignSelf: "flex-end",
+                  paddingRight: 10,
+                }}
+              >
                 {" "}
                 Posted on {item.creationDate}{" "}
               </Text>
               <Text style={styles.answerText}> {item.answer} </Text>
+
+              {/* <View
+                style={{
+                  flexGrow: 1,
+                  marginTop: 4,
+                  alignSelf: "flex-end",
+                  paddingRight: 10,
+                  // flexDirection: "row-reverse",
+                }}
+              >
+                <Text
+                  style={{
+                    paddingTop: 6,
+                    paddingLeft: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  by {item.username}
+                </Text>
+              </View> */}
 
               <View
                 style={{

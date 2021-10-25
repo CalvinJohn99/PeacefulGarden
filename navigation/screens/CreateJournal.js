@@ -87,7 +87,7 @@ function updateNegTimestampJournal(username, journalDate, key) {
     .ref("/Journal/" + username + "/" + journalDate + "/" + key + "/");
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
-    console.log(negTimestampValue);
+    // console.log(negTimestampValue);
     negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
@@ -126,20 +126,8 @@ export default function CreateJournal({ navigation }) {
   };
 
   const onRemoveSelectImages = (item) => {
-    console.log(item);
     setImages(images.filter((it) => it !== item));
-    // console.log("inner images: ", images);
   };
-
-  // console.log("outer images: ", images);
-
-  // const onRemoveSelectImages = (index) => {
-  //   console.log(index);
-  //   setImages((images) => {
-  //     images.remove(index);
-  //   });
-  //   console.log("images: ", images);
-  // };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -154,8 +142,6 @@ export default function CreateJournal({ navigation }) {
       setImageErrorStatus(false);
     }
   };
-
-  // console.log("image array: ", images);
 
   const createJournal = () => {
     var numberOfImages = images.length;
@@ -204,7 +190,6 @@ export default function CreateJournal({ navigation }) {
             if (i === numberOfImages) {
               setUploading(false);
               console.log("number of images uploaded: ", i);
-              // console.log("imageURLSet: ", imageURLSet);
               storeJournal(
                 username,
                 currentDate,
@@ -213,7 +198,7 @@ export default function CreateJournal({ navigation }) {
                 imageURLs,
                 imageRefs
               );
-              navigation.navigate("MoodJournal", {
+              navigation.navigate("Diary", {
                 screen: "MoodJournalCalendar",
               });
             }
@@ -222,22 +207,6 @@ export default function CreateJournal({ navigation }) {
       );
     });
   };
-
-  // console.log("images: ", images);
-  // console.log("imageURLs: ", imageURLs);
-
-  // const AddImage = () => {
-  //   for (let i = 0; i < 9; i++) {
-  //     render(
-  //       <View>
-  //         <Text>Test</Text>
-  //       </View>
-  //     );
-  //   }
-  // };
-
-  console.log(images.length);
-  console.log(imageErrorStatus);
 
   const onSubmit = () => {
     if (journalContent === "" || images.length === 0) {
@@ -362,9 +331,12 @@ export default function CreateJournal({ navigation }) {
           </View>
           <View style={{ width: "100%", alignItems: "center" }}>
             <Text
-              style={[styles.header, { paddingBottom: 10, marginLeft: "-80%" }]}
+              style={[
+                styles.header,
+                { paddingBottom: 10, alignSelf: "flex-start" },
+              ]}
             >
-              Photo
+              Photo (max 9)
             </Text>
 
             <View
@@ -376,7 +348,7 @@ export default function CreateJournal({ navigation }) {
                 // borderWidth: 2,
               }}
             >
-              {images.map((image) => {
+              {images.map((image, index) => {
                 return (
                   <TouchableOpacity
                     style={{
@@ -478,9 +450,9 @@ export default function CreateJournal({ navigation }) {
         </View>
         <View style={styles.submitSection}>
           <View style={styles.warningTextCon}>
-            <Text style={{ color: "red", fontWeight: "bold" }}>
-              *The maximum number of images allowed is 9!
-            </Text>
+            {/* <Text style={{ color: "red", fontWeight: "bold" }}>
+              *The maximum number of photos per journal is 9!
+            </Text> */}
           </View>
           {!uploading ? (
             <TouchableOpacity

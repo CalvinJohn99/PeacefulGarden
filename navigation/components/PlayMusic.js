@@ -102,7 +102,7 @@ export default function PlayMusic(props) {
                 }}
               >
                 {isToggleOn ? (
-                  <FontAwesome5 name="pause-circle" size={80} color="white" />
+                  <FontAwesome5 name="stop-circle" size={80} color="white" />
                 ) : (
                   <FontAwesome5 name="play-circle" size={80} color="white" />
                 )}

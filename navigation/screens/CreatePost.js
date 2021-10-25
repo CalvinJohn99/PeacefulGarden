@@ -112,10 +112,11 @@ function updateNegTimestampPostsAcc(username, key) {
 }
 
 export default function GPostScreen({ navigation }) {
-  const categoryList = useCategoryList();
+  // const categoryList = useCategoryList();
   const currentDate = useCurrentDate();
   const username = useAccountUsername();
   const currentUserID = useAccountUserid();
+  const [categoryList, setCategoryList] = useState([]);
 
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -140,7 +141,32 @@ export default function GPostScreen({ navigation }) {
         }
       }
     })();
+    __isTheUserAuthenticated();
   }, []);
+
+  // useEffect(() => {
+  //   __isTheUserAuthenticated();
+  // }, []);
+
+  function __isTheUserAuthenticated() {
+    const userId = fbdata.auth().currentUser.uid;
+    if (userId !== null) {
+      fbdata
+        .database()
+        .ref("/users/" + userId + "/interest/")
+        .once("value", (snapshot) => {
+          setCategoryList([]);
+          snapshot.forEach((childSnapshot) => {
+            if (childSnapshot.val().check) {
+              setCategoryList((categoryList) => [
+                ...categoryList,
+                childSnapshot.val(),
+              ]);
+            }
+          });
+        });
+    }
+  }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -294,13 +320,13 @@ export default function GPostScreen({ navigation }) {
               // justifyContent: "center",
             }}
           >
-            <Text style={[styles.header]}>Title</Text>
+            <Text style={[styles.header]}>*Title</Text>
             <TextInput
               style={[styles.input, { paddingTop: 0 }]}
               numberOfLines={1}
               onChangeText={(text) => {
                 setTitle(text);
-                // setTitleErrorStatus(false);
+                setTitleErrorStatus(false);
               }}
               value={title}
               placeholder="Enter title here..."
@@ -312,7 +338,7 @@ export default function GPostScreen({ navigation }) {
             ) : null}
           </View>
           <View style={{ width: "100%", marginBottom: 25 }}>
-            <Text style={styles.header}>Content</Text>
+            <Text style={styles.header}>*Content</Text>
             <TextInput
               style={[
                 styles.input,
@@ -323,7 +349,7 @@ export default function GPostScreen({ navigation }) {
               autofocus={true}
               onChangeText={(text) => {
                 setContent(text);
-                // setContentErrorStatus(false);
+                setContentErrorStatus(false);
               }}
               value={content}
               placeholder="Enter Content here..."
@@ -335,13 +361,14 @@ export default function GPostScreen({ navigation }) {
             ) : null}
           </View>
           <View style={{ width: "100%" }}>
-            <Text style={[styles.header, { paddingBottom: 10 }]}>Photo</Text>
+            <Text style={[styles.header, { paddingBottom: 10 }]}>Photo*</Text>
             <View style={{ alignItems: "center" }}>
               {image === "" ? (
                 <TouchableOpacity
                   style={{ alignSelf: "center" }}
                   onPress={() => {
                     pickImage();
+                    setPhotoErrorStatus(false);
                   }}
                 >
                   <FontAwesome5 name="plus" size={40} color="grey" />

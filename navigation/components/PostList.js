@@ -81,7 +81,7 @@ export default function PostList(props) {
             }}
           >
             <TouchableOpacity
-              style={{ borderRadius: 20 }}
+              style={{ borderRadius: 20, height: "90%" }}
               onPress={() => {
                 setModalVisible(true);
               }}
@@ -138,6 +138,11 @@ export default function PostList(props) {
                 </View>
               </ImageBackground>
             </TouchableOpacity>
+            <View
+              style={{ alignSelf: "flex-end", marginTop: 3, marginRight: 10 }}
+            >
+              <Text style={{ fontWeight: "bold" }}>by {item.username}</Text>
+            </View>
 
             <Modal
               animationType="slide"

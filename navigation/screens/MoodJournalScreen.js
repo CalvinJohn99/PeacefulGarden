@@ -59,7 +59,7 @@ export default function MoodJournalScreen({ navigation }) {
           }}
           maxDate={new Date()}
           onDayPress={(day) => {
-            navigation.navigate("MoodJournal", {
+            navigation.navigate("Diary", {
               screen: "ViewMoodJournal",
               params: { currentUsername, day },
             });
