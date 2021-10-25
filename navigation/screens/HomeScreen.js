@@ -16,8 +16,28 @@ import fbdata from "../../firebase.js";
 
 export default function HomeScreen({ navigation }) {
   // const currentDate = useCurrentDate();
-  // const [openingImageURL, setOpeningImageURL] = useState("");
-  // const num = useOpeningNum();
+  const [openingImageURL, setOpeningImageURL] = useState("");
+  const num = useOpeningNum();
+  // const index = Math.floor(Math.random() * num) + 1;
+  // console.log(index);
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      setOpeningImageURL("");
+      const index = Math.floor(Math.random() * num) + 1;
+      console.log("opening image photo number: ", index);
+      const openingImageRef = fbdata
+        .database()
+        .ref("/OpeningImage/" + index + "/url/");
+      const OnLoadingListener = openingImageRef.once("value", (snapshot) => {
+        setOpeningImageURL(snapshot.val().toString());
+      });
+      return () => {
+        openingImageRef.off();
+      };
+    });
+  }, []);
+
   // useEffect(() => {
   //   const index = Math.floor(Math.random() * num) + 1;
   //   const openingImageRef = fbdata
@@ -43,7 +63,8 @@ export default function HomeScreen({ navigation }) {
       <ImageBackground
         source={{
           // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c.appspot.com/o/openingImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=3b044c73-9cb0-4efe-83b6-291cb3db81a8",
-          uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=43c8c539-60fd-4cbb-bfd3-27f82bad3c27",
+          // uri: "https://firebasestorage.googleapis.com/v0/b/peacefulgarden-a4b5c-e541a.appspot.com/o/OpeningImagePortrait%2FImage%20by%20MoneyforCoffee%20from%20Pixabay.jpg?alt=media&token=43c8c539-60fd-4cbb-bfd3-27f82bad3c27",
+          uri: openingImageURL ? openingImageURL : null,
         }}
         resizeMode="cover"
         style={{ width: "100%", height: "100%" }}

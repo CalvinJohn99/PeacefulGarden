@@ -270,7 +270,7 @@ export default function MusicScreen({ navigation }) {
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <FlatList
-        style={{ top: 20, width: "100%" }}
+        style={{ top: 20, width: "100%", marginBottom: 50 }}
         data={musicList}
         renderItem={({ item }) => <PlayMusic music={item} />}
         keyExtractor={(item) => item.id.toString()}

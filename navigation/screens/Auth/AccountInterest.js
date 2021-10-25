@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, Button, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import RNPickerSelect from "react-native-picker-select";
 import { CheckBox } from "react-native-elements";
 import { Avatar } from "react-native-elements";
 import fbdata from "../../../firebase";
-import Interest from "./../../../assets/Interest";
-import AgeCategories from "./../../../assets/AgeCategories";
+import {
+  useCategoryList,
+  useAgegroupList,
+} from "../../components/CommonFunctions.js";
+import commonStyles from "../../../commonStyles.js";
+// import Interest from "./../../../assets/Interest";
+// import AgeCategories from "./../../../assets/AgeCategories";
 
 const placeholder = {
   label: "Select your age...",
@@ -14,27 +19,40 @@ const placeholder = {
   color: "#9EA0A4",
 };
 
-function AccountAge({ navigation, route }) {
-  
+function AccountInterest({ navigation, route }) {
   const { newdata } = route.params;
-  const [checkboxes, setCheckboxes] = useState(Interest);
+  // const ageGroupList = useAgegroupList();
+  const [checkboxes, setCheckboxes] = useState([]);
   const [age, setAge] = useState(null);
   const [data, setData] = useState({
     uid: "",
     username: "",
     img: "",
-    answer1: "",
-    answer2: "",
-    age: "",
+    // age: "",
     interest: {},
   });
 
+  useEffect(() => {
+    const postCategoryRef = fbdata
+      .database()
+      .ref("/postCategory/")
+      .orderByChild("id");
+    const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
+      setCheckboxes([]);
+      snapshot.forEach((childSnapshot) => {
+        setCheckboxes((checkboxes) => [...checkboxes, childSnapshot.val()]);
+      });
+    });
+    return () => {
+      postCategoryRef.off();
+    };
+  }, []);
+
   const handleData = (uuid) => {
-    data.uid = uuid, 
+    data.uid = uuid;
     data.username = newdata.username;
-    data.answer1 = newdata.answer1;
-    data.answer2 = newdata.answer2;
-    data.age = age;
+    data.img = newdata.img;
+    // data.age = age;
     data.interest = checkboxes;
     setData({ ...data });
   };
@@ -54,17 +72,20 @@ function AccountAge({ navigation, route }) {
     });
     setCheckboxes(newData);
   };
+
   const renderCheckBox = checkboxes.map((item, index) => {
     return (
-      <CheckBox
-        checkedColor="green"
-        checked={item.check}
-        title={item.value}
-        uncheckedIcon="circle-o"
-        checkedIcon="dot-circle-o"
-        onPress={() => onChangeBox(item, index)}
-        key={index}
-      />
+      <View style={{ width: "48%" }}>
+        <CheckBox
+          checkedColor="green"
+          checked={item.check}
+          title={item.value}
+          uncheckedIcon="circle-o"
+          checkedIcon="dot-circle-o"
+          onPress={() => onChangeBox(item, index)}
+          key={index}
+        />
+      </View>
     );
   });
 
@@ -72,7 +93,7 @@ function AccountAge({ navigation, route }) {
     return new Promise(async (res, rej) => {
       const response = await fetch(newdata.img);
       const file = await response.blob();
-      
+
       let upload = fbdata
         .storage()
         .ref(data.uid + "/")
@@ -81,14 +102,14 @@ function AccountAge({ navigation, route }) {
 
       upload.on(
         "stated_changed",
-        snapshot => {},
-        err => {
-          rej(err)
+        (snapshot) => {},
+        (err) => {
+          rej(err);
         },
         async () => {
           const url = await upload.snapshot.ref.getDownloadURL();
-          console.log(url)
-          updateProfile(url)
+          console.log(url);
+          updateProfile(url);
           res(url);
         }
       );
@@ -96,25 +117,26 @@ function AccountAge({ navigation, route }) {
   }
 
   function updateProfile(url) {
-    const update  = {
+    const update = {
       displayName: data.username,
       photoURL: url,
-    }
+    };
     fbdata.auth().currentUser.updateProfile(update);
-    console.log("1. Add Auth Done!")
+    console.log("1. Add Auth Done!");
   }
 
   function addRealTimeDatabase() {
-   
     fbdata
       .database()
       .ref("users/" + data.uid)
       .set(
         {
-          answer1: data.answer1,
-          answer2: data.answer2,
-          age: data.age,
+          username: data.username,
+          profileImage: data.img,
+          // age: data.age,
           interest: data.interest,
+          postCount: 0,
+          answerCount: 0,
         },
         function (error) {
           if (error) {
@@ -122,9 +144,8 @@ function AccountAge({ navigation, route }) {
           }
         }
       );
-      console.log("2. Add Realtime Done!")
+    console.log("2. Add Realtime Done!");
   }
-
 
   function signUp() {
     fbdata
@@ -132,24 +153,31 @@ function AccountAge({ navigation, route }) {
       .createUserWithEmailAndPassword(newdata.email, newdata.password)
       .then(function (user) {
         fbdata.auth().currentUser.sendEmailVerification();
-        console.log("User account created & signed in!");
+        // console.log("User account created & signed in!");
         handleData(user["user"]["uid"]);
         addRealTimeDatabase();
       })
       .then(() => {
-        console.log(newdata.img)
-        if(newdata.img === null){
-          fbdata.auth().currentUser.updateProfile({displayName: data.username});
-        }else {
-          addProfileAuth();
-        }
+        fbdata.auth().currentUser.updateProfile({
+          displayName: data.username,
+          photoURL: data.img,
+        });
+
+        // console.log(newdata.img);
+        // if (newdata.img === null) {
+        //   fbdata
+        //     .auth()
+        //     .currentUser.updateProfile({ displayName: data.username });
+        // } else {
+        //   addProfileAuth();
+        // }
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
-          alert("That email address is already in use!");
+          alert("This email address has been registered!");
         }
         if (error.code === "auth/invalid-email") {
-          alert("That email address is invalid!");
+          alert("The email address is invalid!");
         }
         console.error(error);
       });
@@ -157,7 +185,17 @@ function AccountAge({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
+      <View
+        style={{
+          width: "100%",
+          height: "25%",
+          backgroundColor: "#00BCD4",
+          // flexDirection: "column",
+          // alignItems: "center",
+          justifyContent: "center",
+          paddingLeft: 20,
+        }}
+      >
         <View style={styles.userInfo}>
           <Avatar
             size="large"
@@ -166,23 +204,27 @@ function AccountAge({ navigation, route }) {
               uri: `${newdata.img}`,
             }}
           />
-          <Text
-            style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10 }}
-          >
+          <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 20 }}>
             {newdata.username}
           </Text>
         </View>
-        <View style={styles.questionForm}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Age</Text>
+      </View>
+
+      <View style={commonStyles.answerContainer}>
+        {/* <View style={styles.questionForm}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Age Group</Text>
           <RNPickerSelect
             style={pickerSelectStyles}
             onValueChange={(value) => setAge(value)}
             placeholder={placeholder}
-            items={AgeCategories}
+            items={ageGroupList}
           />
-        </View>
+        </View> */}
+
         <View style={styles.questionForm}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Interest</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>
+            Interest
+          </Text>
           <View style={styles.checkBoxGroup}>{renderCheckBox}</View>
         </View>
         <TouchableOpacity
@@ -191,14 +233,23 @@ function AccountAge({ navigation, route }) {
             signUp();
           }}
         >
-          <Button title="Next" color="#fff" />
+          {/* <Button title="Next" color="#fff" /> */}
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            Sign Up
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
-export default AccountAge;
+export default AccountInterest;
 
 const styles = StyleSheet.create({
   container: {
@@ -210,9 +261,10 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
   },
   userInfo: {
+    marginBottom: 30,
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -224,24 +276,27 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    width: "100%",
-    marginVertical: 20,
+    width: "95%",
+    marginVertical: 30,
+    marginHorizontal: 20,
   },
 
   button_submit: {
     height: 50,
     width: 130,
     borderRadius: 14,
-    backgroundColor: "#17CAF1",
+    backgroundColor: "#00BCD4",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: "white",
+    marginTop: 20,
   },
   checkBoxGroup: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
+    marginTop: 10,
   },
 });
 

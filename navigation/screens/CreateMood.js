@@ -205,7 +205,7 @@ export default function CreateMood({ navigation }) {
         moodColor
       );
       alert("Successfully saved!");
-      navigation.navigate("MoodJournal", {
+      navigation.navigate("Diary", {
         screen: "MoodJournalCalendar",
       });
     }
@@ -367,23 +367,23 @@ const styles = StyleSheet.create({
   submitSection: {
     flexDirection: "row",
     top: 70,
-    height: 100,
+    height: 80,
   },
 
-  warningTextCon: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 2,
-    left: 10,
-    padding: 15,
-  },
+  // warningTextCon: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   flex: 2,
+  //   left: 10,
+  //   padding: 15,
+  // },
 
   postbutton: {
     backgroundColor: "#F3B000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,
-    padding: 15,
+    // padding: 15,
     borderRadius: 20,
     flex: 1,
   },

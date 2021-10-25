@@ -171,7 +171,7 @@ function MyTabs() {
             iconName = focused ? "earth" : "earth-outline";
           } else if (route.name === "Question") {
             iconName = focused ? "bulb" : "bulb-outline";
-          } else if (route.name === "MoodJournal") {
+          } else if (route.name === "Diary") {
             iconName = focused ? "book" : "book-outline";
           } else if (route.name === "Music") {
             iconName = focused ? "musical-notes" : "musical-notes-outline";
@@ -260,7 +260,8 @@ function MyTabs() {
         })}
       />
       <Tab.Screen
-        name="MoodJournal"
+        // name="MoodJournal"
+        name="Diary"
         component={JMStackScreen}
         options={{ headerShown: false }}
         listeners={({ navigation, route }) => ({

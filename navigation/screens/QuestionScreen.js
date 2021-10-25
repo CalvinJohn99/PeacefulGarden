@@ -55,7 +55,7 @@ function QuestionScreen({ navigation }) {
       </View> */}
 
       <FlatList
-        style={{ top: 20 }}
+        style={{ top: 20, marginBottom: 30 }}
         data={QList}
         renderItem={({ item }) => (
           <TouchableOpacity

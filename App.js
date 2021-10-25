@@ -11,9 +11,10 @@ import SignupForm from "./navigation/screens/Auth/SignupForm";
 import SigninForm from "./navigation/screens/Auth/SigninForm";
 import MainAccountScreen from "./navigation/screens/Auth/MainAccountScreen";
 import AccountQuestion from "./navigation/screens/Auth/AccountQuestion";
-import AccountAge from "./navigation/screens/Auth/AccountAge";
-import ResetPassword from './navigation/screens/Auth/ResetPassword'
-import Test from './navigation/screens/Auth/Test'
+import AccountInterest from "./navigation/screens/Auth/AccountInterest";
+import ResetPassword from "./navigation/screens/Auth/ResetPassword";
+import Test from "./navigation/screens/Auth/Test";
+import commonStyles from "./commonStyles.js";
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -42,9 +43,13 @@ function App() {
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
-          headerStyle: {
-            backgroundColor: "#1067CC",
-          },
+          // headerStyle: {
+          //   backgroundColor: "#1067CC",
+          // },
+          // headerStyle: {
+          //   backgroundColor: "#00BCD4",
+          // },
+          headerStyle: commonStyles.headerBGColor,
           headerTintColor: "white",
           headerTitleStyle: {
             fontWeight: "bold",
@@ -56,7 +61,8 @@ function App() {
             <Stack.Screen
               name="MainAccountScreen"
               component={MainAccountScreen}
-              options={{ title: "Account" }}
+              // options={{ title: "Account" }}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="SigninForm"
@@ -68,14 +74,14 @@ function App() {
               component={SignupForm}
               options={{ title: "Create New Account" }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="AccountQuestion"
               component={AccountQuestion}
               options={{ title: "Create New Account" }}
-            />
+            /> */}
             <Stack.Screen
-              name="AccountAge"
-              component={AccountAge}
+              name="AccountInterest"
+              component={AccountInterest}
               options={{ title: "Create New Account" }}
             />
             <Stack.Screen
@@ -83,7 +89,7 @@ function App() {
               component={ResetPassword}
               options={{ title: "Reset Password" }}
             />
-             <Stack.Screen
+            <Stack.Screen
               name="Test"
               component={Test}
               options={{ title: "Test" }}
@@ -95,7 +101,6 @@ function App() {
             component={MainContainer}
             options={{ headerShown: false }}
           />
-          
         )}
       </Stack.Navigator>
     </NavigationContainer>

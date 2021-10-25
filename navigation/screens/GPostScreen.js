@@ -94,7 +94,7 @@ export default function GPostScreen({ navigation }) {
         </View>
       </View>
 
-      <View style={{ marinTop: 50 }}>
+      <View style={{ marinTop: 50, paddingBottom: 120 }}>
         <FlatList
           data={userInterest}
           renderItem={renderItem}

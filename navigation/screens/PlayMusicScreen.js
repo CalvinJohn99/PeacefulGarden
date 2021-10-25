@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderWidth: 3,
     margin: 20,
-    borderRadius: 20,
+    // borderRadius: 20,
     overflow: "hidden",
   },
 

@@ -267,7 +267,7 @@ export function useCategoryList() {
     const postCategoryRef = fbdata
       .database()
       .ref("/postCategory/")
-      .orderByChild("key");
+      .orderByChild("id");
     const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
       setCategoryList([]);
       snapshot.forEach((childSnapshot) => {
@@ -282,4 +282,27 @@ export function useCategoryList() {
     };
   }, []);
   return categoryList;
+}
+
+export function useAgegroupList() {
+  const [ageGroupList, setAgeGroupList] = useState([]);
+  useEffect(() => {
+    const AgeGroupRef = fbdata
+      .database()
+      .ref("/ageCategory/")
+      .orderByChild("key");
+    const OnLoadingListener = AgeGroupRef.once("value", (snapshot) => {
+      setAgeGroupList([]);
+      snapshot.forEach((childSnapshot) => {
+        setAgeGroupList((ageGroupList) => [
+          ...ageGroupList,
+          childSnapshot.val(),
+        ]);
+      });
+    });
+    return () => {
+      AgeGroupRef.off();
+    };
+  }, []);
+  return ageGroupList;
 }

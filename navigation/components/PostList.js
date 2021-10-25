@@ -117,7 +117,7 @@ export default function PostList(props) {
                   >
                     {item.title}
                   </Text>
-                  <View
+                  {/* <View
                     style={{
                       display: "flex",
                       flexDirection: "row-reverse",
@@ -134,7 +134,7 @@ export default function PostList(props) {
                     }}
                   >
                     <LikePostButton post={item} />
-                  </View>
+                  </View> */}
                 </View>
               </ImageBackground>
             </TouchableOpacity>

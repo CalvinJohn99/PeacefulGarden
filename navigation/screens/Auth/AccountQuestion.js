@@ -8,71 +8,116 @@ import {
   TextInput,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Avatar } from 'react-native-elements';
+import { Avatar } from "react-native-elements";
 
-function AccountQuestion({navigation , route}) {
-  const [answer1, setAnswer1] = useState(null)
-  const [answer2, setAnswer2] = useState(null)
-  const [newdata, setNewdata] = useState({username: "", password:"", email: "",img:"", answer1: "", answer2: ""})
-  const {data} = route.params;
+function AccountQuestion({ navigation, route }) {
+  const [answer1, setAnswer1] = useState("");
+  const [answer2, setAnswer2] = useState("");
+  const [newdata, setNewdata] = useState({
+    username: "",
+    password: "",
+    email: "",
+    img: "",
+    answer1: "",
+    answer2: "",
+  });
+  const { data } = route.params;
+  const [firstErrorStatus, setFirstErrorStatus] = useState(false);
+  const [secondErrorStatus, setSecondErrorStatus] = useState(false);
 
-  const handleSignUp = () => {  
+  const handleSignUp = () => {
     newdata.username = data.username;
     newdata.password = data.password;
     newdata.email = data.email;
     newdata.img = data.img;
-    newdata.imgName = data.imgName;
     newdata.answer1 = answer1;
     newdata.answer2 = answer2;
     setNewdata({ ...newdata });
-  }
-  
+  };
+
+  const onSubmit = () => {
+    if (answer1 === "" || answer2 === "") {
+      if (answer1 === "") {
+        setFirstErrorStatus(true);
+      }
+      if (answer2 === "") {
+        setSecondErrorStatus(true);
+      }
+    } else {
+      handleSignUp();
+      navigation.navigate("AccountAge", { newdata: newdata });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-     <View style={styles.container}>
-      <View style={styles.userInfo}>
-      <Avatar
+      <View style={styles.container}>
+        <View style={styles.userInfo}>
+          <Avatar
             size="large"
             rounded
             source={{
               uri: `${data.img}`,
             }}
           />
-        <Text style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10, }}>{data.username}</Text>
-      </View>
-      <View style={styles.questionForm}>
-        <Text style={{ fontSize: 16, fontWeight: "normal" }}>
-          1. What is your dream job?
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your Answer"
-          autoCapitalize="none"
-          placeholderTextColor="white"
-          onChangeText={(text) => { setAnswer1(text) }} value={answer1}
-        />
-      </View>
-      <View style={styles.questionForm}>
-        <Text style={{ fontSize: 16, fontWeight: "normal" }}>
-          2. What is the name of your first pet?
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your Answer"
-          autoCapitalize="none"
-          placeholderTextColor="white"
-          onChangeText={(text) => { setAnswer2(text) }} value={answer2}
-        />
-      </View>
-      <TouchableOpacity
-        style={styles.button_submit}
-        onPress={() => {
-          handleSignUp()
-          navigation.navigate("AccountAge", {newdata: newdata})
+          <Text
+            style={{ fontSize: 30, fontWeight: "bold", marginHorizontal: 10 }}
+          >
+            {data.username}
+          </Text>
+        </View>
+        <View style={styles.questionForm}>
+          <Text style={{ fontSize: 16, fontWeight: "normal" }}>
+            1. What is your dream job?
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Answer"
+            autoCapitalize="none"
+            placeholderTextColor="white"
+            onChangeText={(text) => {
+              setAnswer1(text);
+              setFirstErrorStatus(false);
+            }}
+            value={answer1}
+          />
+          {firstErrorStatus === true ? (
+            <Text style={styles.formErrorMsg}>
+              Please enter your answer to post!
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.questionForm}>
+          <Text style={{ fontSize: 16, fontWeight: "normal" }}>
+            2. What is the name of your first pet?
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Answer"
+            autoCapitalize="none"
+            placeholderTextColor="white"
+            onChangeText={(text) => {
+              setAnswer2(text);
+              setSecondErrorStatus(false);
+            }}
+            value={answer2}
+          />
+          {secondErrorStatus === true ? (
+            <Text style={styles.formErrorMsg}>
+              Please enter your answer to post!
+            </Text>
+          ) : null}
+        </View>
+        <TouchableOpacity
+          style={styles.button_submit}
+          onPress={() => {
+            onSubmit();
+            // handleSignUp();
+            // navigation.navigate("AccountAge", { newdata: newdata });
           }}
-      >
-        <Button title="Next" color="#fff" />
-      </TouchableOpacity>
+        >
+          <Button title="Next" color="#fff" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -139,5 +184,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#60C8ED",
+  },
+  formErrorMsg: {
+    color: "red",
+    fontSize: 20,
+    marginTop: 5,
+    // marginLeft: -50,
   },
 });
