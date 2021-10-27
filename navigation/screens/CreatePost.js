@@ -121,12 +121,13 @@ export default function GPostScreen({ navigation }) {
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const [categoryValue, setCategoryValue] = useState("Others");
+  const [categoryValue, setCategoryValue] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
+  const [categoryErrorStatus, setCategoryErrorStatus] = useState(false);
   const [titleErrorStatus, setTitleErrorStatus] = useState(false);
   const [contentErrorStatus, setContentErrorStatus] = useState(false);
   const [photoErrorStatus, setPhotoErrorStatus] = useState(false);
@@ -238,7 +239,15 @@ export default function GPostScreen({ navigation }) {
   };
 
   const onSubmit = () => {
-    if (title === "" || content === "" || image === "") {
+    if (
+      categoryValue === null ||
+      title === "" ||
+      content === "" ||
+      image === ""
+    ) {
+      if (categoryValue === null) {
+        setCategoryErrorStatus(true);
+      }
       if (title === "") {
         setTitleErrorStatus(true);
       }
@@ -306,10 +315,18 @@ export default function GPostScreen({ navigation }) {
                   onValueChange={(value) => {
                     setCategoryValue(value);
                     console.log(value);
+                    setCategoryErrorStatus(false);
                   }}
                   items={categoryList}
                 />
               </View>
+            </View>
+            <View>
+              {categoryErrorStatus === true ? (
+                <Text style={styles.formErrorMsg}>
+                  Please enter your title to post!
+                </Text>
+              ) : null}
             </View>
           </View>
           <View
@@ -400,6 +417,11 @@ export default function GPostScreen({ navigation }) {
           <View style={styles.warningTextCon}>
             <Text style={{ color: "red", fontWeight: "bold" }}>
               *This answer will be made public once you "Post" it!
+            </Text>
+            <Text
+              style={{ color: "#00BCD4", fontWeight: "bold", marginTop: 5 }}
+            >
+              *Post grateful stories, appreciate the beauaty of life!
             </Text>
           </View>
           {!uploading ? (

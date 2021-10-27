@@ -59,8 +59,7 @@ function QuestionViewAnswer({ navigation, route }) {
         <View />
         <SharedElement id={`item.${item.id}.question`}>
           <Text style={commonStyles.questionText}>
-            {" "}
-            {item.id}. {item.question}{" "}
+            {item.id}. {item.question}
           </Text>
         </SharedElement>
       </Animatable.View>

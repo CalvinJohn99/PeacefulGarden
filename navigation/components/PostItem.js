@@ -1,146 +1,184 @@
 import * as React from "react";
-import styled from "styled-components";
-import Textarea from "react-native-textarea";
-import { Dimensions, ScrollView, Button } from "react-native";
-import LikeButton from "./LikeButton";
-
-var width = Dimensions.get("window").width; //full width
-var height = Dimensions.get("window").height; //full height
-
+import { useState, useEffect } from "react";
 import {
+  SafeAreaView,
   View,
   Text,
+  ImageBackground,
   StyleSheet,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
+  FlatList,
+  TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
+import commonStyles, {
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from "../../commonStyles.js";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { LikePostButton } from "../components/LikeButton";
 
-const BoxContent = styled(View)`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin: 10px;
-  width: 100%;
-`;
+export default function PostItem(props) {
+  const item = props.item;
+  const [modalVisible, setModalVisible] = useState(false);
 
-const BoxImage = styled(View)`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin: 10px;
-  width: 100%;
-`;
-const ImageContainer = styled(View)`
-  position: relative;
-  height: 200px;
-  border-radius: 10px;
-  border: 4px solid #fff;
-  margin-top: 10px;
-  box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
-`;
-export default function PostItem({}) {
-  const [text, onChangeText] = React.useState("Useless Text");
   return (
-    <View style={styles.container}>
-      <BoxImage>
-        <View style={styles.boxInfo}>
-          <Text style={styles.textTitle}>13/08/2020</Text>
-          <Text style={styles.textTitle}>Others</Text>
-          <Text style={styles.textTitle}>HHGirl</Text>
-        </View>
-        <ImageContainer>
-          <Image
-            source={require("../../assets/opening1.jpg")}
-            style={styles.postImage}
-          ></Image>
-          <Text
+    <View
+      style={{
+        width: SCREEN_WIDTH * 0.7,
+        height: 200,
+        marginHorizontal: 20,
+        borderRadius: 20,
+      }}
+    >
+      <TouchableOpacity
+        style={{ borderRadius: 20, height: "90%" }}
+        onPress={() => {
+          setModalVisible(true);
+          console.log(item);
+        }}
+      >
+        <ImageBackground
+          source={{ uri: item.imageURL }}
+          imageStyle={{ opacity: 0.9, borderRadius: 20 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <View
             style={{
+              width: "100%",
+              backgroundColor: "#E8E6F4",
               position: "absolute",
-              fontSize: 26,
-              fontWeight: "bold",
-              color: "#fff",
-              top: 5,
-              left: 5,
+              bottom: 0,
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
+              flexDirection: "row",
             }}
           >
-            HAPPY NEW YEAR
-          </Text>
-        </ImageContainer>
-      </BoxImage>
-      <BoxContent>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <View style={styles.boxInput}>
-            <Textarea
-              multiline
-              containerStyle={styles.textareaContainer}
-              style={styles.textarea}
-              onChangeText={onChangeText}
-              value={text}
-              //defaultValue={this.state.text}
-              maxLength={120}
-              placeholder={"Content"}
-              placeholderTextColor={"#000000"}
-              underlineColorAndroid={"transparent"}
-              accessibilityRole={"keyboardkey"}
-            />
+            <Text
+              style={{
+                color: "black",
+                fontSize: 18,
+                fontWeight: "bold",
+                // position: "absolute",
+                marginHorizontal: 15,
+                paddingVertical: 10,
+                flex: 5,
+                // borderWidth: 2,
+                // borderColor: "red",
+              }}
+            >
+              {item.title}
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                // marginTop: 4,
+                marginLeft: 10,
+                flex: 1,
+                flexGrow: 1,
+                // borderWidth: 2,
+                // borderColor: "blue",
+                alignItems: "flex-end",
+                paddingBottom: 6,
+                // alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <LikePostButton post={item} />
+            </View>
           </View>
-        </TouchableWithoutFeedback>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row-reverse",
-            marginTop: 4,
-          }}
-        ></View>
-      </BoxContent>
+        </ImageBackground>
+      </TouchableOpacity>
+      <View style={{ alignSelf: "flex-end", marginTop: 3, marginRight: 10 }}>
+        <Text style={{ fontWeight: "bold" }}>by {item.username}</Text>
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={commonStyles.modalFirstView}>
+          <View
+            style={[
+              commonStyles.modalSecondView,
+              {
+                backgroundColor: "#DBF0FF",
+                alignItems: "center",
+              },
+            ]}
+          >
+            <TouchableOpacity
+              style={{ position: "absolute", top: 10, right: 20 }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <FontAwesome5 name="times" size={40} color="grey" />
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: "100%",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginTop: 30,
+                }}
+              >
+                {item.title}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  marginTop: 20,
+                  color: "grey",
+                }}
+              >
+                Posted by {item.username}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  marginTop: 5,
+                  color: "grey",
+                }}
+              >
+                Posted on {item.creationDate}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  marginTop: 5,
+                  color: "grey",
+                }}
+              >
+                Category: {item.category}
+              </Text>
+              <View style={{ width: "100%", height: 200, marginTop: 30 }}>
+                <ImageBackground
+                  source={{ uri: item.imageURL }}
+                  imageStyle={{ borderRadius: 20 }}
+                  style={{ width: "100%", height: "100%" }}
+                ></ImageBackground>
+              </View>
+              <Text style={{ fontSize: 18, marginTop: 30 }}>
+                {item.content}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    width: width,
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 5,
-    padding: 10,
-  },
-  boxInput: {
-    width: "100%",
-  },
-  textareaContainer: {
-    height: 300,
-    padding: 6,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-  },
-  textarea: {
-    textAlignVertical: "top", // hack android
-    height: 170,
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000000",
-    padding: 5,
-  },
-  textTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  postImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 10,
-  },
-  boxInfo: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginLeft: 5,
-    marginRight: 5,
-  },
-});
