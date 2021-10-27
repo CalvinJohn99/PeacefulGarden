@@ -152,7 +152,7 @@ function AccountInterest({ navigation, route }) {
       .auth()
       .createUserWithEmailAndPassword(newdata.email, newdata.password)
       .then(function (user) {
-        // fbdata.auth().currentUser.sendEmailVerification();
+        fbdata.auth().currentUser.sendEmailVerification();
         // console.log("User account created & signed in!");
         handleData(user["user"]["uid"]);
         addRealTimeDatabase();

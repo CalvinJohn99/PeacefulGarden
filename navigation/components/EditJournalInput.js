@@ -46,6 +46,18 @@ function updateJournalInformation(
   // fbdata.storage().refFromURL(oldRef).delete();
 }
 
+function deleteJournal(username, journalDate, journalID) {
+  const journalRef = fbdata
+    .database()
+    .ref("/Journal/" + username + "/" + journalDate + "/" + journalID + "/");
+
+  journalRef.get().then((snapshot) => {
+    if (snapshot.exists()) {
+      journalRef.remove();
+    }
+  });
+}
+
 export default function EditJournalInput(props) {
   const journalItem = props.item;
   const username = props.currentUsername;
@@ -720,6 +732,11 @@ export default function EditJournalInput(props) {
                         ]}
                         onPress={() => {
                           // deleteMood(moodItem, currentUsername, day.dateString);
+                          deleteJournal(
+                            username,
+                            journalItem.journalDate,
+                            journalItem.id
+                          );
                           setDeleteModalVisible(!deleteModalVisible);
                         }}
                       >
