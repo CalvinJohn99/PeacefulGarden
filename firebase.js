@@ -4,17 +4,17 @@ import "firebase/storage";
 import "firebase/auth";
 
 // web app's Firebase configuration (Hao)
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBMUuAhdumTGYMSVuWjRQmKSRKJhONusAg",
-//   authDomain: "peacefulgarden-a4b5c.firebaseapp.com",
-//   databaseURL:
-//     "https://peacefulgarden-a4b5c-default-rtdb.asia-southeast1.firebasedatabase.app",
-//   projectId: "peacefulgarden-a4b5c",
-//   storageBucket: "peacefulgarden-a4b5c.appspot.com",
-//   messagingSenderId: "595789693308",
-//   appId: "1:595789693308:web:6c2e1faf2651b5c8e924f9",
-//   measurementId: "G-45KC4GX795",
-// };
+const firebaseConfig = {
+  apiKey: "AIzaSyBMUuAhdumTGYMSVuWjRQmKSRKJhONusAg",
+  authDomain: "peacefulgarden-a4b5c.firebaseapp.com",
+  databaseURL:
+    "https://peacefulgarden-a4b5c-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "peacefulgarden-a4b5c",
+  storageBucket: "peacefulgarden-a4b5c.appspot.com",
+  messagingSenderId: "595789693308",
+  appId: "1:595789693308:web:6c2e1faf2651b5c8e924f9",
+  measurementId: "G-45KC4GX795",
+};
 
 // Evans firebase config
 // const firebaseConfig = {
@@ -29,17 +29,17 @@ import "firebase/auth";
 // }
 
 // Simin's firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyASbnE1xWVevoKWKkG-Ika6fZoIsCRjY3M",
-  authDomain: "peacefulgarden-a4b5c-e541a.firebaseapp.com",
-  databaseURL:
-    "https://peacefulgarden-a4b5c-e541a-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "peacefulgarden-a4b5c-e541a",
-  storageBucket: "peacefulgarden-a4b5c-e541a.appspot.com",
-  messagingSenderId: "582001109306",
-  appId: "1:582001109306:web:1a1392ba21d8a57f0c8803",
-  measurementId: "G-JJTN727FLB",
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyASbnE1xWVevoKWKkG-Ika6fZoIsCRjY3M",
+//   authDomain: "peacefulgarden-a4b5c-e541a.firebaseapp.com",
+//   databaseURL:
+//     "https://peacefulgarden-a4b5c-e541a-default-rtdb.asia-southeast1.firebasedatabase.app",
+//   projectId: "peacefulgarden-a4b5c-e541a",
+//   storageBucket: "peacefulgarden-a4b5c-e541a.appspot.com",
+//   messagingSenderId: "582001109306",
+//   appId: "1:582001109306:web:1a1392ba21d8a57f0c8803",
+//   measurementId: "G-JJTN727FLB",
+// };
 
 // initialize firebase
 // expo will create the database whenever we save the file. In order to avoid the duplicates of database creation and errors, we use an if condition to control that.
