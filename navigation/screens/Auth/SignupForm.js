@@ -25,19 +25,25 @@ import Icon from "react-native-vector-icons";
 // import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 
+// sign up form screen
 export default function SignupForm({ navigation }) {
+  // hold user input of username, email, password adn selected profile photo
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [email, setEmail] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
+
+  // hold the profile image list read from firebase
   const [profileImageList, setProfileImageList] = useState([]);
+  // hold the selected profile photo
   const [selectedID, setSelectedID] = useState(null);
+  // error status
   const [check_textInputChange, setCheck_textInputChange] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [isValidUser, setIsValidUser] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
-  // const [img, setImg] = useState(null);
+  // user data
   const [newdata, setNewdata] = useState({
     username: "",
     password: "",
@@ -45,6 +51,7 @@ export default function SignupForm({ navigation }) {
     img: "",
   });
 
+  // read profile images from firebase
   useEffect(() => {
     const profileImageListRef = fbdata.database().ref("/profileImage/");
     const OnLoadingListener = profileImageListRef.once("value", (snapshot) => {
@@ -61,6 +68,9 @@ export default function SignupForm({ navigation }) {
     };
   }, []);
 
+  // handle sign up function
+  // if any input is empty, show alert
+  // otherwise, proceeds to the next step in sign up
   const handleSignUp = () => {
     if (
       username === null ||
@@ -109,9 +119,12 @@ export default function SignupForm({ navigation }) {
       setIsValidConfirmPassword(false);
     }
   };
+
   const updateSecureTextEntry = () => {
     setSecureTextEntry(!secureTextEntry);
   };
+
+  // username must be at least 4 characters
   const handleValidUser = (val) => {
     if (val.trim().length >= 4) {
       setIsValidUser(true);
@@ -120,6 +133,7 @@ export default function SignupForm({ navigation }) {
     }
   };
 
+  // render profile image list in a horizontal flat list
   const renderProfile = ({ item }) => {
     const avatarBorderColor = item.id === selectedID ? "blue" : "white";
     return (
@@ -151,15 +165,15 @@ export default function SignupForm({ navigation }) {
     );
   };
 
+  // render view
   return (
     <SafeAreaView style={styles.container}>
+      {/* header section */}
       <View
         style={{
           width: "100%",
           height: "25%",
           backgroundColor: "#00BCD4",
-          // flexDirection: "column",
-          // alignItems: "center",
           justifyContent: "center",
           paddingLeft: 20,
         }}
@@ -175,6 +189,7 @@ export default function SignupForm({ navigation }) {
         </Text>
       </View>
 
+      {/* sign up form */}
       <View style={commonStyles.answerContainer}>
         <View style={[styles.action, { marginTop: 30 }]}>
           <Input
@@ -182,7 +197,6 @@ export default function SignupForm({ navigation }) {
               marginHorizontal: 20,
             }}
             style={styles.input}
-            // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
             leftIcon={{
               type: "font-awesome",
               name: "user",
@@ -194,7 +208,6 @@ export default function SignupForm({ navigation }) {
             onChangeText={(val) => textInputChange(val)}
             onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
           />
-          {/* <Feather name="check-circle" color="green" size={20} /> */}
           <View
             style={{
               width: "10%",
@@ -226,7 +239,6 @@ export default function SignupForm({ navigation }) {
               marginHorizontal: 20,
             }}
             style={styles.input}
-            // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
             leftIcon={{
               type: "ionicons",
               name: "mail",
@@ -253,7 +265,6 @@ export default function SignupForm({ navigation }) {
               marginHorizontal: 20,
             }}
             style={styles.input}
-            // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
             leftIcon={{
               type: "font-awesome",
               name: "lock",
@@ -296,7 +307,6 @@ export default function SignupForm({ navigation }) {
               marginHorizontal: 20,
             }}
             style={styles.input}
-            // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
             leftIcon={{
               type: "font-awesome",
               name: "lock",
@@ -343,6 +353,7 @@ export default function SignupForm({ navigation }) {
           ></FlatList>
         </View>
 
+        {/* proceed to next section */}
         <TouchableOpacity
           style={styles.button_submit}
           onPress={() => {
@@ -354,112 +365,11 @@ export default function SignupForm({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-
-      {/* <View style={styles.container}>
-        <Text style={styles.title}>Register</Text>
-        <Text style={styles.text}>Please fill in the details to register</Text>
-        <View style={styles.action}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            autoCapitalize="none"
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-            value={email}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={secureTextEntry ? true : false}
-            autoCapitalize="none"
-            onChangeText={(val) => handlePasswordChange(val)}
-          />
-          <TouchableOpacity onPress={updateSecureTextEntry}>
-            {secureTextEntry ? (
-              <Feather name="eye-off" color="grey" size={20} />
-            ) : (
-              <Feather name="eye" color="grey" size={20} />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {isValidPassword ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
-            </Text>
-          </Animatable.View>
-        )}
-        <View style={styles.action}>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            secureTextEntry={secureTextEntry ? true : false}
-            autoCapitalize="none"
-            onChangeText={(val) => handleConfirmPassword(val)}
-          />
-        </View>
-        {isValidConfirmPassword ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Password does not match.</Text>
-          </Animatable.View>
-        )}
-
-        <View style={styles.action}>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            autoCapitalize="none"
-            onChangeText={(val) => textInputChange(val)}
-            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-          />
-          {check_textInputChange ? (
-            <Animatable.View animation="bounceIn">
-              <Feather name="check-circle" color="green" size={20} />
-            </Animatable.View>
-          ) : null}
-        </View>
-        {isValidUser ? null : (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Username must be at least 4 characters long.
-            </Text>
-          </Animatable.View>
-        )}
-
-        <Text style={[styles.text, { marginTop: 30 }]}>Profile Photo</Text>
-        <View style={{ height: 100 }}>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 10, height: 100 }}
-            data={profileImageList}
-            renderItem={renderProfile}
-            keyExtractor={(item) => item.id.toString()}
-          ></FlatList>
-        </View>
-        
-
-        <TouchableOpacity
-          style={styles.button_submit}
-          onPress={() => {
-            handleSignUp();
-          }}
-        >
-          
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-            Next
-          </Text>
-        </TouchableOpacity>
-      </View> */}
     </SafeAreaView>
   );
 }
 
+// style sheet
 const styles = StyleSheet.create({
   container: {
     display: "flex",
