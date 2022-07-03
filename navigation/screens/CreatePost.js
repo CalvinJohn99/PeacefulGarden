@@ -3,13 +3,10 @@ import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
-  FlatList,
   View,
   Text,
   TextInput,
   StyleSheet,
-  Button,
-  Alert,
   ActivityIndicator,
   Image,
   Platform,
@@ -17,21 +14,21 @@ import {
   Modal,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import { FontAwesome5 } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+// import from the build
+import fbdata from "../../firebase";
+import commonStyles from "../../commonStyles.js";
 import useCurrentDate, {
   useAccountUsername,
   useAccountUserid,
-  useCategoryList,
   increasePostCount,
 } from "../components/CommonFunctions.js";
-import * as ImagePicker from "expo-image-picker";
-import fbdata from "../../firebase";
-import commonStyles from "../../commonStyles.js";
-import { FontAwesome5 } from "@expo/vector-icons";
 
-// if (fbdata.apps.length === 0) {
-//   fbdata.initializeApp(firebaseConfig);
-// }
-
+// upload post information to firebase realtime database in two collections
+// file path: posts/category/uniquekey
+// file path: postsbyacc/username/uniquekey
+// update postcount in user collection by 1
 function storePost(
   category,
   title,
@@ -80,6 +77,8 @@ function storePost(
     });
 }
 
+// update the negTimestamp in the posts collection on firebase
+// file path: posts/category/uniquekey
 function updateNegTimestampPosts(category, key, navigation) {
   const timeRef = fbdata
     .database()
@@ -97,6 +96,8 @@ function updateNegTimestampPosts(category, key, navigation) {
   navigation.navigate("Post", { screen: "GPostList" });
 }
 
+// update the negTimestamp in the user posts collection on firebase
+// file path: postsbyacc/username/uniquekey
 function updateNegTimestampPostsAcc(username, key) {
   const timeRef = fbdata
     .database()
@@ -111,27 +112,36 @@ function updateNegTimestampPostsAcc(username, key) {
   });
 }
 
-export default function GPostScreen({ navigation }) {
-  // const categoryList = useCategoryList();
+// Create post screen
+export default function CreatePost({ navigation }) {
+  // create currentDate, username and currentUserID from commonFunctions
   const currentDate = useCurrentDate();
   const username = useAccountUsername();
   const currentUserID = useAccountUserid();
+
+  // useState variables: hold uer interest selected category
   const [categoryList, setCategoryList] = useState([]);
 
+  // useState variable: image, store image picked up by expo image picker
   const [image, setImage] = useState("");
+  // useState variable: uploading, set true when image file start to upload, and set false after uploading finish
   const [uploading, setUploading] = useState(false);
 
+  // useState variables: hold user inputs
   const [categoryValue, setCategoryValue] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  // useState variable: toggle modal overlay
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
+  // useState variables: error status
   const [categoryErrorStatus, setCategoryErrorStatus] = useState(false);
   const [titleErrorStatus, setTitleErrorStatus] = useState(false);
   const [contentErrorStatus, setContentErrorStatus] = useState(false);
   const [photoErrorStatus, setPhotoErrorStatus] = useState(false);
 
+  // request media library permission from the phone
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -145,10 +155,7 @@ export default function GPostScreen({ navigation }) {
     __isTheUserAuthenticated();
   }, []);
 
-  // useEffect(() => {
-  //   __isTheUserAuthenticated();
-  // }, []);
-
+  // read user interest category
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
     if (userId !== null) {
@@ -169,6 +176,7 @@ export default function GPostScreen({ navigation }) {
     }
   }
 
+  // pick up image from camera roll, assign image path to useState variable "image"
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -176,15 +184,13 @@ export default function GPostScreen({ navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
-
-    // console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
-      // setPhotoErrorStatus(false);
     }
   };
 
+  // upload image to firebase storage
+  // call storePost function
   const makePost = async () => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -238,6 +244,8 @@ export default function GPostScreen({ navigation }) {
     );
   };
 
+  // handle click on post button
+  // if any one of category, title, content and image is empty, set the corresponding error status (true), and show error message to users
   const onSubmit = () => {
     if (
       categoryValue === null ||
@@ -262,12 +270,11 @@ export default function GPostScreen({ navigation }) {
     }
   };
 
+  // render view
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <ScrollView
         contentContainerStyle={{
-          // justifyContent: "center",
-          // alignItem: "center",
           paddingBottom: 100,
         }}
         style={{
@@ -275,6 +282,7 @@ export default function GPostScreen({ navigation }) {
           paddingBottom: 160,
         }}
       >
+        {/* header of create post screen, including curernt date and username */}
         <View
           style={{
             flexDirection: "row",
@@ -306,12 +314,13 @@ export default function GPostScreen({ navigation }) {
             borderRadius: 20,
           }}
         >
+          {/* post category section */}
           <View style={{ width: "100%", marginBottom: 25 }}>
             <Text style={styles.header}>Category</Text>
+            {/* picker to select category, assign value to categoryValue onValueChange */}
             <View style={{ width: "100%", alignItems: "center" }}>
               <View style={styles.dropDown}>
                 <RNPickerSelect
-                  // onValueChange={(value) => console.log(value)}
                   onValueChange={(value) => {
                     setCategoryValue(value);
                     console.log(value);
@@ -321,6 +330,7 @@ export default function GPostScreen({ navigation }) {
                 />
               </View>
             </View>
+            {/* Error message */}
             <View>
               {categoryErrorStatus === true ? (
                 <Text style={styles.formErrorMsg}>
@@ -329,12 +339,12 @@ export default function GPostScreen({ navigation }) {
               ) : null}
             </View>
           </View>
+
+          {/* title section */}
           <View
             style={{
               width: "100%",
               marginBottom: 25,
-              // alignItems: "center",
-              // justifyContent: "center",
             }}
           >
             <Text style={[styles.header]}>*Title</Text>
@@ -348,12 +358,15 @@ export default function GPostScreen({ navigation }) {
               value={title}
               placeholder="Enter title here..."
             />
+            {/* error message */}
             {titleErrorStatus === true ? (
               <Text style={styles.formErrorMsg}>
                 Please enter your title to post!
               </Text>
             ) : null}
           </View>
+
+          {/* content section */}
           <View style={{ width: "100%", marginBottom: 25 }}>
             <Text style={styles.header}>*Content</Text>
             <TextInput
@@ -371,12 +384,15 @@ export default function GPostScreen({ navigation }) {
               value={content}
               placeholder="Enter Content here..."
             />
+            {/* content error message */}
             {contentErrorStatus === true ? (
               <Text style={styles.formErrorMsg}>
                 Please enter your content to post!
               </Text>
             ) : null}
           </View>
+
+          {/* photo section */}
           <View style={{ width: "100%" }}>
             <Text style={[styles.header, { paddingBottom: 10 }]}>Photo*</Text>
             <View style={{ alignItems: "center" }}>
@@ -404,16 +420,18 @@ export default function GPostScreen({ navigation }) {
                 </TouchableOpacity>
               )}
             </View>
+            {/* photo error message */}
             {photoErrorStatus === true ? (
               <Text style={styles.formErrorMsg}>
                 Please enter your answer to post!
               </Text>
             ) : null}
-            {/* <Image source={{ uri: image }} style={styles.postImage} /> */}
-            {/* <Button title="choose picture" onPress={pickImage} /> */}
           </View>
         </View>
+
+        {/* submission section */}
         <View style={styles.submitSection}>
+          {/* warning message */}
           <View style={styles.warningTextCon}>
             <Text style={{ color: "red", fontWeight: "bold" }}>
               *This answer will be made public once you "Post" it!
@@ -424,6 +442,7 @@ export default function GPostScreen({ navigation }) {
               *Post grateful stories, appreciate the beauaty of life!
             </Text>
           </View>
+          {/* post button, show activity indicator if uploading is true */}
           {!uploading ? (
             <TouchableOpacity
               style={styles.postbutton}
@@ -439,6 +458,7 @@ export default function GPostScreen({ navigation }) {
           )}
         </View>
 
+        {/* modal overlay, delete selected photo */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -450,9 +470,6 @@ export default function GPostScreen({ navigation }) {
           <View style={commonStyles.modalFirstView}>
             <View style={commonStyles.modalSecondView}>
               <Text style={commonStyles.deleteWarningTitle}>Delete image?</Text>
-              {/* <Text style={commonStyles.deleteWarningText}>
-                * Once delete, it is unrecoverable!
-              </Text> */}
               <View style={{ flexDirection: "row", marginVertical: 10 }}>
                 <TouchableOpacity
                   style={[
@@ -482,40 +499,17 @@ export default function GPostScreen({ navigation }) {
             </View>
           </View>
         </Modal>
-
-        {/* <View
-          style={{
-            marginBottom: 25,
-            width: "95%",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-around",
-            // height: 200,
-          }}
-        >
-          <Text style={{ color: "red", width: 200 }}>
-            *This post will be made public once you "post" it!
-          </Text>
-          {!uploading ? (
-            <Button title="Post" onPress={makePost} />
-          ) : (
-            <ActivityIndicator size="large" color="#000" />
-          )}
-        </View> */}
         <StatusBar style="auto" />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Style Sheet
 const styles = StyleSheet.create({
   container: {
-    //flex:1,
     justifyContent: "space-around",
     alignItems: "center",
-    /*        backgroundColor: "#fff",
-        padding: 20,
-        margin: 10,*/
   },
   header: {
     color: "black",
@@ -553,12 +547,10 @@ const styles = StyleSheet.create({
   postImage: {
     alignItems: "center",
     width: "95%",
-    // height: 200,
     marginBottom: 10,
     backgroundColor: "#fff",
     borderRadius: 20,
   },
-  // marginTop: 10,
 
   submitSection: {
     flexDirection: "row",
