@@ -3,25 +3,18 @@ import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
-  FlatList,
   View,
   Text,
   TextInput,
   StyleSheet,
-  Button,
-  Alert,
   ActivityIndicator,
   Image,
   Platform,
   TouchableOpacity,
   Modal,
 } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
 import useCurrentDate, {
   useAccountUsername,
-  useAccountUserid,
-  useCategoryList,
-  increasePostCount,
   getDateFormatOne,
 } from "../components/CommonFunctions.js";
 import * as ImagePicker from "expo-image-picker";
@@ -30,10 +23,8 @@ import commonStyles from "../../commonStyles.js";
 import { FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-// if (fbdata.apps.length === 0) {
-//   fbdata.initializeApp(firebaseConfig);
-// }
-
+// store journal content to firebase realtime database
+// fiel path: Journal/username/date/uniquekey
 function storeJournal(
   username,
   currentDate,
@@ -76,6 +67,8 @@ function storeJournal(
     });
 }
 
+// update negTimestamp
+// read journal in descending order
 function updateNegTimestampJournal(username, journalDate, key) {
   const timeRef = fbdata
     .database()
@@ -87,25 +80,36 @@ function updateNegTimestampJournal(username, journalDate, key) {
     .ref("/Journal/" + username + "/" + journalDate + "/" + key + "/");
   timeRef.once("value", (snapshot) => {
     var negTimestampValue = snapshot.val() * -1;
-    // console.log(negTimestampValue);
     negTimeRef.update({ negTimestamp: negTimestampValue });
   });
 }
 
+// Create Journal Screen
 export default function CreateJournal({ navigation }) {
+  // call useCurrentDate and userAccountUsername form CommonFunctions
   const currentDate = useCurrentDate();
   const username = useAccountUsername();
+  // useState variables:
+  // date: value of date picker
   const [date, setDate] = useState(new Date());
+  // journalDate: hold journal date in the format "yyyy-mm-dd"
   const [journalDate, setJournalDate] = useState(getDateFormatOne(new Date()));
+  // images: hold picked images
   const [images, setImages] = useState([]);
+  // uploading: set true when images are uploading
   const [uploading, setUploading] = useState(false);
-  const [errorStatus, setErrorStatus] = useState(false);
+  // journalContent: hold journal content input
   const [journalContent, setJournalContent] = useState("");
+  // toggle modal overlay
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  // remove this deleteImage from images
   const [deleteImage, setDeleteImage] = useState("");
+  // content error status
   const [contentErrorStatus, setContentErrorStatus] = useState(false);
+  // image error status
   const [imageErrorStatus, setImageErrorStatus] = useState(false);
 
+  // request media library permission
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -118,6 +122,7 @@ export default function CreateJournal({ navigation }) {
     })();
   }, []);
 
+  // handle date pick valueOnChange
   const onChange = (event, selectedDate) => {
     const currentJournalDate = selectedDate || date;
     setDate(currentJournalDate);
@@ -125,10 +130,12 @@ export default function CreateJournal({ navigation }) {
     setJournalDate(formatedJournalDate);
   };
 
+  // remove picked image
   const onRemoveSelectImages = (item) => {
     setImages(images.filter((it) => it !== item));
   };
 
+  // pick image from camera roll
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -143,6 +150,8 @@ export default function CreateJournal({ navigation }) {
     }
   };
 
+  // upload images to firebase storage
+  // call storeJournal once all images are uploaded
   const createJournal = () => {
     var numberOfImages = images.length;
     let i = 0;
@@ -208,6 +217,8 @@ export default function CreateJournal({ navigation }) {
     });
   };
 
+  // handle on submit once "save" is clicked
+  // if journalContent or image is empty, show error message
   const onSubmit = () => {
     if (journalContent === "" || images.length === 0) {
       if (journalContent === "") {
@@ -218,18 +229,14 @@ export default function CreateJournal({ navigation }) {
       }
     } else {
       createJournal();
-      // navigation.navigate("MoodJournal", {
-      //   screen: "MoodJournalCalendar",
-      // });
     }
   };
 
+  // render view
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <ScrollView
         contentContainerStyle={{
-          // justifyContent: "center",
-          // alignItem: "center",
           paddingBottom: 100,
         }}
         style={{
@@ -272,14 +279,11 @@ export default function CreateJournal({ navigation }) {
             style={{
               width: "100%",
               marginBottom: 25,
-              // borderWidth: 2,
-              // borderColor: "red",
             }}
           >
             <Text style={styles.header}>Select Date</Text>
             <View
               style={{
-                // alignSelf: "center",
                 width: "45%",
                 alignItems: "center",
                 backgroundColor: "white",
@@ -288,8 +292,6 @@ export default function CreateJournal({ navigation }) {
                 paddingHorizontal: 20,
                 borderRadius: 10,
                 marginLeft: "2%",
-                // borderWidth: 2,
-                // borderColor: "blue",
               }}
             >
               <DateTimePicker
@@ -344,8 +346,6 @@ export default function CreateJournal({ navigation }) {
                 width: "95%",
                 flexDirection: "row",
                 flexWrap: "wrap",
-                // borderColor: "red",
-                // borderWidth: 2,
               }}
             >
               {images.map((image, index) => {
@@ -354,8 +354,6 @@ export default function CreateJournal({ navigation }) {
                     style={{
                       width: "30%",
                       height: 100,
-                      // borderWidth: 2,
-                      // borderColor: "blue",
                       alignItems: "center",
                       justifyContent: "center",
                       backgroundColor: "white",
@@ -396,73 +394,21 @@ export default function CreateJournal({ navigation }) {
                   </TouchableOpacity>
                 </View>
               ) : null}
-
-              {/* <View
-                style={{
-                  width: "45%",
-                  height: 100,
-                  borderWidth: 2,
-                  borderColor: "blue",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "white",
-                  margin: 10,
-                }}
-              >  */}
-
-              {/* {images.length === 0 ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      pickImage();
-                    }}
-                  >
-                    <FontAwesome5 name="plus" size={40} color="grey" />
-                  </TouchableOpacity>
-                ) : (
-                  <Image
-                    source={{ uri: images[0] }}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                )}
-              </View>
-
-              {images.length < 2 ? (
-                <TouchableOpacity
-                  onPress={() => {
-                    pickImage();
-                  }}
-                >
-                  <FontAwesome5 name="plus" size={40} color="grey" />
-                </TouchableOpacity>
-              ) : (
-                <Image source={{ uri: images[1] }} style={styles.postImage} />
-              )} */}
             </View>
             {imageErrorStatus === true ? (
               <Text style={[styles.formErrorMsg, { marginLeft: "-18%" }]}>
                 Please upload at least one photo!
               </Text>
             ) : null}
-
-            {/* <Image source={{ uri: image }} style={styles.postImage} /> */}
-            {/* <Button title="choose picture" onPress={pickImage} /> */}
           </View>
         </View>
         <View style={styles.submitSection}>
-          <View style={styles.warningTextCon}>
-            {/* <Text style={{ color: "red", fontWeight: "bold" }}>
-              *The maximum number of photos per journal is 9!
-            </Text> */}
-          </View>
+          <View style={styles.warningTextCon}></View>
           {!uploading ? (
             <TouchableOpacity
               style={styles.postbutton}
               onPress={() => {
                 onSubmit();
-                // createJournal();
-                // navigation.navigate("MoodJournal", {
-                //   screen: "MoodJournalCalendar",
-                // });
               }}
             >
               <Text style={styles.postbuttontext}>Save</Text>
@@ -483,9 +429,6 @@ export default function CreateJournal({ navigation }) {
           <View style={commonStyles.modalFirstView}>
             <View style={commonStyles.modalSecondView}>
               <Text style={commonStyles.deleteWarningTitle}>Delete image?</Text>
-              {/* <Text style={commonStyles.deleteWarningText}>
-                  * Once delete, it is unrecoverable!
-                </Text> */}
               <View style={{ flexDirection: "row", marginVertical: 10 }}>
                 <TouchableOpacity
                   style={[
@@ -514,40 +457,17 @@ export default function CreateJournal({ navigation }) {
             </View>
           </View>
         </Modal>
-
-        {/* <View
-          style={{
-            marginBottom: 25,
-            width: "95%",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-around",
-            // height: 200,
-          }}
-        >
-          <Text style={{ color: "red", width: 200 }}>
-            *This post will be made public once you "post" it!
-          </Text>
-          {!uploading ? (
-            <Button title="Post" onPress={makePost} />
-          ) : (
-            <ActivityIndicator size="large" color="#000" />
-          )}
-        </View> */}
         <StatusBar style="auto" />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// style sheet
 const styles = StyleSheet.create({
   container: {
-    //flex:1,
     justifyContent: "space-around",
     alignItems: "center",
-    /*        backgroundColor: "#fff",
-        padding: 20,
-        margin: 10,*/
   },
   header: {
     color: "black",
@@ -587,7 +507,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
   },
-  // marginTop: 10,
 
   submitSection: {
     flexDirection: "row",
@@ -623,6 +542,5 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 20,
     marginTop: 3,
-    // marginLeft: -70,
   },
 });
