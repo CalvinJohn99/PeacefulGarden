@@ -1,6 +1,8 @@
 import * as React from "react";
 import { StyleSheet, Dimensions } from "react-native";
 
+// common styles can be applied in various screens and components
+
 const colors = require("nice-color-palettes/500");
 
 export const { width, height } = Dimensions.get("window");
