@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FlatList } from "react-native";
 
+// create a VirtualizedView to enclosed more than one virtualized list
 export default function VirtualizedView(props) {
   return (
     <FlatList
