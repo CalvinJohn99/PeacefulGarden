@@ -5,6 +5,10 @@ import fbdata from "../../firebase.js";
 import { decreaseAnswerCount } from "../components/CommonFunctions.js";
 import commonStyles from "../../commonStyles.js";
 
+// delete answer from firebase realtime database
+// data path: qanswer/question/uniquekey/
+// data path: qanswerbyuser/user/question/uniquekey/
+// reduce answer count in user data collectino by 1
 function deleteAnswer(question, answerID, username, userID) {
   const answerRef = fbdata
     .database()
@@ -36,6 +40,7 @@ function deleteAnswer(question, answerID, username, userID) {
   decreaseAnswerCount(userID);
 }
 
+// update answer content in firebase realtime database
 function updateAnswer(question, answerID, username, newAnswer) {
   fbdata
     .database()
@@ -55,12 +60,19 @@ function updateAnswer(question, answerID, username, newAnswer) {
     .update({ answer: newAnswer });
 }
 
+// EditAnswerInput componenet
+// show each answer
+// allow edit and delete of answer
 export default function EditAnswerInput(props) {
+  // edited answer, initialised as the original answer
   const [editAnswer, setEditAnswer] = useState(props.item.answer);
+  // modal visibility status
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  // text input focus status
   const [focused, setFocused] = useState(false);
 
+  // return text input border colour based on variable focused
   const getBorderColor = () => {
     if (focused) {
       return "#00BCD4";
@@ -68,6 +80,7 @@ export default function EditAnswerInput(props) {
     return "white";
   };
 
+  // render view
   return (
     <View
       style={{
@@ -91,7 +104,6 @@ export default function EditAnswerInput(props) {
       <Text
         style={{
           marginTop: 10,
-          // fontSize: 16,
         }}
       >
         Posted on: {props.item.creationDate}
@@ -214,12 +226,10 @@ export default function EditAnswerInput(props) {
                 multiline={true}
                 editable={true}
                 autofocus={true}
-                // placeholder={props.item.answer}
                 onChangeText={(text) => {
                   setEditAnswer(text);
                 }}
                 value={editAnswer}
-                // clearTextOnFocus={true}
                 style={[
                   commonStyles.inputBox,
                   { borderColor: getBorderColor() },
