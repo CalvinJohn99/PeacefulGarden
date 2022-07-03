@@ -4,10 +4,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import fbdata from "../../firebase";
 import { useAccountUsername } from "./CommonFunctions";
 
+// component handle like button on answers of questions
 export default function LikeButton(props) {
+  // useState variable: liked, initialized as false
+  // hold the status of answer, true: liked, red, false: unliked, white
   const [liked, setLiked] = useState(false);
   const currentUser = useAccountUsername();
 
+  // the firebase ref to snapshot the liked status
+  // snapshot exist: isLiked
+  // snapshot !exist: !isLiked
   const checkLikeAnswerRef = fbdata
     .database()
     .ref(
@@ -19,6 +25,9 @@ export default function LikeButton(props) {
         currentUser
     );
 
+  // listen to the value change on the reference, and set useState variable "liked"
+  // snapshot exists: setLiked(true)
+  // snapshot !exists: setLiked(false);
   useEffect(() => {
     const likeListener = checkLikeAnswerRef.on("value", (snapshot) => {
       if (snapshot.exists()) {
@@ -32,6 +41,9 @@ export default function LikeButton(props) {
     };
   }, []);
 
+  // handle click on the liked button
+  // snapshot exists: change to unlike, remove the ref
+  // snapshot !exists: change to like, add ref and value
   function likeAnswer() {
     const addLikeAnswerRef = fbdata
       .database()
@@ -51,10 +63,10 @@ export default function LikeButton(props) {
     });
   }
 
+  // render view
   return (
     <Pressable
       onPress={() => {
-        // setLiked((isLiked) => !isLiked);
         likeAnswer();
       }}
     >
@@ -67,10 +79,16 @@ export default function LikeButton(props) {
   );
 }
 
+// component handle like button of post
 export function LikePostButton(props) {
+  // useState variable: liked, initialized as false
+  // hold the status of post, true: liked, red, false: unliked, white
   const [liked, setLiked] = useState(false);
   const currentUser = useAccountUsername();
 
+  // the firebase ref to snapshot the liked status
+  // snapshot exist: isLiked
+  // snapshot !exist: !isLiked
   const checkLikePostRef = fbdata
     .database()
     .ref(
@@ -82,6 +100,9 @@ export function LikePostButton(props) {
         currentUser
     );
 
+  // listen to the value change on the reference, and set useState variable "liked"
+  // snapshot exists: setLiked(true)
+  // snapshot !exists: setLiked(false);
   useEffect(() => {
     const postlikeListener = checkLikePostRef.on("value", (snapshot) => {
       if (snapshot.exists()) {
@@ -95,6 +116,9 @@ export function LikePostButton(props) {
     };
   }, []);
 
+  // handle click on the liked button
+  // snapshot exists: change to unlike, remove the ref
+  // snapshot !exists: change to like, add ref and value
   function likePost() {
     const addLikePostRef = fbdata
       .database()
@@ -108,10 +132,10 @@ export function LikePostButton(props) {
     });
   }
 
+  // render view
   return (
     <Pressable
       onPress={() => {
-        // setLiked((isLiked) => !isLiked);
         likePost();
       }}
     >
