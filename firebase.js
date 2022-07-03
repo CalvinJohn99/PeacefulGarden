@@ -42,13 +42,12 @@ const firebaseConfig = {
 // };
 
 // initialize firebase
-// expo will create the database whenever we save the file. In order to avoid the duplicates of database creation and errors, we use an if condition to control that.
+// expo will create the database whenever we refresh the built. In order to avoid the duplicates of database creation and errors, we use an if condition to control that.
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
+// Create a firebase component and export
 const fbdata = firebase;
-
-export const fbstorage = firebase.storage();
 
 export default fbdata;
