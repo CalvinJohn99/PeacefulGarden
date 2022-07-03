@@ -3,23 +3,27 @@ import { Button, StyleSheet, SafeAreaView, View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import fbdata from "../../../firebase";
 import Icon from "react-native-vector-icons";
-// import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import commonStyles from "../../../commonStyles.js";
 
 export default function SigninForm({ navigation }) {
+  // user input of email and password
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  // set user data
   const [data, setData] = useState({ password: "", email: "" });
+  // error status
   const [emailErrorStatus, setEmailErrorStatus] = useState(false);
   const [passwordErrorStatus, setPasswordErrorStatus] = useState(false);
 
+  // set user data before sign in
   const handleSignIn = () => {
     data.password = password;
     data.email = email;
     setData({ ...data });
   };
 
+  // handle sign in function
   function signIn(email, password) {
     fbdata
       .auth()
@@ -36,13 +40,14 @@ export default function SigninForm({ navigation }) {
         ) {
           alert("That email address is invalid!");
         } else {
-          // alert("The password is invalid or the user does not have a password");
           alert("The email / password is invalid!");
         }
         console.error(error);
       });
   }
 
+  // handle onsubmit once "sign in" is clicked
+  // if there is empty input, set error to true
   const onSubmit = () => {
     if (email === null || password === null) {
       if (email === null) {
@@ -57,6 +62,7 @@ export default function SigninForm({ navigation }) {
     }
   };
 
+  // render view
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <View
@@ -64,15 +70,9 @@ export default function SigninForm({ navigation }) {
           width: "100%",
           height: "25%",
           backgroundColor: "#00BCD4",
-          // flexDirection: "column",
-          // alignItems: "center",
           justifyContent: "center",
           paddingLeft: 20,
         }}
-        // style={[
-        //   commonStyles.questionHeaderWrapper,
-        //   { backgroundColor: "#00BCD4" },
-        // ]}
       >
         <Text
           style={{
@@ -103,7 +103,6 @@ export default function SigninForm({ navigation }) {
           }}
           style={{ paddingLeft: 10 }}
           placeholder="Email@address.com"
-          // leftIcon={<Icon name="user" size={24} color="#00BCD4" />}
           leftIcon={{
             type: "ionicons",
             name: "mail",
@@ -130,7 +129,6 @@ export default function SigninForm({ navigation }) {
           style={{ paddingLeft: 10 }}
           placeholder="Password"
           secureTextEntry={true}
-          // leftIcon={<Icon name="lock" size={24} color="#00BCD4" />}
           leftIcon={{
             type: "font-awesome",
             name: "lock",
@@ -162,14 +160,8 @@ export default function SigninForm({ navigation }) {
           style={styles.button_submit}
           onPress={() => {
             onSubmit();
-            // handleSignIn();
-            // signIn(data.email, data.password);
           }}
         >
-          {/* <Button
-            title="Login"
-            color="#fff"
-          /> */}
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
             Login
           </Text>
@@ -204,30 +196,17 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginVertical: 20,
   },
-  // input: {
-  //   width: 350,
-  //   height: 50,
-  //   backgroundColor: "#C4C4C6",
-  //   margin: 10,
-  //   padding: 8,
-  //   color: "white",
-  //   fontSize: 18,
-  //   fontWeight: "300",
-  //   marginBottom: 10,
-  // },
 
   button_submit: {
     height: 50,
     width: 130,
     borderRadius: 14,
-    // backgroundColor: "#17CAF1",
     backgroundColor: "#00BCD4",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: "white",
     marginTop: 30,
-    // marginVertical: 20,
   },
   formErrorMsg: {
     color: "red",
@@ -235,7 +214,5 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 10,
     marginBottom: 10,
-    // marginTop: 3,
-    // marginLeft: -50,
   },
 });
