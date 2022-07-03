@@ -18,10 +18,15 @@ import commonStyles, {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LikePostButton } from "../components/LikeButton";
 
+// Post Item component
+// view full post content
 export default function PostItem(props) {
+  // receive item (post) passed from PostList component
   const item = props.item;
+  // useState variable: toggle modal overlay visibility
   const [modalVisible, setModalVisible] = useState(false);
 
+  // render view
   return (
     <View
       style={{
@@ -31,6 +36,7 @@ export default function PostItem(props) {
         borderRadius: 20,
       }}
     >
+      {/* render each post with image, title and creator username */}
       <TouchableOpacity
         style={{ borderRadius: 20, height: "90%" }}
         onPress={() => {
@@ -59,12 +65,9 @@ export default function PostItem(props) {
                 color: "black",
                 fontSize: 18,
                 fontWeight: "bold",
-                // position: "absolute",
                 marginHorizontal: 15,
                 paddingVertical: 10,
                 flex: 5,
-                // borderWidth: 2,
-                // borderColor: "red",
               }}
             >
               {item.title}
@@ -73,15 +76,11 @@ export default function PostItem(props) {
               style={{
                 display: "flex",
                 flexDirection: "row-reverse",
-                // marginTop: 4,
                 marginLeft: 10,
                 flex: 1,
                 flexGrow: 1,
-                // borderWidth: 2,
-                // borderColor: "blue",
                 alignItems: "flex-end",
                 paddingBottom: 6,
-                // alignItems: "center",
                 justifyContent: "center",
               }}
             >
@@ -94,6 +93,8 @@ export default function PostItem(props) {
         <Text style={{ fontWeight: "bold" }}>by {item.username}</Text>
       </View>
 
+      {/* view full post modal overlay, 
+          visible when modalVisible is true */}
       <Modal
         animationType="slide"
         transparent={true}
