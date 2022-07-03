@@ -4,13 +4,14 @@ import {
   Text,
   SafeAreaView,
   StyleSheet,
-  Image,
   ImageBackground,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import backgroundAccount from "./../../../assets/backgroundAccountBlue.jpg";
 
+// Peaceful Garden opening page
 export default function MainAccountScreen({ navigation }) {
+  // render view
   return (
     <SafeAreaView style={{ width: "100%", height: "100%" }}>
       <ImageBackground
@@ -42,13 +43,6 @@ export default function MainAccountScreen({ navigation }) {
           </View>
         </View>
       </ImageBackground>
-
-      {/* <View style={styles.backgroundImageFrame}>
-        <Image
-          source={backgroundAccount}
-          style={styles.backgroundImage}
-        ></Image>
-      </View> */}
     </SafeAreaView>
   );
 }
@@ -62,14 +56,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     paddingHorizontal: 20,
-    // backgroundColor: "white",
   },
   form: {
     width: "100%",
-    // height: "100%",
     display: "flex",
     flexDirection: "column",
-    // alignSelf: "center",
     justifyContent: "flex-start",
     alignItems: "center",
     paddingVertical: 50,
