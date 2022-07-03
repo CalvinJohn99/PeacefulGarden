@@ -8,16 +8,20 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { Button, Input, Icon } from "react-native-elements";
+import { Input, Icon } from "react-native-elements";
 import fbdata from "../../../firebase";
 import * as Animatable from "react-native-animatable";
 import commonStyles from "../../../commonStyles.js";
 
 export default function ResetPassword({ navigation }) {
+  // user input email
   const [email, setEmail] = useState("");
+  // set true when sending password reset email by firebase
   const [showLoading, setShowLoading] = useState(false);
+  // error status
   const [showMessage, setShowMessage] = useState(false);
 
+  // handle reset password request
   const reset = async () => {
     setShowLoading(true);
     try {
@@ -30,6 +34,8 @@ export default function ResetPassword({ navigation }) {
       // Alert.alert(e.message);
     }
   };
+
+  // render view
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <View
@@ -37,15 +43,9 @@ export default function ResetPassword({ navigation }) {
           width: "100%",
           height: "25%",
           backgroundColor: "#00BCD4",
-          // flexDirection: "column",
-          // alignItems: "center",
           justifyContent: "center",
           paddingLeft: 20,
         }}
-        // style={[
-        //   commonStyles.questionHeaderWrapper,
-        //   { backgroundColor: "#00BCD4" },
-        // ]}
       >
         <Text
           style={{
@@ -94,17 +94,6 @@ export default function ResetPassword({ navigation }) {
             Reset
           </Text>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={styles.button_submit}
-          onPress={() => {
-            navigation.navigate("SigninForm");
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-            Back to Sign in
-          </Text>
-        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );
@@ -155,13 +144,11 @@ const styles = StyleSheet.create({
     height: 50,
     width: 160,
     borderRadius: 14,
-    // backgroundColor: "#17CAF1",
     backgroundColor: "#00BCD4",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: "white",
     marginTop: 30,
-    // marginVertical: 20,
   },
 });
