@@ -7,29 +7,29 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
 } from "react-native";
-import useCurrentDate, {
-  useAccountUsername,
-  useAccountUserid,
-} from "../components/CommonFunctions";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import fbdata from "../../firebase.js";
 import commonStyles from "../../commonStyles.js";
+// import components
+import useCurrentDate from "../components/CommonFunctions";
 import PostList from "../components/PostList.js";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
+// View Post Screen
 export default function GPostScreen({ navigation }) {
+  // call useCurrentDate function, return date in the format "day fullmonth fullyear"
   const currentDate = useCurrentDate();
-  const [currentUserID, setCurrentUserID] = useState(null);
+  // useState Variable: userInterest
+  // hold user interest list
   const [userInterest, setUserInterest] = useState([]);
 
   useEffect(() => {
     __isTheUserAuthenticated();
   }, []);
 
+  // read uesr interest list from firebase
   function __isTheUserAuthenticated() {
     const userId = fbdata.auth().currentUser.uid;
-    setCurrentUserID(userId);
     if (userId !== null) {
       fbdata
         .database()
@@ -46,16 +46,20 @@ export default function GPostScreen({ navigation }) {
     }
   }
 
+  // render user interest category
   const renderItem = ({ item: interestItem }) => {
     if (interestItem.check) {
       return (
         <View style={{ marginBottom: 30 }}>
+          {/* called PostList component, 
+              pass the variable interestItem */}
           <PostList interestItem={interestItem} />
         </View>
       );
     }
   };
 
+  // render view
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
       <View
@@ -74,10 +78,10 @@ export default function GPostScreen({ navigation }) {
             {currentDate}
           </Text>
         </View>
+        {/* Plus new function */}
         <View style={{ paddingRight: 20 }}>
           <TouchableOpacity
             style={{
-              // backgroundColor: "#F3B000",
               paddingVertical: 5,
               paddingHorizontal: 10,
               borderRadius: 20,
@@ -86,23 +90,17 @@ export default function GPostScreen({ navigation }) {
               navigation.navigate("Post", { screen: "CreatePost" });
             }}
           >
-            {/* <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-              Create Post
-            </Text> */}
             <Ionicons name="add-circle" size={60} color="#f3b000" />
           </TouchableOpacity>
         </View>
       </View>
 
+      {/* render interest category flatlist, using renderItem component */}
       <View
         style={{
           marinTop: 10,
           paddingBottom: 120,
           width: "96%",
-          // alignItem: "flex-start",
-          // alignSelf: "flex-start",
-          // borderWidth: 2,
-          // borderColor: "red",
         }}
       >
         <FlatList
