@@ -4,24 +4,29 @@ import {
   Text,
   View,
   StyleSheet,
-  Button,
   ImageBackground,
-  SafeAreaView,
   TouchableOpacity,
-  Touchable,
-  FlatList,
   Modal,
 } from "react-native";
 import { Audio } from "expo-av";
 import { FontAwesome5 } from "@expo/vector-icons";
 import commonStyles from "../../commonStyles.js";
 
+// play music component
+// receive music from Music Screen
+// open music in a modal overlay
+// play and stop funcitons are implemented
 export default function PlayMusic(props) {
+  // receive music from Music Screen
   const music = props.music;
+  // useState variable: isToggleOn, to handle the button click status
   const [isToggleOn, setIsToggleOn] = useState(false);
+  // useState variable: sound, to hold the sound track
   const [sound, setSound] = useState();
+  // useState variable: modalVisible, to toggle modal visibility, true is visible, false is invisible
   const [modalVisible, setModalVisible] = useState(false);
 
+  // play music function
   async function playSound() {
     console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync({ uri: music.musicURL });
@@ -31,6 +36,7 @@ export default function PlayMusic(props) {
     await sound.playAsync();
   }
 
+  // pause music function
   async function pauseSound() {
     await sound.pauseAsync();
     // setSound(!sound);
@@ -45,6 +51,10 @@ export default function PlayMusic(props) {
       : undefined;
   }, [sound]);
 
+  // handle touchable icon
+  // initial state of isToggleOn is false
+  // click play, setIsToggleOn(true)
+  // click pause, setIsToggleOn(false)
   function handleClick() {
     if (isToggleOn) {
       setIsToggleOn(false);
@@ -55,8 +65,10 @@ export default function PlayMusic(props) {
     }
   }
 
+  // render view
   return (
     <View>
+      {/* touchable item holding music item */}
       <TouchableOpacity
         style={styles.musicButton}
         onPress={() => {
@@ -72,6 +84,7 @@ export default function PlayMusic(props) {
         </ImageBackground>
       </TouchableOpacity>
 
+      {/* open when the music item is clicked */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -101,6 +114,8 @@ export default function PlayMusic(props) {
                   handleClick();
                 }}
               >
+                {/* false: show play button
+                    true: show stop button */}
                 {isToggleOn ? (
                   <FontAwesome5 name="stop-circle" size={80} color="white" />
                 ) : (
@@ -115,6 +130,7 @@ export default function PlayMusic(props) {
   );
 }
 
+// style sheet
 const styles = StyleSheet.create({
   playMusicContainer: {
     width: "100%",
