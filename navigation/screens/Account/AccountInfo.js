@@ -5,8 +5,6 @@ import {
   Text,
   View,
   ScrollView,
-  Button,
-  ActivityIndicator,
   Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -26,22 +24,20 @@ import * as Animatable from "react-native-animatable";
 const sleep = (m) => new Promise((r) => setTimeout(r, m));
 
 export default function AccountInfo(props) {
+  // set user information
   const [user, setUser] = useState([]);
   const [uid, setUid] = useState("");
   const [image, setImage] = useState(Avatar_Default);
   const [username, setUserName] = useState("");
   const [interest, setInterest] = useState([]);
+  // set initial index of custom tab
   const [customSelectedIndex, setCustomSelectedIndex] = useState(3);
   const [verify, setVerify] = useState(false);
   const [isLoading, setShowLoading] = useState(false);
+  // hold new email input by user
   const [updateEmail, setUpdateEmail] = useState(null);
-  const [updateUserName, setUpdateUserName] = useState(null);
+  // show password reset message based on "verify"
   const [showResetMessage, setShowResetMessage] = useState(false);
-
-  // useEffect(() => {
-  //   setShowLoading(true);
-  //   __isTheUserAuthenticated();
-  // }, []);
 
   useEffect(() => {
     props.navigation.addListener("focus", () => {
@@ -71,6 +67,7 @@ export default function AccountInfo(props) {
     setShowLoading(false);
   }
 
+  // sign out account
   function handleSignOut() {
     fbdata
       .auth()
@@ -80,6 +77,7 @@ export default function AccountInfo(props) {
       });
   }
 
+  // handle update of interest category
   function handleUpdate() {
     fbdata
       .database()
@@ -100,22 +98,12 @@ export default function AccountInfo(props) {
       );
   }
 
+  // handle resend verificatino email
   function handleSendVerifyEmail() {
     fbdata.auth().currentUser.sendEmailVerification();
   }
 
-  // async function handleUpdateUsername() {
-  //   const auth = fbdata.auth();
-  //   try {
-  //     await auth.currentUser.updateProfile({ displayName: updateUserName });
-  //     __isTheUserAuthenticated();
-  //     console.log("Username updated!");
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert(err);
-  //   }
-  // }
-
+  // handle update email address
   async function handleUpdateEmail() {
     const auth = fbdata.auth();
     try {
@@ -130,10 +118,10 @@ export default function AccountInfo(props) {
     }
   }
 
+  // handle reset password
   async function handleResetPassword() {
     if (verify) {
       const registeredEmail = fbdata.auth().currentUser.email;
-      // console.log(registeredEmail);
       try {
         await fbdata.auth().sendPasswordResetEmail(registeredEmail);
         setShowResetMessage(true);
@@ -142,17 +130,18 @@ export default function AccountInfo(props) {
       } catch (e) {
         Alert.alert("Please enter your registered email to reset password!");
         console.log(e);
-        // Alert.alert(e.message);
       }
     } else {
       Alert.alert("Please verify your email before reset password!");
     }
   }
 
+  // update the selected custom segment
   const updateCustomSegment = (index) => {
     setCustomSelectedIndex(index);
   };
 
+  // handle check box valueOnChange
   const onChangeBox = (itemSelected) => {
     const newData = interest.map((item) => {
       if (item.id === itemSelected.id) {
@@ -169,6 +158,7 @@ export default function AccountInfo(props) {
     setInterest(newData);
   };
 
+  // render check box
   const renderCheckBox = interest.map((item, index) => {
     return (
       <View style={{ width: "48%" }}>
@@ -185,8 +175,10 @@ export default function AccountInfo(props) {
     );
   });
 
+  // render view
   return (
     <SafeAreaView style={styles.container}>
+      {/* user information and sign out section */}
       <View style={styles.topInfo}>
         <View style={styles.userInfo}>
           <Avatar
@@ -273,6 +265,7 @@ export default function AccountInfo(props) {
         </TouchableOpacity>
       </View>
 
+      {/* 4 segment tabs */}
       <View style={stylesSheet.MainContainer}>
         <View style={stylesSheet.MainContainer}>
           <SegmentedControlTab
@@ -299,32 +292,29 @@ export default function AccountInfo(props) {
             }}
             activeTabTextStyle={{ color: "white", fontSize: 16 }}
           />
+
           <View style={stylesSheet.contentStyle}>
+            {/* view and edit account post */}
             {customSelectedIndex === 0 && (
               <View style={{ flex: 1, alignItems: "center", top: 10 }}>
                 <PostByAcc username={user["username"]} userID={uid} />
               </View>
-              // <Text style={stylesSheet.tabTextStyle}>
-              //   {" "}
-              //   Selected Tab = Put your posts here{" "}
-              // </Text>
             )}
+
+            {/* view and edit account answer */}
             {customSelectedIndex === 1 && (
-              // <Text style={stylesSheet.tabTextStyle}>
-              //   {" "}
-              //   Selected Tab = Put your questions here{" "}
-              // </Text>
               <View
                 style={{
                   flex: 1,
                   alignItems: "center",
                   top: 10,
-                  // justifyContent: "center",
                 }}
               >
                 <QuestByAcc />
               </View>
             )}
+
+            {/* change account setting */}
             {customSelectedIndex === 2 && (
               <ScrollView
                 contentContainerStyle={{
@@ -398,6 +388,8 @@ export default function AccountInfo(props) {
                 </View>
               </ScrollView>
             )}
+
+            {/* update account interest category */}
             {customSelectedIndex === 3 && (
               <ScrollView
                 contentContainerStyle={{
@@ -445,70 +437,6 @@ export default function AccountInfo(props) {
                 >
                   *Interest categories can be amended in setting after login.
                 </Text>
-
-                {/* <Text style={{ marginLeft: 15, marginTop: 20 }}>
-                  *Post will shown based on the interest category selected.
-                </Text> */}
-
-                {/* <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "95%",
-                    marginTop: 50,
-                    paddingVertical: 20,
-                  }}
-                >
-                  <Text style={styles.text}>Username</Text>
-                  <Input
-                    placeholder={fbdata.auth().currentUser.displayName}
-                    autoCapitalize="none"
-                    onChangeText={(value) => setUpdateUserName(value)}
-                    value={updateUserName}
-                  />
-
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => {
-                      handleUpdateUsername();
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: "bold",
-                        color: "white",
-                      }}
-                    >
-                      Update
-                    </Text>
-                  </TouchableOpacity>
-
-                  <Text style={styles.text}>Email</Text>
-                  <Input
-                    placeholder={fbdata.auth().currentUser.email}
-                    autoCapitalize="none"
-                    onChangeText={(value) => setUpdateEmail(value)}
-                    value={updateEmail}
-                  />
-
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => {
-                      handleUpdateEmail();
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: "bold",
-                        color: "white",
-                      }}
-                    >
-                      Update
-                    </Text>
-                  </TouchableOpacity>
-                </View> */}
               </ScrollView>
             )}
           </View>
