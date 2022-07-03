@@ -1,21 +1,15 @@
 // @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  Modal,
-} from "react-native";
+import { View, FlatList } from "react-native";
 import fbdata from "../../../firebase.js";
 import EditPost from "../../components/EditPost.js";
 
 export default function PostByAcc(props) {
+  // useState variable: hold post made by current user
   const [userPosts, setUserPosts] = useState([]);
 
+  // read post created by current user
   useEffect(() => {
     const postbyAccRef = fbdata
       .database()
@@ -38,17 +32,14 @@ export default function PostByAcc(props) {
     return null;
   }
 
+  // render view
   return (
     <View>
       <FlatList
-        // horizontal
-        // pagingEnabled={true}
-        // showsHorizontalScrollIndicator={false}
-        // lagacyImplementation={false}
-        // style={{ width: "100%" }}
-        // showsVerticalScrollIndicator={false}
         data={userPosts}
         renderItem={({ item }) => (
+          // call EditPost
+          // pass variable post, username and userID
           <EditPost
             item={item}
             username={props.username}
