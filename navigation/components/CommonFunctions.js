@@ -2,6 +2,9 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import fbdata from "../../firebase";
 
+// list of common functions that can be called by other screens or compoennts
+
+// return curernt date in the format of "day fullmonth fullyear"
 export default function useCurrentDate() {
   const [currentDate, setCurrentDate] = useState(null);
   useEffect(() => {
@@ -27,6 +30,7 @@ export default function useCurrentDate() {
   return currentDate;
 }
 
+// return date in the format of "yyyy-mm-dd"
 export function useDateString() {
   const [dateString, setDateString] = useState(null);
   useEffect(() => {
@@ -38,6 +42,7 @@ export function useDateString() {
   return dateString;
 }
 
+// return number of opening images stored in database
 export function useOpeningNum() {
   const [openingImageNum, setOpeningImageNum] = useState(0);
   useEffect(() => {
@@ -52,24 +57,25 @@ export function useOpeningNum() {
   return openingImageNum;
 }
 
-export function useOpeningImage() {
-  const [openingImageURL, setOpeningImageURL] = useState("");
-  const num = useOpeningNum();
-  useEffect(() => {
-    const index = Math.floor(Math.random() * num) + 1;
-    const openingImageRef = fbdata
-      .database()
-      .ref("/OpeningImage/" + index + "/url/");
-    const OnLoadingListener = openingImageRef.once("value", (snapshot) => {
-      setOpeningImageURL(snapshot.val().toString());
-    });
-    return () => {
-      openingImageRef.off();
-    };
-  }, []);
-  return openingImageURL;
-}
+// export function useOpeningImage() {
+//   const [openingImageURL, setOpeningImageURL] = useState("");
+//   const num = useOpeningNum();
+//   useEffect(() => {
+//     const index = Math.floor(Math.random() * num) + 1;
+//     const openingImageRef = fbdata
+//       .database()
+//       .ref("/OpeningImage/" + index + "/url/");
+//     const OnLoadingListener = openingImageRef.once("value", (snapshot) => {
+//       setOpeningImageURL(snapshot.val().toString());
+//     });
+//     return () => {
+//       openingImageRef.off();
+//     };
+//   }, []);
+//   return openingImageURL;
+// }
 
+// return account user id
 export function useAccountUserid() {
   const [userid, setUserid] = useState([]);
 
@@ -84,6 +90,7 @@ export function useAccountUserid() {
   return userid;
 }
 
+// return account username
 export function useAccountUsername() {
   const [username, setUserName] = useState([]);
   const [uid, setUid] = useState("");
@@ -108,6 +115,7 @@ export function useAccountUsername() {
   return username;
 }
 
+// question list in firebase
 export function useQuestionList() {
   const [QList, setQList] = useState([]);
   React.useEffect(() => {
@@ -128,6 +136,7 @@ export function useQuestionList() {
   return QList;
 }
 
+// return user answer in firebase
 export function useUserAnswer(question, username) {
   const [answerbyUserList, setAnswerbyUserList] = useState([]);
   React.useEffect(() => {
@@ -152,6 +161,7 @@ export function useUserAnswer(question, username) {
   return answerbyUserList;
 }
 
+// increase answer count in user accoun information
 export function increaseAnswerCount(currentUserID) {
   const userRef = fbdata.database().ref("users/" + currentUserID);
   const answerCountRef = fbdata
@@ -163,6 +173,7 @@ export function increaseAnswerCount(currentUserID) {
   });
 }
 
+// decrease answer count in user accoun information
 export function decreaseAnswerCount(currentUserID) {
   const userRef = fbdata.database().ref("users/" + currentUserID);
   const answerCountRef = fbdata
@@ -174,6 +185,7 @@ export function decreaseAnswerCount(currentUserID) {
   });
 }
 
+// increase pose count in user accoun information
 export function increasePostCount(currentUserID) {
   const userRef = fbdata.database().ref("users/" + currentUserID);
   const postCountRef = fbdata
@@ -185,6 +197,7 @@ export function increasePostCount(currentUserID) {
   });
 }
 
+// decrease post count in user accoun information
 export function decreasePostCount(currentUserID) {
   const userRef = fbdata.database().ref("users/" + currentUserID);
   const postCountRef = fbdata
@@ -204,6 +217,7 @@ export function getCurrentDateString() {
   return year + "-" + month + "-" + date;
 }
 
+// format date object to "yyyy-mm-dd"
 export function getDateFormatOne(dateOb) {
   // let dateOb = new Date(date);
   let dd = dateOb.getDate();
@@ -219,6 +233,7 @@ export function getDateFormatOne(dateOb) {
   return formatedDateOb;
 }
 
+// format date object to "day fullmonth fullyear"
 export function getDateFormatTwo(dateOb) {
   var months = [
     "January",
@@ -241,6 +256,7 @@ export function getDateFormatTwo(dateOb) {
   return formatedDateOb;
 }
 
+// format day elements passed by calendar to "day fullmonth fullyear"
 export function getDateFormatThree(day, month, year) {
   var months = [
     "January",
@@ -261,6 +277,7 @@ export function getDateFormatThree(day, month, year) {
   return formatedDateOb;
 }
 
+// return post category list
 export function useCategoryList() {
   const userId = fbdata.auth().currentUser.uid;
   console.log(userId);
@@ -287,50 +304,4 @@ export function useCategoryList() {
     };
   }, []);
   return categoryList;
-}
-
-// export function useCategoryList() {
-//   const [categoryList, setCategoryList] = useState([]);
-//   useEffect(() => {
-//     const postCategoryRef = fbdata
-//       .database()
-//       .ref("/postCategory/")
-//       .orderByChild("id");
-//     const OnLoadingListener = postCategoryRef.once("value", (snapshot) => {
-//       setCategoryList([]);
-//       snapshot.forEach((childSnapshot) => {
-//         setCategoryList((categoryList) => [
-//           ...categoryList,
-//           childSnapshot.val(),
-//         ]);
-//       });
-//     });
-//     return () => {
-//       postCategoryRef.off();
-//     };
-//   }, []);
-//   return categoryList;
-// }
-
-export function useAgegroupList() {
-  const [ageGroupList, setAgeGroupList] = useState([]);
-  useEffect(() => {
-    const AgeGroupRef = fbdata
-      .database()
-      .ref("/ageCategory/")
-      .orderByChild("key");
-    const OnLoadingListener = AgeGroupRef.once("value", (snapshot) => {
-      setAgeGroupList([]);
-      snapshot.forEach((childSnapshot) => {
-        setAgeGroupList((ageGroupList) => [
-          ...ageGroupList,
-          childSnapshot.val(),
-        ]);
-      });
-    });
-    return () => {
-      AgeGroupRef.off();
-    };
-  }, []);
-  return ageGroupList;
 }
