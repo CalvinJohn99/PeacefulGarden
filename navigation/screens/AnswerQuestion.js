@@ -9,7 +9,6 @@ import {
   TouchableWithoutFeedback,
   View,
   TouchableOpacity,
-  Animated,
 } from "react-native";
 import fbdata from "../../firebase.js";
 import useCurrentDate, {
@@ -19,6 +18,10 @@ import useCurrentDate, {
 } from "../components/CommonFunctions.js";
 import commonStyles from "../../commonStyles.js";
 
+// upload answer content to firebase
+// file path: qanswer/question/uniquekey
+// file path: qanswerbyuser/username/question/uniquekey
+// update user answer count by 1
 function storeQAnswer(
   currentQuestion,
   answer,
@@ -73,6 +76,8 @@ function storeQAnswer(
     });
 }
 
+// update negTimestamp for ordering in descending order
+// file path: qanswer/question/uniquekey
 function updateNegTimestampQA(question, key) {
   const timeRef = fbdata
     .database()
@@ -86,6 +91,8 @@ function updateNegTimestampQA(question, key) {
   });
 }
 
+// update negTimestamp for ordering in descending order
+// file path: qanswerbyuser/username/question/uniquekey
 function updateNegTimestampQAbyAcc(question, currentUser, key) {
   const timeRef = fbdata
     .database()
@@ -107,15 +114,23 @@ function updateNegTimestampQAbyAcc(question, currentUser, key) {
   });
 }
 
+// creaet answer screen
+// receive question passed from QuestionViewAnswer screen
 export default function AnswerQuestion({ navigation, route }) {
+  // call useCurrentDate, useAccountUsername, useAccountUserid
   const currentDate = useCurrentDate();
   const currentUser = useAccountUsername();
   const currentUserID = useAccountUserid();
+  // receive passed variable
   const { currentQuestion } = route.params;
+  // useState variable: answer, hold answer input
   const [answer, setAnswer] = useState("");
+  // set true when text input is focused
   const [focused, setFocused] = useState(false);
+  // set true when answer is empty
   const [errorStatus, setErrorStatus] = useState(false);
 
+  // return border color based on "focused"
   const getBorderColor = () => {
     if (focused) {
       return "#00BCD4";
@@ -123,6 +138,7 @@ export default function AnswerQuestion({ navigation, route }) {
     return "white";
   };
 
+  // handle onSubmit once "save" is clicked
   const onSubmit = () => {
     if (answer === "") {
       setErrorStatus(true);
@@ -139,16 +155,7 @@ export default function AnswerQuestion({ navigation, route }) {
     }
   };
 
-  // const enterAnswer = (text) => {
-  //   if (text.trim() != 0) {
-  //     setAnswer(text);
-  //     setErrorStatus(false);
-  //   } else {
-  //     setAnswer("");
-  //     setErrorStatus(true);
-  //   }
-  // };
-
+  // render view
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -157,8 +164,6 @@ export default function AnswerQuestion({ navigation, route }) {
       }}
     >
       <SafeAreaView style={commonStyles.pageContainer}>
-        {/* <Text style={styles.todayDate}> {currentDate} </Text> */}
-
         <View
           style={[
             commonStyles.questionHeaderWrapper,
@@ -170,15 +175,6 @@ export default function AnswerQuestion({ navigation, route }) {
             {currentQuestion.id}. {currentQuestion.question}{" "}
           </Text>
         </View>
-
-        {/* <View
-          style={[styles.question, { backgroundColor: currentQuestion.color }]}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-            {" "}
-            {currentQuestion.id}. {currentQuestion.question}{" "}
-          </Text>
-        </View> */}
 
         <View style={commonStyles.answerContainer}>
           <View style={commonStyles.inputBoxWrapper}>
@@ -196,7 +192,6 @@ export default function AnswerQuestion({ navigation, route }) {
               onFocus={() => {
                 setFocused(true);
               }}
-              //returnKeyType="done"
             />
           </View>
           <View
@@ -224,11 +219,6 @@ export default function AnswerQuestion({ navigation, route }) {
               onPress={() => {
                 onSubmit();
               }}
-              // onPress={() => {
-              //   storeQAnswer(currentQuestion.question, answer);
-              //   alert("Successfully posted!");
-              //   navigation.navigate("Question", { screen: "QList" });
-              // }}
             >
               <Text style={styles.postbuttontext}>Post</Text>
             </TouchableOpacity>
@@ -239,29 +229,8 @@ export default function AnswerQuestion({ navigation, route }) {
   );
 }
 
+// style sheet
 const styles = StyleSheet.create({
-  // outerContainer: {
-  //   flex: 1,
-  //   alignItems: "center",
-  //   //justifyContent: "center",
-  // },
-
-  // todayDate: {
-  //   top: 20,
-  //   fontWeight: "bold",
-  //   fontSize: 26,
-  // },
-
-  // question: {
-  //   top: 20,
-  //   margin: 20,
-  //   padding: 20,
-  //   borderRadius: 20,
-  //   width: "90%",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
-
   submitSection: {
     flexDirection: "row",
     top: 40,
@@ -280,8 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3b000",
     justifyContent: "center",
     alignItems: "center",
-    // marginVertical: 20,
-    // marginHorizontal: 20,
     margin: 20,
     paddingVertical: 5,
     paddingHorizontal: 5,
@@ -298,9 +265,5 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    // marginTop: 10,
-    // alignSelf: "flex-start",
-    // marginLeft: "10%",
-    // marginLeft: -50,
   },
 });
