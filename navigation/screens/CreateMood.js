@@ -15,7 +15,6 @@ import {
 import fbdata from "../../firebase.js";
 import {
   useAccountUsername,
-  getCurrentDateString,
   getDateFormatOne,
 } from "../components/CommonFunctions.js";
 import commonStyles, {
@@ -25,6 +24,8 @@ import commonStyles, {
 import { FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+// upload mood content to firebase realtime database
+// file path: Mood/username/date/uniquekey
 function storeMComment(
   moodIconName,
   moodID,
@@ -67,6 +68,8 @@ function storeMComment(
     });
 }
 
+// update negTimestamp of the mood
+// used to sort mood in descending order
 function updateNegTimestamp(moodDate, currentUsername, newMoodCommentKey) {
   const timeRef = fbdata
     .database()
@@ -88,27 +91,32 @@ function updateNegTimestamp(moodDate, currentUsername, newMoodCommentKey) {
   });
 }
 
-// function getMoodIconURL() {
-//   const moodIconURLRef = fbdata.database().ref("/MoodIconURL/");
-//   moodIconURLRef.get().then((snapshot) => {
-//     return snapshot.val();
-//   });
-// }
-
+// create mood screen
 export default function CreateMood({ navigation }) {
-  const currentDateString = getCurrentDateString();
+  // call useAccountUsername from commonFunctions
   const currentUsername = useAccountUsername();
+  // useState variables:
+  // date: value of date selector
   const [date, setDate] = useState(new Date());
+  // moodDate: format selected date as "yyyy-mm-dd"
   const [moodDate, setMoodDate] = useState(getDateFormatOne(new Date()));
+  // moodFontAwesome5Icon: mood list read from firebase
   const [moodFontAwesome5Icon, setMoodFontAwesome5Icon] = useState([]);
+  // moodColor: set mood color once selected
   const [moodColor, setMoodColor] = useState([]);
+  // forcusedText: text input focus status
   const [focusedText, setFocusedText] = useState(false);
+  // comment: store comment inut
   const [comment, setComment] = useState("");
+  // selectedID: store selected id of mood icon
   const [selectedID, setSelectedID] = useState(null);
+  // selectedIcon: store selected mood icon name
   const [selectedIcon, setSelectedIcon] = useState(null);
+  // error status for comment & mood
   const [commentErrorStatus, setCommentErrorStatus] = useState(false);
   const [moodErrorStatus, setMoodErrorStatus] = useState(false);
 
+  // read mood list from firebase
   useEffect(() => {
     const moodRef = fbdata
       .database()
@@ -128,6 +136,7 @@ export default function CreateMood({ navigation }) {
     };
   }, []);
 
+  // on change of date picker
   const onChange = (event, selectedDate) => {
     const currentMoodDate = selectedDate || date;
     setDate(currentMoodDate);
@@ -135,6 +144,7 @@ export default function CreateMood({ navigation }) {
     setMoodDate(formatedMoodDate);
   };
 
+  // change text input border colour based on variable focusedText
   const getBorderColorText = () => {
     if (focusedText) {
       return "#00BCD4";
@@ -142,6 +152,8 @@ export default function CreateMood({ navigation }) {
     return "white";
   };
 
+  // render mood list in a horizontal flatlist
+  // change border and background colour of mood once selected
   const renderItem = ({ item }) => {
     const iconBackgroundColor = item.id === selectedID ? item.color : "white";
     const iconfilledColor = selectedID === item.id ? "white" : item.color;
@@ -178,6 +190,9 @@ export default function CreateMood({ navigation }) {
     );
   };
 
+  // handle on submit action once "post" button is clicked
+  // set error status to true if either icon or comment is empty
+  // call storeMood otherwise, and navigate back to calendar navigation of MoodJournalScreen
   const onSubmit = () => {
     if (selectedIcon === null || comment === "") {
       if (selectedIcon === null) {
@@ -202,6 +217,7 @@ export default function CreateMood({ navigation }) {
     }
   };
 
+  // render view
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -223,13 +239,11 @@ export default function CreateMood({ navigation }) {
           </Text>
         </View>
 
+        {/* date picker section */}
         <View
           style={{
             width: "100%",
             marginTop: 20,
-            // marginBottom: 25,
-            // borderWidth: 2,
-            // borderColor: "red",
             flexDirection: "row",
             alignItems: "center",
           }}
@@ -237,16 +251,10 @@ export default function CreateMood({ navigation }) {
           <Text style={styles.header}>Select Date</Text>
           <View
             style={{
-              // alignSelf: "center",
-              // width: "45%",
-              // alignItems: "center",
               backgroundColor: "white",
               paddingVertical: 5,
-              // paddingHorizontal: 40,
               borderRadius: 10,
               marginLeft: "2%",
-              // borderWidth: 2,
-              // borderColor: "blue",
               flex: 2,
             }}
           >
@@ -264,6 +272,7 @@ export default function CreateMood({ navigation }) {
           </View>
         </View>
 
+        {/* Mood picker section */}
         <View
           style={{
             marginTop: 20,
@@ -271,12 +280,6 @@ export default function CreateMood({ navigation }) {
           }}
         >
           <FlatList
-            // horizontal
-            // pagingEnabled={true}
-            // showsHorizontalScrollIndicator={false}
-            // lagacyImplementation={false}
-            // style={{ width: "100%" }}
-            // showsVerticalScrollIndicator={false}
             data={moodFontAwesome5Icon}
             numColumns={5}
             style={{
@@ -293,6 +296,7 @@ export default function CreateMood({ navigation }) {
           </Text>
         ) : null}
 
+        {/* Comment section */}
         <View
           style={[commonStyles.inputBoxWrapper, { height: "40%", top: 20 }]}
         >
@@ -313,7 +317,6 @@ export default function CreateMood({ navigation }) {
             onFocus={() => {
               setFocusedText(true);
             }}
-            //returnKeyType="done"
           />
           {commentErrorStatus === true ? (
             <Text style={styles.formErrorMsg}>
@@ -321,6 +324,8 @@ export default function CreateMood({ navigation }) {
             </Text>
           ) : null}
         </View>
+
+        {/* submission section */}
         <View style={styles.submitSection}>
           <TouchableOpacity
             style={styles.postbutton}
@@ -336,39 +341,19 @@ export default function CreateMood({ navigation }) {
   );
 }
 
+// style sheet
 const styles = StyleSheet.create({
-  // todayDate: {
-  //   width: "100%",
-  //   textAlign: "center",
-  //   top: 20,
-  //   fontWeight: "bold",
-  //   fontSize: 26,
-  //   borderWidth: 2,
-  //   borderColor: "red",
-  // },
-
   moodIcon: {
     width: 60,
     height: 60,
-    //top: 30,
     left: 18,
     flexDirection: "row",
     justifyContent: "space-evenly",
-    //marginVertical: SPACING,
-    //marginBottom: SPACING + 32,
     marginRight: 20,
   },
 
   moodBorder: {
     borderWidth: 2,
-    //height: 60,
-    //top: 30,
-    //left: 30,
-    //flexDirection: 'row',
-    //justifyContent: 'space-evenly',
-    //marginVertical: SPACING,
-    //marginBottom: SPACING + 32,
-    //marginRight:30,
   },
 
   inputWrapper: {
@@ -402,20 +387,11 @@ const styles = StyleSheet.create({
     height: 80,
   },
 
-  // warningTextCon: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   flex: 2,
-  //   left: 10,
-  //   padding: 15,
-  // },
-
   postbutton: {
     backgroundColor: "#F3B000",
     justifyContent: "center",
     alignItems: "center",
     margin: 15,
-    // padding: 15,
     borderRadius: 20,
     flex: 1,
   },
@@ -429,7 +405,6 @@ const styles = StyleSheet.create({
   formErrorMsg: {
     color: "red",
     fontSize: 20,
-    // marginLeft: 5,
     marginVertical: 10,
   },
   header: {
@@ -437,7 +412,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     paddingLeft: 35,
-    // marginTop: 20,
     flex: 1,
   },
 });
