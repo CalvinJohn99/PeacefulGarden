@@ -6,21 +6,25 @@ import {
   FlatList,
   Text,
   StyleSheet,
-  StatusBar,
   TouchableOpacity,
-  Animated,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import fbdata from "../../firebase.js";
-import commonStyles from "../../commonStyles.js";
-
-import useCurrentDate from "../components/CommonFunctions.js";
-import LikeButton from "../components/LikeButton";
-import { SharedElement } from "react-navigation-shared-element";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+// import firebase from "firebase.js"
+import fbdata from "../../firebase.js";
+
+// import common styles from "commonStyls"
+import commonStyles from "../../commonStyles.js";
+
+// import component
+import LikeButton from "../components/LikeButton";
+
+// View answer based on selected question
+// Receive question object from QuestionScreen
+// Show FlatList of answers of the passed question
 function QuestionViewAnswer({ navigation, route }) {
-  const { item } = route.params;
+  // Recieve question id, question, color and put into a new variable currentQuestion
   const questionid = route.params.item.id;
   const questiontext = route.params.item.question;
   const questioncolor = route.params.item.color;
@@ -30,6 +34,7 @@ function QuestionViewAnswer({ navigation, route }) {
     color: questioncolor,
   };
 
+  // Read answer list of the passed question from firebase and put into array QAList
   const [QAList, setQAList] = useState([]);
   useEffect(() => {
     const questionAnswerRef = fbdata
@@ -47,43 +52,26 @@ function QuestionViewAnswer({ navigation, route }) {
     };
   }, []);
 
+  // render the screen
   return (
     <SafeAreaView style={commonStyles.pageContainer}>
+      {/* show question with the corresponding background colour */}
       <Animatable.View
-        // animation="fadeInUp"
         style={[
           commonStyles.questionHeaderWrapper,
           { backgroundColor: questioncolor },
         ]}
       >
         <View />
-        <SharedElement id={`item.${item.id}.question`}>
-          <Text style={commonStyles.questionText}>
-            {item.id}. {item.question}
-          </Text>
-        </SharedElement>
+        <Text style={commonStyles.questionText}>
+          {questionid}. {questiontext}
+        </Text>
       </Animatable.View>
-      {/* <View style={styles.submitSection}>
-        <View style={styles.dateCon}>
-          <Text style={styles.todayDate}> {currentDate} </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.newbutton}
-          onPress={() => {
-            navigation.navigate("Question", {
-              screen: "QCreateAnswer",
-              params: { currentQuestion },
-            });
-          }}
-        >
-          <Text style={styles.newbuttontext}>New</Text>
-        </TouchableOpacity>
-      </View> */}
 
+      {/* Plus new button using plus icon, navigate to create new answer for the passed question once clicked, pass variable currentQuestion to the create ansewr screen */}
       <Animatable.View style={commonStyles.answerContainer}>
         <Animatable.View animation="zoomIn">
           <TouchableOpacity
-            // animation="fadeInUp"
             style={styles.newbutton}
             onPress={() => {
               navigation.navigate("Question", {
@@ -96,6 +84,7 @@ function QuestionViewAnswer({ navigation, route }) {
           </TouchableOpacity>
         </Animatable.View>
 
+        {/* List of answers of the question passed from QuestionScreen */}
         <FlatList
           style={{
             width: "95%",
@@ -116,26 +105,6 @@ function QuestionViewAnswer({ navigation, route }) {
                 Posted on {item.creationDate}{" "}
               </Text>
               <Text style={styles.answerText}> {item.answer} </Text>
-
-              {/* <View
-                style={{
-                  flexGrow: 1,
-                  marginTop: 4,
-                  alignSelf: "flex-end",
-                  paddingRight: 10,
-                  // flexDirection: "row-reverse",
-                }}
-              >
-                <Text
-                  style={{
-                    paddingTop: 6,
-                    paddingLeft: 20,
-                    fontWeight: "bold",
-                  }}
-                >
-                  by {item.username}
-                </Text>
-              </View> */}
 
               <View
                 style={{
@@ -181,24 +150,10 @@ function QuestionViewAnswer({ navigation, route }) {
   );
 }
 
-// QuestionViewAnswer.SharedElement = (route, otherRoute, showing) => {
-//   const { item } = route.params;
-//   return [
-//     // { id: `item.${item.id}.question` },
-//     { id: `item.${item.id}.question`, animation: "fadeInUp" },
-//   ];
-// };
-
 export default QuestionViewAnswer;
 
+// style sheet
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   // marginTop: StatusBar.currentHeight || 20,
-  //   alignItems: "center",
-  //   backgroundColor: "#ffffff",
-  // },
-
   answerCon: {
     marginVertical: 20,
     padding: 5,
@@ -221,23 +176,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 18,
   },
-
-  // submitSection: {
-  //   flexDirection: "row",
-  //   height: 100,
-  // },
-
-  // dateCon: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   flex: 3,
-  //   left: 5,
-  // },
-
-  // todayDate: {
-  //   fontWeight: "bold",
-  //   fontSize: 26,
-  // },
 
   newbutton: {
     justifyContent: "center",
