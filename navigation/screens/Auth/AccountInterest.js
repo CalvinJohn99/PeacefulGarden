@@ -1,37 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, Button, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import RNPickerSelect from "react-native-picker-select";
 import { CheckBox } from "react-native-elements";
 import { Avatar } from "react-native-elements";
 import fbdata from "../../../firebase";
-import {
-  useCategoryList,
-  useAgegroupList,
-} from "../../components/CommonFunctions.js";
 import commonStyles from "../../../commonStyles.js";
-// import Interest from "./../../../assets/Interest";
-// import AgeCategories from "./../../../assets/AgeCategories";
 
-const placeholder = {
-  label: "Select your age...",
-  value: null,
-  color: "#9EA0A4",
-};
-
+// choose account interest category and sign up account with firebase authentication
 function AccountInterest({ navigation, route }) {
+  // receive data passed from Signup Form
   const { newdata } = route.params;
-  // const ageGroupList = useAgegroupList();
+  // interest category
   const [checkboxes, setCheckboxes] = useState([]);
-  const [age, setAge] = useState(null);
+  // set userdata
   const [data, setData] = useState({
     uid: "",
     username: "",
     img: "",
-    // age: "",
     interest: {},
   });
 
+  // read interest category from firebase
   useEffect(() => {
     const postCategoryRef = fbdata
       .database()
@@ -48,15 +37,16 @@ function AccountInterest({ navigation, route }) {
     };
   }, []);
 
+  // set user data
   const handleData = (uuid) => {
     data.uid = uuid;
     data.username = newdata.username;
     data.img = newdata.img;
-    // data.age = age;
     data.interest = checkboxes;
     setData({ ...data });
   };
 
+  // handle onchange of checkbox value
   const onChangeBox = (itemSelected, index) => {
     const newData = checkboxes.map((item) => {
       if (item.id === itemSelected.id) {
@@ -73,6 +63,7 @@ function AccountInterest({ navigation, route }) {
     setCheckboxes(newData);
   };
 
+  // render checkbox
   const renderCheckBox = checkboxes.map((item, index) => {
     return (
       <View style={{ width: "48%" }}>
@@ -89,42 +80,7 @@ function AccountInterest({ navigation, route }) {
     );
   });
 
-  async function addProfileAuth() {
-    return new Promise(async (res, rej) => {
-      const response = await fetch(newdata.img);
-      const file = await response.blob();
-
-      let upload = fbdata
-        .storage()
-        .ref(data.uid + "/")
-        .child(data.uid)
-        .put(file);
-
-      upload.on(
-        "stated_changed",
-        (snapshot) => {},
-        (err) => {
-          rej(err);
-        },
-        async () => {
-          const url = await upload.snapshot.ref.getDownloadURL();
-          console.log(url);
-          updateProfile(url);
-          res(url);
-        }
-      );
-    });
-  }
-
-  function updateProfile(url) {
-    const update = {
-      displayName: data.username,
-      photoURL: url,
-    };
-    fbdata.auth().currentUser.updateProfile(update);
-    console.log("1. Add Auth Done!");
-  }
-
+  // store user information in firebase realtime database
   function addRealTimeDatabase() {
     fbdata
       .database()
@@ -133,7 +89,6 @@ function AccountInterest({ navigation, route }) {
         {
           username: data.username,
           profileImage: data.img,
-          // age: data.age,
           interest: data.interest,
           postCount: 0,
           answerCount: 0,
@@ -147,6 +102,7 @@ function AccountInterest({ navigation, route }) {
     console.log("2. Add Realtime Done!");
   }
 
+  // handle sign up, create account
   function signUp() {
     fbdata
       .auth()
@@ -162,15 +118,6 @@ function AccountInterest({ navigation, route }) {
           displayName: data.username,
           photoURL: data.img,
         });
-
-        // console.log(newdata.img);
-        // if (newdata.img === null) {
-        //   fbdata
-        //     .auth()
-        //     .currentUser.updateProfile({ displayName: data.username });
-        // } else {
-        //   addProfileAuth();
-        // }
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -183,6 +130,7 @@ function AccountInterest({ navigation, route }) {
       });
   }
 
+  // render view
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -190,8 +138,6 @@ function AccountInterest({ navigation, route }) {
           width: "100%",
           height: "25%",
           backgroundColor: "#00BCD4",
-          // flexDirection: "column",
-          // alignItems: "center",
           justifyContent: "center",
           paddingLeft: 20,
         }}
@@ -211,16 +157,6 @@ function AccountInterest({ navigation, route }) {
       </View>
 
       <View style={commonStyles.answerContainer}>
-        {/* <View style={styles.questionForm}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Age Group</Text>
-          <RNPickerSelect
-            style={pickerSelectStyles}
-            onValueChange={(value) => setAge(value)}
-            placeholder={placeholder}
-            items={ageGroupList}
-          />
-        </View> */}
-
         <View style={styles.questionForm}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>
             Interest
@@ -239,7 +175,6 @@ function AccountInterest({ navigation, route }) {
             signUp();
           }}
         >
-          {/* <Button title="Next" color="#fff" /> */}
           <Text
             style={{
               fontSize: 18,
