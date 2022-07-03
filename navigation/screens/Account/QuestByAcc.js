@@ -1,35 +1,36 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, View, Text, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import {
   useAccountUserid,
   useAccountUsername,
   useQuestionList,
-  useUserAnswer,
 } from "../../components/CommonFunctions.js";
 import ListAnswerbyQuestion from "../../components/EditAnswer";
-import commonStyles, {
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT,
-} from "../../../commonStyles.js";
+import { SCREEN_WIDTH } from "../../../commonStyles.js";
 
+// View question by account component
+// called by AccountInfo
 export default function QuestByAcc({ navigation }) {
+  // get userID
   const userID = useAccountUserid();
+  // get username
   const username = useAccountUsername();
+  // get question list
   const Qlist = useQuestionList();
 
+  // render view
   return (
     <View>
       <FlatList
         style={{
           width: SCREEN_WIDTH * 0.92,
           borderRadius: 20,
-          // borderWidth: 2,
-          // borderColor: "red",
         }}
         data={Qlist}
         renderItem={({ item }) => (
           <View>
+            {/* call ListAnswerbyQuestion,
+                pass variables quesiton, username and userID*/}
             <ListAnswerbyQuestion
               question={item}
               username={username}
