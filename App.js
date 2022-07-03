@@ -1,22 +1,28 @@
 // @refresh state
 
+// Import relevant react native libraries
 import React, { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-//Import Firebase
+
+// import firebase from file "firebase.js"
 import fbdata from "./firebase";
-//Import Screens
+
+// import various screens from folder navigation
 import MainContainer from "./navigation/MainContainer.js";
 import SignupForm from "./navigation/screens/Auth/SignupForm";
 import SigninForm from "./navigation/screens/Auth/SigninForm";
 import MainAccountScreen from "./navigation/screens/Auth/MainAccountScreen";
-import AccountQuestion from "./navigation/screens/Auth/AccountQuestion";
 import AccountInterest from "./navigation/screens/Auth/AccountInterest";
 import ResetPassword from "./navigation/screens/Auth/ResetPassword";
-import Test from "./navigation/screens/Auth/Test";
+
+// import shared style sheet
 import commonStyles from "./commonStyles.js";
 
+// Create a stack navigation
 const Stack = createNativeStackNavigator();
+
+// The root function of peaceful garden
 function App() {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
@@ -25,30 +31,25 @@ function App() {
   // Handle user state changes
   function onAuthStateChanged(user) {
     setUser(user);
-    //console.log(user);
     if (initializing) setInitializing(false);
   }
 
+  // Listen to user state change
+  // firebase function onAuthStateChanged is triggered when the user state change in firebase authentication
   useEffect(() => {
-    // fbdata
-    //   .auth()
-    //   .signOut()
     const subscriber = fbdata.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  // render screens based on user state
+  // No user -- render MainAccountScreen
+  // active user -- render MainContainer (the main bottom tab container consisting main functionalities of the app)
   if (initializing) return null;
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
-          // headerStyle: {
-          //   backgroundColor: "#1067CC",
-          // },
-          // headerStyle: {
-          //   backgroundColor: "#00BCD4",
-          // },
           headerStyle: commonStyles.headerBGColor,
           headerTintColor: "white",
           headerTitleStyle: {
@@ -61,7 +62,6 @@ function App() {
             <Stack.Screen
               name="MainAccountScreen"
               component={MainAccountScreen}
-              // options={{ title: "Account" }}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -74,11 +74,6 @@ function App() {
               component={SignupForm}
               options={{ title: "Create New Account" }}
             />
-            {/* <Stack.Screen
-              name="AccountQuestion"
-              component={AccountQuestion}
-              options={{ title: "Create New Account" }}
-            /> */}
             <Stack.Screen
               name="AccountInterest"
               component={AccountInterest}
@@ -88,11 +83,6 @@ function App() {
               name="ResetPassword"
               component={ResetPassword}
               options={{ title: "Reset Password" }}
-            />
-            <Stack.Screen
-              name="Test"
-              component={Test}
-              options={{ title: "Test" }}
             />
           </>
         ) : (
