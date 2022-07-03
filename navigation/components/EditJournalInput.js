@@ -1,12 +1,9 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import {
-  SafeAreaView,
   View,
-  FlatList,
   Text,
   StyleSheet,
-  StatusBar,
   TouchableOpacity,
   Image,
   Modal,
@@ -15,9 +12,6 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import useCurrentDate, {
-  getCurrentDateString,
-} from "../components/CommonFunctions.js";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import fbdata from "../../firebase.js";
@@ -26,6 +20,7 @@ import commonStyles, {
   SCREEN_HEIGHT,
 } from "../../commonStyles.js";
 
+// update journal content in firebase realtime database
 function updateJournalInformation(
   username,
   journalDate,
@@ -33,7 +28,6 @@ function updateJournalInformation(
   journalContent,
   imageURL,
   imageRef
-  // oldRef
 ) {
   fbdata
     .database()
@@ -43,9 +37,9 @@ function updateJournalInformation(
       imageURL: imageURL,
       imageRef: imageRef,
     });
-  // fbdata.storage().refFromURL(oldRef).delete();
 }
 
+// delete journal on firebase realtime database
 function deleteJournal(username, journalDate, journalID) {
   const journalRef = fbdata
     .database()
@@ -58,36 +52,49 @@ function deleteJournal(username, journalDate, journalID) {
   });
 }
 
+// component to show and edit journal item
+// called by ViewMoodJournal screen
+// oepn modal overlay to edit and delete journal
+// allow edit of journal images
 export default function EditJournalInput(props) {
+  // receive variables from ViewMoodJournal screen
   const journalItem = props.item;
   const username = props.currentUsername;
   const day = props.day;
-  const originalImage = journalItem.imageURL;
-  const [originalImageURL, setOriginalImageURL] = useState(
-    journalItem.imageURL
-  );
-  var imageURL = originalImageURL;
+
+  // array of imageURL, will be updated if image editted
+  var imageURL = journalItem.imageURL;
+  // array of image firebase storage reference, will be updated if image editted
   var imageRef = journalItem.imageRef;
+  // hold new picked images
   const [newImages, setNewImages] = useState([]);
+  // hold editted journal content, initialised as the original journal content
   const [journalContent, setJournalContent] = useState(
     journalItem.journalContent
   );
+  // modal overlay visibility status
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  // text input focus status
   const [focusedText, setFocusedText] = useState(false);
+  // hold index of original photo which is deleted
   const [oldIndex, setOldIndex] = useState(null);
-  const [oldRef, setOldRef] = useState(null);
+  // hold modal overlay visibility status
   const [deleteOldImageModalVisible, setDeleteOldImageModalVisible] =
     useState(false);
   const [deleteNewImageModalVisible, setDeleteNewImageModalVisible] =
     useState(false);
+  // hold removed newly picked image
   const [removeNew, setRemoveNew] = useState(false);
+  // image uploading status
   const [uploading, setUploading] = useState(false);
-  const [errorStatus, setErrorStatus] = useState(false);
-  const [imageChange, setImageChange] = useState(false);
+
+  // const [imageChange, setImageChange] = useState(false);
+  // hold error status
   const [imageErrorStatus, setImageErrorStatus] = useState(false);
   const [contentErrorStatus, setContentErrorStatus] = useState(false);
 
+  // request media library permission async
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -100,10 +107,12 @@ export default function EditJournalInput(props) {
     })();
   }, []);
 
+  // remove newly picked up image from newImages
   const onRemoveNewImages = (item) => {
     setNewImages(newImages.filter((it) => it !== item));
   };
 
+  // remove original image from imageURL and imageRef, and remove image on firebase storage
   const onRemoveOldImages = (index) => {
     // setOldRef(imageRef[index]);
     fbdata.storage().refFromURL(imageRef[index]).delete();
@@ -111,6 +120,7 @@ export default function EditJournalInput(props) {
     imageRef.splice(index, 1);
   };
 
+  // handle pick up image
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -124,11 +134,11 @@ export default function EditJournalInput(props) {
     }
   };
 
+  // handle new image uploading
+  // call updateJournalInformation function
   const updateJournal = () => {
     var numberOfNewImages = newImages.length;
     let i = 0;
-    // let imageURLs = [];
-    // let imageRefs = [];
     newImages.map(async (image) => {
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -189,6 +199,7 @@ export default function EditJournalInput(props) {
     });
   };
 
+  // return text input border based on variable focusedText
   const getBorderColorText = () => {
     if (focusedText) {
       return "#00BCD4";
@@ -196,18 +207,8 @@ export default function EditJournalInput(props) {
     return "white";
   };
 
-  function duplicateImageArray() {
-    var imageArray = [];
-    journalItem.imageURL.map((image) => {
-      for (let i = 0; i < journalItem.imageURL.length; i++) {
-        imageArray.push(image);
-      }
-    });
-    return imageArray;
-  }
-
-  var totalImageArray = duplicateImageArray();
-
+  // handle onSubmit when "save is clicked"
+  // set error status true if any field is empty
   const onSubmit = () => {
     if (
       journalContent === "" ||
@@ -236,6 +237,7 @@ export default function EditJournalInput(props) {
     }
   };
 
+  // render view
   return (
     <View>
       <TouchableOpacity
@@ -270,8 +272,6 @@ export default function EditJournalInput(props) {
             marginBottom: 50,
             flexDirection: "row",
             flexWrap: "wrap",
-            // borderColor: "red",
-            // borderWidth: 2,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -299,8 +299,6 @@ export default function EditJournalInput(props) {
                   style={{
                     width: "45%",
                     height: 150,
-                    // borderWidth: 2,
-                    // borderColor: "blue",
                     alignItems: "center",
                     justifyContent: "center",
                     margin: 5,
@@ -314,25 +312,6 @@ export default function EditJournalInput(props) {
               );
             }
             return null;
-
-            // return (
-            //   <View
-            //     style={{
-            //       width: "30%",
-            //       height: 100,
-            //       // borderWidth: 2,
-            //       // borderColor: "blue",
-            //       alignItems: "center",
-            //       justifyContent: "center",
-            //       margin: 5,
-            //     }}
-            //   >
-            //     <Image
-            //       source={{ uri: image }}
-            //       style={{ width: "100%", height: "100%" }}
-            //     ></Image>
-            //   </View>
-            // );
           })}
         </View>
 
@@ -343,10 +322,7 @@ export default function EditJournalInput(props) {
             marginBottom: 50,
             flexDirection: "row",
             flexWrap: "wrap",
-            // borderColor: "red",
-            // borderWidth: 2,
             paddingLeft: 8,
-            // alignItems: "center",
           }}
         >
           {journalItem.imageURL.map((image, index) => {
@@ -375,6 +351,7 @@ export default function EditJournalInput(props) {
         </View>
       </TouchableOpacity>
 
+      {/* edit modal overlay */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -405,7 +382,7 @@ export default function EditJournalInput(props) {
                   imageRef = journalItem.imageRef;
                   setNewImages([]);
                   setFocusedText(false);
-                  setImageChange(false);
+                  // setImageChange(false);
                 }}
               >
                 <FontAwesome5 name="times" size={40} color="black" />
@@ -429,7 +406,6 @@ export default function EditJournalInput(props) {
                   onFocus={() => {
                     setFocusedText(true);
                   }}
-                  //returnKeyType="done"
                 />
                 {contentErrorStatus === true ? (
                   <Text style={[styles.formErrorMsg]}>
@@ -543,33 +519,6 @@ export default function EditJournalInput(props) {
                   justifyContent: "center",
                 }}
               >
-                {/* <TouchableOpacity
-                  style={[
-                    commonStyles.modalButton,
-                    { backgroundColor: "#F3B000" },
-                  ]}
-                  onPress={() => {
-                    onSubmit();
-                    // if (newImages.length !== 0) {
-                    //   updateJournal();
-                    // } else {
-                    //   updateJournalInformation(
-                    //     username,
-                    //     journalItem.journalDate,
-                    //     journalItem.id,
-                    //     journalContent,
-                    //     imageURL,
-                    //     imageRef
-                    //     // oldRef
-                    //   );
-                    // }
-
-                    // setModalVisible(!modalVisible);
-                  }}
-                >
-                  <Text style={commonStyles.modalButtonText}>Save</Text>
-                </TouchableOpacity> */}
-
                 {!uploading ? (
                   <TouchableOpacity
                     style={[
@@ -599,6 +548,7 @@ export default function EditJournalInput(props) {
                 </TouchableOpacity>
               </View>
 
+              {/* delete original image modal overlay */}
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -612,9 +562,6 @@ export default function EditJournalInput(props) {
                     <Text style={commonStyles.deleteWarningTitle}>
                       Delete image?
                     </Text>
-                    {/* <Text style={commonStyles.deleteWarningText}>
-                      * Once delete, it is unrecoverable!
-                    </Text> */}
                     <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <TouchableOpacity
                         style={[
@@ -648,6 +595,7 @@ export default function EditJournalInput(props) {
                 </View>
               </Modal>
 
+              {/* delete newly picked up image modal overlay */}
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -661,9 +609,6 @@ export default function EditJournalInput(props) {
                     <Text style={commonStyles.deleteWarningTitle}>
                       Delete image?
                     </Text>
-                    {/* <Text style={commonStyles.deleteWarningText}>
-                      * Once delete, it is unrecoverable!
-                    </Text> */}
                     <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <TouchableOpacity
                         style={[
@@ -731,7 +676,6 @@ export default function EditJournalInput(props) {
                           { backgroundColor: "#F02A4B" },
                         ]}
                         onPress={() => {
-                          // deleteMood(moodItem, currentUsername, day.dateString);
                           deleteJournal(
                             username,
                             journalItem.journalDate,
