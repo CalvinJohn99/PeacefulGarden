@@ -1,17 +1,16 @@
 import * as React from "react";
 
-// import navigation
+// import navigation components
 import {
-  NavigationContainer,
   StackActions,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+
+// import other elements
 import Ionicons from "react-native-vector-icons/Ionicons";
-import commonStyles, { SCREEN_WIDTH, SCREEN_HEIGHT } from "../commonStyles";
+import commonStyles from "../commonStyles";
 
 // import screens
 import HomeScreen from "./screens/HomeScreen";
@@ -28,6 +27,7 @@ import MusicScreen from "./screens/MusicScreen";
 import AccountScreen from "./screens/AccountScreen";
 
 // Create Gratefulness Post stack
+// Nested within bottom tab navigation
 const GPostStack = createStackNavigator();
 
 const GPostStackScreen = () => {
@@ -42,11 +42,14 @@ const GPostStackScreen = () => {
         },
       }}
     >
+      {/* Post list screen */}
       <QuesStack.Screen
         name="GPostList"
         component={GPostScreen}
         options={{ headerTitle: "Gratefulness Post" }}
       />
+
+      {/* Create post screen */}
       <QuesStack.Screen
         name="CreatePost"
         component={CreatePost}
@@ -59,8 +62,9 @@ const GPostStackScreen = () => {
 };
 
 // Create Self-awareness Question stack
+// Nested within bottom tab navigation
 const QuesStack = createStackNavigator();
-// const QuesStack = createSharedElementStackNavigator();
+
 const QuesStackScreen = () => {
   return (
     <QuesStack.Navigator
@@ -73,30 +77,23 @@ const QuesStackScreen = () => {
         },
       }}
     >
+      {/* Question list screen */}
       <QuesStack.Screen
         name="QList"
         component={QuestionScreen}
         options={{ headerTitle: "Question List" }}
       />
+
+      {/* View answers of correspoinding questions */}
       <QuesStack.Screen
         name="QViewAnswer"
         component={QuestionViewAnswer}
         options={() => ({
           headerTitle: "View Answer",
-          // gestureEnabled: false,
-          // transitionSpec: {
-          //   open: { animation: "timing", config: { duration: 5000 } },
-          //   close: { animation: "timing", config: { duration: 500 } },
-          // },
-          // cardStyleInterpolator: ({ current: { progress } }) => {
-          //   return {
-          //     cardStyle: {
-          //       opacity: progress,
-          //     },
-          //   };
-          // },
         })}
       />
+
+      {/* Create answer for a particular question */}
       <QuesStack.Screen
         name="QCreateAnswer"
         component={AnswerQuestion}
@@ -106,7 +103,9 @@ const QuesStackScreen = () => {
   );
 };
 
-const JMStack = createNativeStackNavigator();
+// Create Journal and Mood Stack
+// Nested within bottom tab navigation
+const JMStack = createStackNavigator();
 const JMStackScreen = () => {
   return (
     <JMStack.Navigator
@@ -119,24 +118,28 @@ const JMStackScreen = () => {
         },
       }}
     >
+      {/* Calendar navigation to view mood and journal */}
       <JMStack.Screen
         name="MoodJournalCalendar"
         component={MoodJournalScreen}
         options={{ headerTitle: "Mood and Journal" }}
       />
 
+      {/* Create mood screen */}
       <JMStack.Screen
         name="CreateMood"
         component={CreateMood}
         options={{ headerTitle: "Create Mood" }}
       />
 
+      {/* Create journal screen */}
       <JMStack.Screen
         name="CreateJournal"
         component={CreateJournal}
         options={{ headerTitle: "Create Journal" }}
       />
 
+      {/* View mood and journal in detail, edit and delete modd and journal */}
       <JMStack.Screen
         name="ViewMoodJournal"
         component={ViewMoodJournal}
@@ -146,22 +149,19 @@ const JMStackScreen = () => {
   );
 };
 
-// Create tab
+// Create bottom tab navigation
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        // headerStyle: {
-        //   backgroundColor: "#1067CC",
-        // },
         headerStyle: commonStyles.headerBGColor,
         headerTintColor: "white",
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        // headerShown: false,
+
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -180,14 +180,13 @@ function MyTabs() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "white",
-        // tabBarStyle: {
-        //   backgroundColor: "#1067CC",
-        // },
         tabBarStyle: commonStyles.bottomBGColor,
       })}
     >
+      {/* Home page of the app */}
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -209,16 +208,16 @@ function MyTabs() {
             shadowOpacity: 0.8,
             shadowRadius: 5,
             elevation: 20,
-
-            // alignItems: "center",
-            // justifyContent: "center",
           },
         }}
       />
+
+      {/* Navigate to post stack, the initial screen is view post list */}
       <Tab.Screen
         name="Post"
         component={GPostStackScreen}
         options={{ headerShown: false }}
+        // When navigate to the post tab, navigation will be directed to the initial screen of post stack
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             const routeName =
@@ -229,29 +228,15 @@ function MyTabs() {
           },
         })}
       />
+
+      {/* Navigate to the question stack, the initial screen is question list */}
       <Tab.Screen
         name="Question"
         component={QuesStackScreen}
         options={{ headerShown: false }}
+        // When navigate to the question tab, navigation will be directed to the initial screen
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
-            // work with transition delay
-            // navigation.dispatch(
-            //   CommonActions.reset({
-            //     index: 0,
-            //     routes: [{ name: "QList" }],
-            //   })
-            // );
-
-            // work with transition delay
-            // navigation.reset({
-            //   index: 0,
-            //   routes: [{ name: "QList" }],
-            // });
-
-            // work with development-only error -- action pop_to_top was not handled by any navigator
-            // navigation.dispatch(StackActions.popToTop());
-
             const routeName = getFocusedRouteNameFromRoute(route) ?? "QList";
             if (routeName !== "QList") {
               navigation.dispatch(StackActions.popToTop());
@@ -259,15 +244,15 @@ function MyTabs() {
           },
         })}
       />
+
+      {/* Navigate to mood and journal stack, the initial screen is calendar navigation */}
       <Tab.Screen
-        // name="MoodJournal"
         name="Diary"
         component={JMStackScreen}
         options={{ headerShown: false }}
+        // When navigate to the mood and journal tab, navigation will be directed to the initial screen
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
-            // navigation.dispatch(StackActions.popToTop());
-
             const routeName =
               getFocusedRouteNameFromRoute(route) ?? "MoodJournalCalendar";
             if (routeName !== "MoodJournalCalendar") {
@@ -276,16 +261,21 @@ function MyTabs() {
           },
         })}
       />
+
+      {/* Navigate to relaxing music screen */}
       <Tab.Screen
         name="Music"
         component={MusicScreen}
         options={{ headerTitle: "Relaxing Music" }}
       />
+
+      {/* Navigate to account screen */}
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
   );
 }
 
+// export bottom tab navigation as default
 export default function MainContainer() {
   return <MyTabs />;
 }
