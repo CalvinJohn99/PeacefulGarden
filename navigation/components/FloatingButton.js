@@ -5,13 +5,10 @@ import {
   View,
   Animated,
 } from "react-native";
-
-import { useState } from "react";
-
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 
+// componenet handle floating button on MoodJournalScreen
 export default function FloatingButton(props) {
-  // const [animation] = useState(new Animated.Value(0));
   const [animation, setAnimation] = React.useState(new Animated.Value(0));
   React.useEffect(() => {
     props.navigation.addListener("focus", () => {
@@ -19,6 +16,7 @@ export default function FloatingButton(props) {
     });
   });
 
+  // toggle animation state
   const toggleMenu = () => {
     const toValue = animation.open ? 0 : 1;
 
@@ -30,6 +28,7 @@ export default function FloatingButton(props) {
     animation.open = !animation.open;
   };
 
+  // set animation parameters
   const moodStyle = {
     transform: [
       { scale: animation },
@@ -42,6 +41,7 @@ export default function FloatingButton(props) {
     ],
   };
 
+  // set animation parameters
   const journalStyle = {
     transform: [
       { scale: animation },
@@ -54,6 +54,7 @@ export default function FloatingButton(props) {
     ],
   };
 
+  // set animation parameters
   const rotation = {
     transform: [
       {
@@ -65,11 +66,13 @@ export default function FloatingButton(props) {
     ],
   };
 
+  // set animation parameters
   const opacity = animation.interpolate({
     inputRange: [0, 0.5, 1],
     outputRange: [0, 0, 1],
   });
 
+  // render view
   return (
     <View style={[styles.container, props.style]}>
       <TouchableWithoutFeedback
@@ -112,8 +115,6 @@ export default function FloatingButton(props) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    //position: "absolute",
-    // right: -140,
     bottom: 80,
   },
 
