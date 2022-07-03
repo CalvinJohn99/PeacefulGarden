@@ -1,20 +1,13 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import {
-  SafeAreaView,
   View,
   FlatList,
   Text,
-  StyleSheet,
-  StatusBar,
   TouchableOpacity,
-  Image,
   Modal,
   TextInput,
 } from "react-native";
-import useCurrentDate, {
-  getCurrentDateString,
-} from "../components/CommonFunctions.js";
 import { FontAwesome5 } from "@expo/vector-icons";
 import fbdata from "../../firebase.js";
 import commonStyles, {
@@ -22,6 +15,7 @@ import commonStyles, {
   SCREEN_HEIGHT,
 } from "../../commonStyles.js";
 
+// function handle deleteMood from firebase
 function deleteMood(moodItem, currentUsername, dateString) {
   const moodRef = fbdata
     .database()
@@ -34,6 +28,7 @@ function deleteMood(moodItem, currentUsername, dateString) {
   });
 }
 
+// function handle update mood content in firebase
 function updateMood(
   selectedIcon,
   selectedID,
@@ -54,21 +49,32 @@ function updateMood(
     });
 }
 
+// component edit mood input called by ViewMoodJournal
+// list down mood in descending order of creation time
+// allow edit and delete of mood by click on mood, open edit modal overlay
 export default function EditMoodInput(props) {
+  // receive variables moodItem, currentUsername, day
   const moodItem = props.item;
   const currentUsername = props.currentUsername;
   const day = props.day;
+  // hold selected mood, initilised to the selected in the moodItem data
   const [selectedIcon, setSelectedIcon] = useState(
     moodItem.moodFontAwesome5Icon
   );
   const [selectedID, setSelectedID] = useState(moodItem.moodID);
+  // hole edited mood commnet, initilised to the original mood comment
   const [moodComment, setMoodComment] = useState(moodItem.comment);
+  // hold modal visibility status
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  // hold text input focus status
   const [focusedText, setFocusedText] = useState(false);
+  // hold edited mood colour, initilised to the original mood colour
   const [moodColor, setMoodColor] = useState(moodItem.color);
+  // an array holding mood list from firebase
   const [moodFontAwesome5Icon, setMoodFontAwesome5Icon] = useState([]);
 
+  // read mood list from firebase
   useEffect(() => {
     const moodRef = fbdata
       .database()
@@ -88,6 +94,7 @@ export default function EditMoodInput(props) {
     };
   }, []);
 
+  // return text input border colour based on focus status
   const getBorderColorText = () => {
     if (focusedText) {
       return "#00BCD4";
@@ -95,6 +102,8 @@ export default function EditMoodInput(props) {
     return "white";
   };
 
+  // render mood list
+  // change mood border and background colour based on selectedID
   const renderItem = ({ item }) => {
     const iconBackgroundColor = selectedID === item.id ? item.color : "white";
     const iconfilledColor = selectedID === item.id ? "white" : item.color;
@@ -103,7 +112,6 @@ export default function EditMoodInput(props) {
         style={{
           flex: 1,
           marginVertical: 2.5,
-          // paddingHorizontal: 5,
           borderRadius: 50,
           alignItems: "center",
           justifyContent: "center",
@@ -130,6 +138,7 @@ export default function EditMoodInput(props) {
     );
   };
 
+  // render view
   return (
     <View>
       <TouchableOpacity
@@ -140,8 +149,6 @@ export default function EditMoodInput(props) {
           flexDirection: "row",
           alignSelf: "center",
           backgroundColor: "white",
-          // borderWidth: 2,
-          // borderColor: "grey",
           borderRadius: 20,
           shadowColor: "grey",
           shadowOffset: {
@@ -165,8 +172,6 @@ export default function EditMoodInput(props) {
             flex: 1,
             paddingLeft: 20,
             marginVertical: 10,
-            // borderWidth: 2,
-            // borderColor: "red",
           }}
         />
         <Text
@@ -215,13 +220,10 @@ export default function EditMoodInput(props) {
               style={{
                 marginTop: 60,
                 width: "100%",
-                // height: SCREEN_HEIGHT * 0.1,
                 backgroundColor: "white",
                 borderRadius: 20,
                 alignItems: "center",
                 justifyContent: "center",
-                // borderWidth: 2,
-                // borderColor: "red",
               }}
             >
               <FlatList
@@ -229,11 +231,6 @@ export default function EditMoodInput(props) {
                 numColumns={5}
                 style={{
                   width: "98%",
-                  // paddingVertical: 10,
-                  // backgroundColor: "blue",
-                  // alignSelf: "center",
-                  // width: SCREEN_WIDTH * 0.73,
-                  // marginTop: SCREEN_HEIGHT * 0.004,
                 }}
                 columnWrapperStyle={{ flex: 1, justifyContent: "center" }}
                 renderItem={renderItem}
@@ -256,7 +253,6 @@ export default function EditMoodInput(props) {
                 onFocus={() => {
                   setFocusedText(true);
                 }}
-                //returnKeyType="done"
               />
             </View>
 
