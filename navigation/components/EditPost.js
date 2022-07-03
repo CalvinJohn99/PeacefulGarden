@@ -24,6 +24,11 @@ import * as ImagePicker from "expo-image-picker";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
+// function to handle delete post
+// delete data at the following reference point on firebase
+// data path: posts/category/uniquekey
+// data path: postsbyacc/username/uniquekey
+// decrease post count in user data collection
 function deletePost(
   postID,
   postCategory,
@@ -55,6 +60,9 @@ function deletePost(
   fbdata.storage().refFromURL(postImageRef).delete();
 }
 
+// updaet post content
+// data path: posts/category/uniquekey
+// data path: postsbyacc/username/uniquekey
 function updatePost(
   postID,
   postUsername,
@@ -74,20 +82,30 @@ function updatePost(
 }
 
 export default function EditPost(props) {
+  // receive variables item, username, userID
   const item = props.item;
   const username = props.username;
   const userID = props.userID;
+  // hold edited /picked image, initialised as the original image
   const [image, setImage] = useState(item.imageURL);
+  // hold image update statu
+  // true: updated, false: not updated
   const [imageUpdated, setImageUpdated] = useState(false);
+  // hold edited post content, initialised as the original post content
   const [editPostContent, setEditPostContent] = useState(item.content);
+  // hold modal overlay visibility status
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteImageVisible, setDeleteImageVisible] = useState(false);
+  // hold text input focus status
   const [focused, setFocused] = useState(false);
+  // hold error status
   const [contentErrorStatus, setContentErrorStatus] = useState(false);
   const [imageErrorStatus, setImageErrorStatus] = useState(false);
+  // hold uploading status
   const [uploading, setUploading] = useState(false);
 
+  // request media library permission async
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -100,6 +118,7 @@ export default function EditPost(props) {
     })();
   }, []);
 
+  // handle pick up image by expo image picker
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -108,8 +127,6 @@ export default function EditPost(props) {
       quality: 1,
     });
 
-    // console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
       setImageErrorStatus(false);
@@ -117,6 +134,8 @@ export default function EditPost(props) {
     }
   };
 
+  // update post image if the image is editted
+  // call upadtePost function with new image ref
   const updatePostImage = async () => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -151,7 +170,6 @@ export default function EditPost(props) {
       () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false);
-          // console.log("download url", url);
           blob.close();
           if (editPostContent === "" || image === "") {
             setErrorStatus(true);
@@ -165,8 +183,6 @@ export default function EditPost(props) {
               ref.toString()
             );
             setModalVisible(!modalVisible);
-            // alert("Successfully posted!");
-            // navigation.navigate("Post", { screen: "GPostList" });
           }
           return url;
         });
@@ -174,6 +190,7 @@ export default function EditPost(props) {
     );
   };
 
+  // set text input border colour based on variable "focused"
   const getBorderColor = () => {
     if (focused) {
       return "#00BCD4";
@@ -181,6 +198,9 @@ export default function EditPost(props) {
     return "white";
   };
 
+  // handle onSubmit when "save" button is clicked
+  // if any input is empty, set error true
+  // otherwise, call updatePost or updatePostImage
   const onSubmit = () => {
     if (editPostContent === "" || image === "") {
       if (editPostContent === "") {
@@ -207,13 +227,13 @@ export default function EditPost(props) {
     }
   };
 
+  // render view
   return (
     <View>
       <Card
         style={{
           marginVertical: 20,
           width: SCREEN_WIDTH * 0.9,
-          // height: SCREEN_HEIGHT * 0.55,
           borderRadius: 20,
           margin: 20,
           shadowColor: "grey",
@@ -325,6 +345,7 @@ export default function EditPost(props) {
         </View>
       </Modal>
 
+      {/* edit modal overlay */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -447,22 +468,9 @@ export default function EditPost(props) {
                   ) : (
                     <ActivityIndicator size="large" color="#000" />
                   )}
-
-                  {/* <TouchableOpacity
-                    style={[
-                      commonStyles.modalButton,
-                      { backgroundColor: "#F3B000" },
-                    ]}
-                    onPress={() => {
-                      onSubmit();
-                      // updatePost(item.id, item.username, editPostContent);
-                      // setModalVisible(!modalVisible);
-                    }}
-                  >
-                    <Text style={commonStyles.modalButtonText}>Save</Text>
-                  </TouchableOpacity> */}
                 </View>
 
+                {/* delete modal overlay */}
                 <Modal
                   animationType="slide"
                   transparent={true}
