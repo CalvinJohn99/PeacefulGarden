@@ -1,57 +1,28 @@
 // @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-  TouchableOpacity,
-  Image,
-  Animated,
-} from "react-native";
-import { Calendar, CalendarList, Agenda } from "react-native-calendars";
-import { FontAwesome, Octicons } from "@expo/vector-icons";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import { Calendar } from "react-native-calendars";
 
-import fbdata from "../../firebase.js";
-import useCurrentDate, {
-  useAccountUsername,
-} from "../components/CommonFunctions.js";
+import { useAccountUsername } from "../components/CommonFunctions.js";
 import FloatingButton from "../components/FloatingButton.js";
 import commonStyles, {
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
 } from "../../commonStyles.js";
-//import ViewMood from "./ViewMood";
-//import {Card, Avatar} from 'react-native-paper';
 
+// Mood Journal Screen
+// Calendar navigation
+// Pass date to ViewMoodJournal screen once a date is selected
 export default function MoodJournalScreen({ navigation }) {
-  const currentDate = useCurrentDate();
   const currentUsername = useAccountUsername();
-  const mood = { color: "green" };
-  const journal = { color: "blue" };
 
+  // render view
   return (
     <SafeAreaView style={styles.outerContainer}>
-      {/* <View>
-        <Text style={{ top: 20, fontWeight: "bold", fontSize: 26 }}>
-          {" "}
-          {currentDate}{" "}
-        </Text>
-      </View> */}
-
-      {/* <View style={styles.submitSection}>
-        <TouchableOpacity
-          style={styles.postbutton}
-          onPress={() => {
-            navigation.navigate("Journal", { screen: "CreateMood" });
-          }}
-        >
-          <Text style={styles.postbuttontext}>New</Text>
-        </TouchableOpacity>
-      </View> */}
-
+      {/* render calendar navigation,
+          select a date to navigate,
+          pass date to ViewMoodJournal screen*/}
       <View style={styles.calendar}>
         <Calendar
           onVisibleMonthsChange={(months) => {
@@ -64,9 +35,6 @@ export default function MoodJournalScreen({ navigation }) {
               params: { currentUsername, day },
             });
           }}
-          // onDayLongPress={(day) => {
-          //   console.log("selected day", day);
-          // }}
           monthFormat={"MMM yyyy"}
           onMonthChange={(month) => {
             console.log("month changed", month);
@@ -78,42 +46,12 @@ export default function MoodJournalScreen({ navigation }) {
           onPressArrowLeft={(subtractMonth) => subtractMonth()}
           onPressArrowRight={(addMonth) => addMonth()}
           enableSwipeMonths={false}
-          // markingType={"multi-dot"}
-          // markedDates={{
-          //   "2021-10-01": { dots: [mood, journal] },
-          //   "2021-10-06": { dots: [mood, journal] },
-          //   "2021-10-07": { dots: [mood] },
-          //   "2021-10-14": {
-          //     dots: [mood],
-          //     selected: true,
-          //     selectedColor: "lightblue",
-          //   },
-          // }}
         />
       </View>
 
-      {/* <View style={styles.remarks}>
-        <Text style={[styles.remarksDetails]}>Remarks:</Text>
-
-        <View style={[styles.remarksDetails]}>
-          <Text>
-            <FontAwesome name="circle" size={24} color="lightblue" /> : Today
-          </Text>
-        </View>
-
-        <View style={[styles.remarksDetails]}>
-          <Text>
-            <Octicons name="primitive-dot" size={24} color="green" /> : Mood
-          </Text>
-        </View>
-
-        <View style={[styles.remarksDetails]}>
-          <Text>
-            <Octicons name="primitive-dot" size={24} color="blue" /> : Journal
-          </Text>
-        </View>
-      </View> */}
-
+      {/* called floating button component
+          allow navigation to create mood and journal respectively
+          pass navigation to floating button */}
       <View style={styles.container}>
         <FloatingButton navigation={navigation} />
       </View>
@@ -121,6 +59,7 @@ export default function MoodJournalScreen({ navigation }) {
   );
 }
 
+// Style Sheet
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
