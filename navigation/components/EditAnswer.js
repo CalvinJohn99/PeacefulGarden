@@ -1,19 +1,15 @@
 // @refresh state
 import * as React from "react";
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-} from "react-native";
+import { View, Text, FlatList } from "react-native";
 import fbdata from "../../firebase.js";
 import EditAnswerInput from "./EditAnswerInput.js";
 
+// EditAnswer component which read answers for each question and pass each answer to EditAnsewrInput component
 export default function ListAnswerbyQuestion(props) {
+  // useState variable: hold answer of passed question from QuestByAcc component under account
   const [qabyacc, setQabyacc] = useState([]);
+  // read ansewrs for each question
   React.useEffect(() => {
     const accQARef = fbdata
       .database()
@@ -32,15 +28,16 @@ export default function ListAnswerbyQuestion(props) {
     };
   }, []);
 
+  // if no answer for a particular question, return null
   if (qabyacc.length === 0) {
     return null;
   }
+
+  // render view
   return (
     <View
       style={{
         width: "100%",
-        // borderWidth: 2,
-        // borderColor: "black",
         backgroundColor: "white",
         borderRadius: 20,
         flex: 1,
@@ -49,14 +46,6 @@ export default function ListAnswerbyQuestion(props) {
         marginVertical: 20,
         borderWidth: 1,
         borderColor: "rgba(178,185,214,0.5)",
-        // shadowColor: "grey",
-        // shadowOffset: {
-        //   width: 2,
-        //   height: 5,
-        // },
-        // shadowOpacity: 0.36,
-        // shadowRadius: 5,
-        // elevation: 11,
       }}
     >
       <View
