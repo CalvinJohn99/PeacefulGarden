@@ -25,5 +25,5 @@ App.js file navigates the user to account authentication or the entire main tab 
 MainContainer.js file navigates the user within the main tab navigation. It includes the tab navigation and the stack navigaiton for each tab.
 
 
-[You can find a video of our application here!](https://youtu.be/4bThcfhrXwU)
+[You can find a video of our application here!](https://youtu.be/4bThcfhrXwU) \
 [You can find a kickstarter video for our application here!](https://youtu.be/EtwAMQa-Clk)
