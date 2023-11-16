@@ -1,9 +1,10 @@
 # PeacefulGarden
+Peaceful garden is a social media mobile applicaiton aimed at improving mental health.
 
 You can find the video for our application [here!](https://youtu.be/4bThcfhrXwU) to see how our app works.\
 You can find the kickstarter video for our application [here!](https://youtu.be/EtwAMQa-Clk) to understand the purpose of our application.
 
-### Peaceful garden is a social media mobile applicaiton that provides users with the following functions:
+### Core App Functionalities:
 
 * View different motivating codes on the home tab, the code will be chosen randomly from a collection on firebase
 * View and post gratefulness posts, create posts stack in maincontainer, including GPostScreen, PostList and PostItem, CreatePost, and LikeButton
